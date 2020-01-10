@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<!-- 메이븐 기본설정 프로젝트를 상속하여 공통 의존 라이브러리들의 자동 버전 관리 등 용이 -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.2.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	
+	<!-- OJDBC 드라이버 repository -->
+	<repositories>
+	    <repository>
+            <id>oracle</id>
+            <name>ORACLE JDBC Repository</name>
+            <url>http://maven.jahia.org/maven2</url>
+        </repository>
+	</repositories>
+	
+	<groupId>kr.byweb</groupId>
+	<artifactId>byweb-stt-demo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>byweb-stt-demo</name>
+	<description>byweb TM project</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<!-- 스프링 MVC를 이용해 웹 어플리케이션을 구축. 기본 내장 컨테이너로 톰켓 사용 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<!-- VO, DTO, Entity 관련 작업 간소화. 개발PC 내 Lombok 설치 필요 -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- spring-boot-starter-web에 포함된 tomcat은 JSP엔진을 포함하고 있지 않아 jasper, jstl 의존성 필요 -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>jstl</artifactId>
+		</dependency>
+		 
+		<dependency>
+		    <groupId>org.apache.tomcat.embed</groupId>
+		    <artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+		
+		<!-- Oracle JDBC Driver -->
+		<dependency>
+		    <groupId>com.oracle</groupId>
+        	<artifactId>ojdbc7</artifactId>
+        	<version>12.1.0.2</version>
+		</dependency>
+        
+        <!-- Spring MyBatis 연동 -->
+		<dependency>
+		    <groupId>org.mybatis.spring.boot</groupId>
+       	 	<artifactId>mybatis-spring-boot-starter</artifactId>
+       	 	<version>1.1.1</version>
+		</dependency>
+		
+		<!-- 스프링 부트 어플리케이션 테스트용 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- 자동설정클래스 내 스프링빈을 properties파일을 통해 재정의 시 @ConfigurationProperties 사용 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- 프로젝트를 executable jar로 패키징 -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
