@@ -1,8 +1,13 @@
 package kr.byweb.stt.demo.conf.mapper;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import kr.byweb.stt.demo.conf.model.AnlysStdVo;
 
 @Mapper
 public interface KeywordManagementMapper {
-	public String selectTime() throws Exception;
+	public List<AnlysStdVo> getAnalysisStandardList(Map pMap) throws Exception;
 }

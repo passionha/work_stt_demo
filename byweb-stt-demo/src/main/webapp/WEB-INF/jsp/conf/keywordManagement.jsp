@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,9 +75,17 @@
 		text-align: center;
 	}
 	
-	#btn_kwdList input {
+	#btn_kwdList {
 		float: right;
+	}
+	
+	#btn_kwdList input {
 		margin-bottom: 10px;
+	}
+	
+	#tbl_kwdList{
+		clear: both;
+		width: 100%;
 	}
 	
 	#tbl_kwdList tr, th, td {
@@ -88,6 +95,19 @@
 	
 	
 </style>
+<script type="text/javascript">
+function kwdListSearch() {
+	if(document.getElementById("sel_prdln").value == 'SEL'){
+		alert("상품군을 선택하세요.");
+		return;
+	}else if(sel_kwdKnd = document.getElementById("sel_kwdKnd").value == 'SEL'){
+		alert("키워드종류를 선택하세요.");
+		return;
+	}else{
+		document.frm_kwdListSearch.submit();
+	}
+}
+</script>
 </head>
 <body>
 <div id="wrapper">
@@ -96,27 +116,33 @@
 	<section>
 	
 		<h3>녹취파일 분석기준 설정</h3>
-		<div id="searchBar">
-			<ul>
-				<li>▶</li>
-				<li>상품군</li>
-				<li>
-					<select>
-						<option>선택</option>	
-						<option>연금보험</option>	
-					</select>
-				</li>
-				<li>▶</li>
-				<li>키워드종류</li>
-				<li>
-					<select>
-						<option>선택</option>	
-						<option>필수키워드</option>
-						<option>금지어</option>
-					</select>
-				</li>
-			</ul>
-		</div>
+		<form name="frm_kwdListSearch" action="getAnalysisStandardList" method="post">
+			<input type="hidden" name="req_dept_cd" value="1">
+			<div id="searchBar">
+				<ul>
+					<li>▶</li>
+					<li>상품군</li>
+					<li>
+						<select id="sel_prdln" name="prdln_cd" onchange="kwdListSearch()">
+							<c:forEach var="prdlnMng" items="${prdlnMngVos}" begin="0" step="1">
+								<c:if test="${prdlnMng.prdln_cd != 'ALL'}">
+								<option value="${prdlnMng.prdln_cd}">${prdlnMng.prdln_nm}</option>
+								</c:if>
+							</c:forEach>
+						</select>
+					</li>
+					<li>▶</li>
+					<li>키워드종류</li>
+					<li>
+						<select id="sel_kwdKnd" name="kwd_spr" onchange="kwdListSearch()">
+							<c:forEach var="tmCmCd" items="${tmCmCdVos}" begin="0" step="1">
+								<option value="${tmCmCd.cd}">${tmCmCd.cd_nm}</option>
+							</c:forEach>
+						</select>
+					</li>
+				</ul>
+			</div>
+		</form>
 		
 		<div id="kwdSetBox">
 			<div id="kwdSetTitle">
@@ -134,7 +160,7 @@
 			<div id="btn_kwdList">
 				<input type="button" value="저장">
 				<input type="button" value="삭제">
-				<input type="button" value="동의어" onclick="window.open('goSynPopup','synMngPopup','width=430,height=500,location=no,status=no,scrollbars=no');">
+				<input type="button" value="동의어" onclick="window.open('synPopup','synPopup','width=430,height=500,location=no,status=no,scrollbars=no');">
 			</div>
 			<table id="tbl_kwdList">
 				<thead>
@@ -155,11 +181,11 @@
 						<td>1</td>
 						<td><input type="checkbox"></td>
 						<td><input type="text" value="사망보장"></td>
-						<td><input type="text" value="동의어1" readonly onclick="window.open('goSynPopup','synMngPopup','width=430,height=500,location=no,status=no,scrollbars=no');"></td>
+						<td><input type="text" value="동의어1" readonly onclick="window.open('synPopup','synPopup','width=430,height=500,location=no,status=no,scrollbars=no');"></td>
 						<td><input type="text" value="20"></td>
 						<td><input type="text" value="Y"></td>
 						<td><input type="text" value="10"></td>
-						<td>홍길동(123456</td>
+						<td>홍길동(123456)</td>
 						<td>2020-01-02</td>
 					</tr>
 				</tbody>

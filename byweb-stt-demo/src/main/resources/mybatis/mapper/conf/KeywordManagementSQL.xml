@@ -2,10 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.byweb.stt.demo.conf.mapper.KeywordManagementMapper">
 	
-	<select id="selectTime" resultType="String">
-		SELECT
-	      TO_CHAR(SYSDATE, 'YYYYMMDD')
-	  	FROM DUAL
+	<select id="getAnalysisStandardList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.conf.model.AnlysStdVo">
+		SELECT 
+		      REQ_DEPT_CD
+		    , PRDLN_CD
+		    , KWD_SPR
+		    , SCRNG_SPR
+		    , SCRNG_SPR AS ORG_SCRNG_SPR
+		    , KWD_NM
+		    , KWD_NM AS ORG_KWD_NM
+		    , SYN_NM
+		    , RNG
+		    , SCR
+		    , USE_YN
+		    , EMP_NO
+		    , (SELECT NM FROM PI_EMP B WHERE B.EMP_NO = A.EMP_NO) AS USER_NM
+		    , REG_DT
+		    , '0' AS CHK_DEL
+		FROM TM_ANLYS_STD A
+		WHERE
+		    	REQ_DEPT_CD = #{req_dept_cd}
+		    AND PRDLN_CD = #{prdln_cd}
+		    AND KWD_SPR = #{kwd_spr}
+		ORDER BY KWD_NM
 	</select>
+	
    
  </mapper>

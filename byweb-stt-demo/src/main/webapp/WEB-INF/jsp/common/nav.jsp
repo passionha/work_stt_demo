@@ -20,9 +20,13 @@
 	<nav>
 		<p>NAV</p>
 		<ul>
-			<li><a href="">LINK</a></li>
-			<li><a href="">LINK</a></li>
-			<li><a href="">LINK</a></li>
+			<li><a href="getSbmList">회사별 제출현황</a></li>
+			<br>
+			<li><a href="getAnlysStdList">분석기준 설정</a></li>
+			<br>
+			<li><a href="">결과 확인</a></li>
+			<br>
+			<li><a href="">상품군 관리</a></li>
 		</ul>
 	</nav>
 </body>

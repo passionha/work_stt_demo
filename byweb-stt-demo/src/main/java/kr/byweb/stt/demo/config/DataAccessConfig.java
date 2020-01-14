@@ -1,4 +1,4 @@
-package kr.byweb.stt.demo.conf;
+package kr.byweb.stt.demo.config;
 
 import javax.sql.DataSource;
 
@@ -18,7 +18,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  * @author BYWEB-008
  */
 @Configuration
-@MapperScan(basePackages = "kr.byweb.stt.demo.conf.mapper")
+@MapperScan(basePackages = "kr.byweb.stt.demo.**.mapper")
 public class DataAccessConfig {
 	
 	 //DataSourceConfig

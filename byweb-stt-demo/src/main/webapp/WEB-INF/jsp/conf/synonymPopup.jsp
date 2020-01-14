@@ -12,8 +12,8 @@
 		</div> 
 		
 		<div id="btn_synSet">
-			<input type="button" value="삭제">
 			<input type="button" value="저장">
+			<input type="button" value="삭제" onclick="confirm('동의어를 삭제하시겠습니까?');">
 		</div>
 		
 		<table border="1">
@@ -31,7 +31,7 @@
 			<h4>□동의어 선택</h4>
 		</div>
 		
-		<table>
+		<table border="1">
 			<thead>
 				<tr>
 					<th>선택</th>
