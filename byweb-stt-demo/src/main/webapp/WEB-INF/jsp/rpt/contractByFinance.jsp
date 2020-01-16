@@ -1,9 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<jsp:useBean id="today" class="java.util.Date" />
-<%-- <fmt:formatDate value="${today}" pattern="yyyy-MM-dd" var="today"/> --%>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,7 +63,6 @@
 <%@ include file="/WEB-INF/jsp/common/nav.jsp" %>
 	<section>
 		<h3>회사별 제출현황</h3>
-		
 		<form action="getContractList" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀">

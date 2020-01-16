@@ -114,7 +114,6 @@ function kwdListSearch() {
 <%@ include file="/WEB-INF/jsp/common/header.jsp" %>
 <%@ include file="/WEB-INF/jsp/common/nav.jsp" %>
 	<section>
-	
 		<h3>녹취파일 분석기준 설정</h3>
 		<form name="frm_kwdListSearch" action="getAnlysStdList" method="post">
 			<div id="searchBar">
@@ -190,10 +189,6 @@ function kwdListSearch() {
 				</tbody>
 			</table>
 		</div>
-		
-		
-		
-		
 	</section>
 <%@ include file="/WEB-INF/jsp/common/footer.jsp" %>
 </div>

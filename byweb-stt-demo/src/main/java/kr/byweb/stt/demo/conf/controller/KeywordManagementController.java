@@ -64,7 +64,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getAnalysisStandardList")
+	/*@RequestMapping("/getAnalysisStandardList")
 	public String getAnalysisStandardList(HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		
@@ -106,7 +106,7 @@ public class KeywordManagementController {
 			e.printStackTrace();
 		}
 		return "conf/keywordManagement";
-	}	
+	}	*/
 	
 	/**
 	 * 동의어 관리 팝업
