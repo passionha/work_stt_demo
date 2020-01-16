@@ -97,12 +97,12 @@
 </style>
 <script type="text/javascript">
 function kwdListSearch() {
-	if(document.getElementById("sel_prdln").value == 'SEL'){
+	if(sel_kwdKnd = document.getElementById("sel_kwdKnd").value != 'SEL' && document.getElementById("sel_prdln").value == 'SEL'){
 		alert("상품군을 선택하세요.");
 		return;
-	}else if(sel_kwdKnd = document.getElementById("sel_kwdKnd").value == 'SEL'){
+	/* }else if(sel_kwdKnd = document.getElementById("sel_kwdKnd").value == 'SEL'){
 		alert("키워드종류를 선택하세요.");
-		return;
+		return; */
 	}else{
 		document.frm_kwdListSearch.submit();
 	}
@@ -116,8 +116,7 @@ function kwdListSearch() {
 	<section>
 	
 		<h3>녹취파일 분석기준 설정</h3>
-		<form name="frm_kwdListSearch" action="getAnalysisStandardList" method="post">
-			<input type="hidden" name="req_dept_cd" value="1">
+		<form name="frm_kwdListSearch" action="getAnlysStdList" method="post">
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>
@@ -126,7 +125,7 @@ function kwdListSearch() {
 						<select id="sel_prdln" name="prdln_cd" onchange="kwdListSearch()">
 							<c:forEach var="prdlnMng" items="${prdlnMngVos}" begin="0" step="1">
 								<c:if test="${prdlnMng.prdln_cd != 'ALL'}">
-								<option value="${prdlnMng.prdln_cd}">${prdlnMng.prdln_nm}</option>
+								<option value="${prdlnMng.prdln_cd}" <c:if test="${prdln_cd eq prdlnMng.prdln_cd}">selected</c:if>>${prdlnMng.prdln_nm}</option>
 								</c:if>
 							</c:forEach>
 						</select>
@@ -136,7 +135,7 @@ function kwdListSearch() {
 					<li>
 						<select id="sel_kwdKnd" name="kwd_spr" onchange="kwdListSearch()">
 							<c:forEach var="tmCmCd" items="${tmCmCdVos}" begin="0" step="1">
-								<option value="${tmCmCd.cd}">${tmCmCd.cd_nm}</option>
+								<option value="${tmCmCd.cd}" <c:if test="${kwd_spr eq tmCmCd.cd}">selected</c:if>>${tmCmCd.cd_nm}</option>
 							</c:forEach>
 						</select>
 					</li>
@@ -151,7 +150,7 @@ function kwdListSearch() {
 			<div id="btn_kwdSet">
 				<input type="button" value="키워드 등록">
 			</div>
-			<textarea id="ta_writeKwd" rows="4">여러 키워드 등록 시 구분자를 ","단위로 등록하세요. 한 키워드는 50자 이상을 넘을 수 없습니다.</textarea>
+			<textarea id="ta_writeKwd" rows="4" placeholder="여러 키워드 등록 시 구분자를 ','단위로 등록하세요. 한 키워드는 50자 이상을 넘을 수 없습니다."></textarea>
 		</div>
 		<div id="kwdListBox">
 			<div id="kwdListTitle">

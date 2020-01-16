@@ -39,7 +39,7 @@
 	    </if>
 	</select>
 	
-	<!-- 키워드종류 조회 -->
+	<!-- 키워드종류 목록 조회 -->
 	<select id="getKwdKndCd" resultType="kr.byweb.stt.demo.cm.model.TmCmCdVo">
 		SELECT
 		      'SEL' AS CD
@@ -57,4 +57,60 @@
 		    AND USE_YN = 'Y'
 	</select>
    
+	<!-- 회사 목록 조회 -->
+	<select id="getReqDeptList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.cm.model.FinanceVo">
+		SELECT
+		      'ALL' AS CLASS_CD
+		    , '전체' AS CLASS_NAME
+		    , 'ALL' AS FINANCE_CD
+		    , '전체' AS FINANCE_NAME
+		    , '' AS BUSI_STRT_DAY
+		    , '' AS BUSI_END_DAY
+		FROM DUAL
+		UNION ALL
+		SELECT
+		      CLASS_CD
+		    , (SELECT CLASS_NAME FROM RR_FINANCE_CLASS WHERE CLASS_CD = A.CLASS_CD) AS CLASS_NAME
+		    , FINANCE_CD
+		    , FINANCE_NAME
+		    , BUSI_STRT_DAY
+		    , BUSI_END_DAY
+		FROM RR_FINANCE A
+		WHERE FINANCE_CD = '9999999'
+		UNION ALL
+		SELECT *
+		FROM (
+		    SELECT
+		          A.CLASS_CD
+		        , A.CLASS_NAME
+		        , B.FINANCE_CD
+		        , B.FINANCE_NAME
+		        , B.BUSI_STRT_DAY
+		        , B.BUSI_END_DAY
+		    FROM (
+		        SELECT 
+		              CLASS_CD
+		            , CLASS_NAME
+		            , CLASS_LEVEL
+		            , UPPER_CLASS
+		       FROM RR_FINANCE_CLASS
+		       START WITH CLASS_CD='050000'
+		       CONNECT BY PRIOR CLASS_CD=UPPER_CLASS
+		    ) A, RR_FINANCE B
+		    WHERE A.CLASS_CD=B.CLASS_CD
+		    <choose>
+	    	<when test="cls_cd == 'ALL'">
+		    AND A.UPPER_CLASS IN ('050100', '050200')
+	    	</when>
+	    	<otherwise>
+		    AND A.UPPER_CLASS=#{cls_cd}
+		    </otherwise>
+			</choose>
+			<if test="sdate != ''">
+		    AND NVL(#{sdate}, TO_CHAR(SYSDATE, 'YYYYMMDD')) BETWEEN B.BUSI_STRT_DAY AND B.BUSI_END_DAY
+		    </if>
+		    ORDER BY FINANCE_NAME      
+		)
+	</select>
+	
  </mapper>

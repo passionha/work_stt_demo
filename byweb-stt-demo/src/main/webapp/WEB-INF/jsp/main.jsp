@@ -1,3 +1,4 @@
+<%-- <%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%> --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -30,16 +31,29 @@
 </style>
 </head>
 <body>
+<%
+	String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String)session.getAttribute("req_dept_cd");
+	String localUrl = request.getServletPath().toString();
+	String iPage = localUrl.substring(localUrl.lastIndexOf("/WEB-INF/jsp/")+13);
+%>
 <div id="wrapper">
-<%@ include file="/WEB-INF/jsp/common/header.jsp" %>
-<%@ include file="/WEB-INF/jsp/common/nav.jsp" %>
+	<jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
+<%-- <%@ include file="/WEB-INF/jsp/common/header.jsp" %>
+<%@ include file="/WEB-INF/jsp/common/nav.jsp" %> --%>
 	<section>
-		<p>SECTION</p>
+		<p><%=localUrl %></p>
+		<p><%=iPage %></p>
 		<article>
-			<p>ARTICLE</p>
+			<p>Main Page.</p>
+			<p>Select Header</p>
+			<p>localUrl : <%= localUrl%></p>
+			<p>iPage : <%= iPage%></p>
+			<p>req_dept_cd : <%= req_dept_cd%></p>
 		</article>
 	</section>
-<%@ include file="/WEB-INF/jsp/common/footer.jsp" %>
+	<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>
+<%-- <%@ include file="/WEB-INF/jsp/common/footer.jsp" %> --%>
 </div>
 </body>
 </html>

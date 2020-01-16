@@ -18,9 +18,8 @@
 </head>
 <body>
 	<nav>
-		<p>NAV</p>
 		<ul>
-			<li><a href="getSbmList">회사별 제출현황</a></li>
+			<li><a href="getContractList">회사별 제출현황</a></li>
 			<br>
 			<li><a href="getAnlysStdList">분석기준 설정</a></li>
 			<br>

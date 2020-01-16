@@ -1,8 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:useBean id="today" class="java.util.Date" />
-<fmt:formatDate value="${today}" pattern="yyyy-MM-dd" var="today"/>
+<%-- <fmt:formatDate value="${today}" pattern="yyyy-MM-dd" var="today"/> --%>
 
 <!DOCTYPE html>
 <html>
@@ -67,7 +67,7 @@
 	<section>
 		<h3>회사별 제출현황</h3>
 		
-		<form action="getSbmList" method="post">
+		<form action="getContractList" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀">
 				<input type="submit" value="조회">
@@ -78,22 +78,24 @@
 					<li>▶</li>
 					<li>회사명</li>
 					<li>
-						<select>
-							<option>전체</option>	
-							<option>A보험회사</option>	
-							<option>B보험회사</option>	
+						<select name="fin_cd" >
+							<c:forEach var="fin" items="${finList}" begin="0" step="1">
+								<option value="${fin.finance_cd}" <c:if test="${fin_cd eq fin.finance_cd}">selected</c:if>>${fin.finance_name}</option>
+							</c:forEach>
 						</select>
 					</li>
 					<li>▶</li>
 					<li>제출일자</li>
 					
 					<li>
-						<input type="date" value="${today}">
+						<p>${sdate}</p>
+						<p>${edate}</p>
+						<input type="text" name="sdate" <c:if test="${sdate ne ''}">value="${sdate}"</c:if>>
 						<img src="/user/images/calendar.gif" onclick="">
 					</li>
 					<li>~</li>
 					<li>
-						<input type="date" value="${today}">
+						<input type="text" name="edate" <c:if test="${edate ne ''}">value="${edate}"</c:if>>
 						<img src="/user/images/calendar.gif" onclick="">
 					</li>
 				</ul>
