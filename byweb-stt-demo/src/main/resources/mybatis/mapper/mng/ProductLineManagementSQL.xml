@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.byweb.stt.demo.mng.mapper.ProductLineManagementMapper">
+	
+	<select id="getPrdlnList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.mng.model.PrdlnMngVo">
+		SELECT
+	          '0' AS REQ_DEPT_CD
+	        , 'SEL' AS PRDLN_CD
+	        , '선택' AS PRDLN_NM
+	        , 'Y' AS USE_YN
+	        , '' AS EMP_NO
+	    	, TO_DATE('') AS REG_DT
+	    FROM DUAL
+	    UNION ALL
+	    SELECT
+	    	  '0' AS REQ_DEPT_CD
+	        , 'ALL' AS PRDLN_CD
+	    	, '전체' AS PRDLN_NM
+	    	, 'Y' AS USE_YN
+	    	, '' AS EMP_NO
+	    	, TO_DATE('') AS REG_DT
+	    FROM DUAL
+	    UNION ALL
+	    SELECT
+	    	  REQ_DEPT_CD
+	    	, PRDLN_CD
+	    	, PRDLN_NM
+	    	, USE_YN
+	    	, EMP_NO
+	    	, REG_DT
+	    FROM TM_PRDLN_MNG
+	    WHERE 1=1
+	    <if test="req_dept_cd != ''">
+	    AND REQ_DEPT_CD = #{req_dept_cd}
+	    </if>
+	    <if test="use_yn != ''">
+	    AND USE_YN = #{use_yn}
+	    </if>
+	</select>
+   
+ </mapper>
