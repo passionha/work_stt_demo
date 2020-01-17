@@ -24,9 +24,8 @@ public class TmCmCdVo {
 	private String emp_no;
 	private Timestamp reg_dt;
 	
-	//회사정보 테이블 RR_FINANCE, RR_FINANCE_CLASS
+	//회사정보 테이블 : RR_FINANCE
 	private String class_cd;
-	private String class_name;
 	private String finance_cd;
 	private String finance_name;
 	private Timestamp busi_strt_day;
@@ -41,4 +40,5 @@ public class TmCmCdVo {
 //	private Timestamp reg_dt;
 	
 	//기타 화면 정의 파라미터
+	private String class_name;
 }

@@ -50,7 +50,7 @@ public class ContractByFinanceController {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
 		
-		//redirect한 페이지에서 전달받은 파라미터 추출
+		//삭제 후 redirect 시 저장한 파라미터 추출
 		Map<String, ?> inputFlashMap =  RequestContextUtils.getInputFlashMap(request);
 		if(inputFlashMap != null) {
 			sdate = (String) inputFlashMap.get("sdate");
