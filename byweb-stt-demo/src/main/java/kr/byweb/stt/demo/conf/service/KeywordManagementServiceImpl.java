@@ -13,11 +13,11 @@ import kr.byweb.stt.demo.conf.model.AnlysStdVo;
 public class KeywordManagementServiceImpl implements KeywordManagementService{
 	
 	@Autowired
-	private KeywordManagementMapper kwdMngMapper;
+	private KeywordManagementMapper keywordManagementMapper;
 
 	@Override
 	public List<AnlysStdVo> getAnalysisStandardList(Map pMap) throws Exception {
-		return kwdMngMapper.getAnalysisStandardList(pMap);
+		return keywordManagementMapper.getAnalysisStandardList(pMap);
 	}
 	
 	

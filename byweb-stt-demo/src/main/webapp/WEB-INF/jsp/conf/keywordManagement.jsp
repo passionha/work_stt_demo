@@ -100,9 +100,6 @@ function kwdListSearch() {
 	if(sel_kwdKnd = document.getElementById("sel_kwdKnd").value != 'SEL' && document.getElementById("sel_prdln").value == 'SEL'){
 		alert("상품군을 선택하세요.");
 		return;
-	/* }else if(sel_kwdKnd = document.getElementById("sel_kwdKnd").value == 'SEL'){
-		alert("키워드종류를 선택하세요.");
-		return; */
 	}else{
 		document.frm_kwdListSearch.submit();
 	}

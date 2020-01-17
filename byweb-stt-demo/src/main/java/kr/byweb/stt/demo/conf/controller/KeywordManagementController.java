@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import kr.byweb.stt.demo.cm.model.PrdlnMngVo;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 import kr.byweb.stt.demo.conf.model.AnlysStdVo;
@@ -21,10 +20,10 @@ import kr.byweb.stt.demo.conf.service.KeywordManagementService;
 public class KeywordManagementController {
 	
 	@Autowired
-	KeywordManagementService kwdMngService;
+	KeywordManagementService keywordManagementService;
 	
 	@Autowired
-	TmCommonCodeService tmCmCdService;
+	TmCommonCodeService tmCommonCodeService;
 	
 	/**
 	 * 분석기준 설정 조회
@@ -46,8 +45,8 @@ public class KeywordManagementController {
 		pMap.put("use_yn", use_yn);
 		
 		try {
-			List<TmCmCdVo> tmCmCdVos = tmCmCdService.getKwdKndCd();
-			List<PrdlnMngVo> prdlnMngVos = tmCmCdService.getPrdlnList(pMap);
+			List<TmCmCdVo> tmCmCdVos = tmCommonCodeService.getKwdKndCd();
+			List<TmCmCdVo> prdlnMngVos = tmCommonCodeService.getPrdlnList(pMap);
 			
 			model.addAttribute("prdlnMngVos", prdlnMngVos);
 			model.addAttribute("tmCmCdVos", tmCmCdVos);

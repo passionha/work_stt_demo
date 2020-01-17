@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.byweb.stt.demo.rpt.mapper.ContractByFinanceMapper">
+	
+	<!-- 회사별 계약정보 목록 조회 -->
+	<select id="getContractList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rpt.model.ContractVo">
+		SELECT
+		      T2.*
+		    , DECODE(TRNS_STTS, '3', MATCH_F_CNT||'/'||MATCH_CNT,
+		      (SELECT CD_NM FROM TM_CD_INF WHERE GRP_CD = 'AnlySt' AND USE_YN = 'Y' AND CD = TRNS_STTS)) AS ANLY_ST
+		FROM (
+		    SELECT
+		          T.CLS_CD, T.REQ_DEPT_CD, T.FIN_CD
+		        , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=T.FIN_CD) AS FIN_NM
+		        , MAX(SBM_FILE_NM) AS SBM_FILE_NM
+		        , TO_CHAR(MAX(REG_DT), 'YYYYMMDD') AS REG_DT
+		        , T.REQ_DT
+		        , MAX(SBM_DT) AS SBM_DT
+		        , MAX(UPL_FILE_NM) KEEP(DENSE_RANK FIRST ORDER BY FL_REG_DT DESC NULLS LAST) AS UPL_FILE_NM
+		        , COUNT(DISTINCT SCRTS_NO) AS CTT_CNT
+		        , COUNT(*) AS FILE_CNT
+		        , NVL(MAX(TRNS_STTS) KEEP(DENSE_RANK FIRST ORDER BY FL_REG_DT DESC NULLS LAST), 4) AS TRNS_STTS
+		        , SUM(DECODE(TRNS_STTS, NULL, 1, 2, 1, 9, 1, 0)) AS MISMATCH_CNT
+		        , SUM(NVL2(TRNS_STTS, 1, 0)) KEEP(DENSE_RANK FIRST ORDER BY FL_REG_DT DESC NULLS LAST) AS MATCH_CNT
+		        , SUM(DECODE(TRNS_STTS, 0, 1, 1, 1, 0)) KEEP(DENSE_RANK FIRST ORDER BY FL_REG_DT DESC NULLS LAST) AS MATCH_F_CNT
+		    FROM (
+		        SELECT
+		              A.CLS_CD, A.REQ_DEPT_CD, A.FIN_CD, A.REQ_DT, A.SCRTS_NO
+		            , MAX(A.SBM_FILE_NM) KEEP(DENSE_RANK FIRST ORDER BY C.REG_DT DESC) AS SBM_FILE_NM
+		            , B.RCD_FILE_NM
+		            , MAX(C.TRNS_STTS) KEEP(DENSE_RANK FIRST ORDER BY C.REG_DT DESC) AS TRNS_STTS
+		            , MAX(C.UPL_FILE_NM) AS UPL_FILE_NM
+		            , MAX(C.REG_DT) AS FL_REG_DT
+		            , MAX(A.SBM_DT) AS SBM_DT
+		            , MAX(A.REG_DT) AS REG_DT
+		        FROM  (
+		            SELECT * FROM RR_TM001
+		            WHERE REQ_DEPT_CD=#{req_dept_cd}
+                	  AND SBM_DT BETWEEN #{sdate} AND #{edate}
+                	  <if test="fin_cd != 'ALL'">
+	                  AND FIN_CD=#{fin_cd}
+	                  </if>
+		        ) A, RR_TM002 B, (
+		            SELECT
+		                  A.CLS_CD, A.REQ_DEPT_CD
+		                , A.FIN_CD, A.REQ_DT
+		                , A.UPL_FILE_NM
+		                , B.SCRTS_NO
+		                , B.FILE_NM
+		                , B.TRNS_STTS
+		                , B.REG_DT
+		            FROM TM_FLUPL_INF A, TM_RCDFL_INF B
+		            WHERE A.CLS_CD=B.CLS_CD
+		                AND A.REQ_DEPT_CD=B.REQ_DEPT_CD
+		                AND A.FIN_CD=B.FIN_CD
+		                AND A.REQ_DT=B.REQ_DT
+		                AND A.SAVE_FILE_NM=B.SAVE_FILE_NM
+		                AND A.UPL_SPR='1'
+		                AND B.USE_YN='Y'
+		                AND A.REQ_DT=B.REQ_DT
+		                AND A.SAVE_FILE_NM=B.SAVE_FILE_NM
+		                AND A.UPL_SPR='1'
+		                AND B.USE_YN='Y'
+		                AND A.TRNS_STTS != '5'
+		                AND B.TRNS_STTS != '5'
+		            ) C
+		            WHERE A.CLS_CD=B.CLS_CD
+		                AND A.REQ_DEPT_CD=B.REQ_DEPT_CD
+		                AND A.FIN_CD=B.FIN_CD
+		                AND A.REQ_DT=B.REQ_DT
+		                AND A.SCRTS_NO=B.SCRTS_NO
+		                AND B.CLS_CD=C.CLS_CD(+)
+		                AND B.REQ_DEPT_CD=C.REQ_DEPT_CD(+)
+		                AND B.FIN_CD=C.FIN_CD(+)
+		                AND B.REQ_DT=C.REQ_DT(+)
+		                AND B.SCRTS_NO=C.SCRTS_NO(+)
+		                AND B.RCD_FILE_NM=C.FILE_NM(+)
+		            GROUP BY A.CLS_CD, A.REQ_DEPT_CD, A.FIN_CD, A.REQ_DT, A.SCRTS_NO, B.RCD_FILE_NM
+		        ) T
+		    GROUP BY T.CLS_CD, T.REQ_DEPT_CD, T.FIN_CD, T.REQ_DT) T2
+		ORDER BY SBM_DT DESC, FIN_NM ASC
+	</select>
+	
+	<!-- 계약정보 목록 삭제 -->
+	<delete id="deleteContract" parameterType="java.util.Map">
+	DELETE
+	FROM RR_TM001
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+    
+	<!-- 계약정보매칭 목록 삭제 -->
+	<delete id="deleteContractMatch" parameterType="java.util.Map">
+	DELETE
+	FROM RR_TM002
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+    
+	<!-- 검수 결과 목록 삭제 -->
+	<delete id="deleteInspectionResult" parameterType="java.util.Map">
+	DELETE
+	FROM TM_INSPC_RSLT
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+    
+	<!-- 사용키워드 목록 삭제 -->
+	<delete id="deleteUseKeyword" parameterType="java.util.Map">
+	DELETE
+	FROM TM_USE_KWD
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+    
+	<!-- 키워드 라인정보 목록 삭제 -->
+	<delete id="deleteKeywordLineInfo" parameterType="java.util.Map">
+	DELETE
+	FROM TM_KWD_LNINF
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+    
+	<!-- 키워드 결과 목록 삭제 -->
+	<delete id="deleteKeywordResult" parameterType="java.util.Map">
+	DELETE
+	FROM TM_KWD_RSLT
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+    
+	<!-- 녹취파일 삭제목록 구하기 -->
+	<select id="getDeleteFileList" parameterType="java.util.Map" resultType="hashmap">
+	SELECT * FROM TM_FLUPL_INF
+	WHERE CLS_CD = #{cls_cd}
+	AND REQ_DEPT_CD = #{req_dept_cd}
+	AND FIN_CD = #{fin_cd}
+	AND REQ_DT = #{req_dt}
+    </select>
+    
+	<!-- 파일업로드 정보 목록 삭제 FLAG -->
+	<delete id="deleteUploadFileInfo" parameterType="java.util.Map">
+	DELETE
+	FROM TM_FLUPL_INF
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+    
+	<!-- 녹취파일 정보 목록 삭제 FLAG -->
+	<delete id="deleteRecordingFile" parameterType="java.util.Map">
+	DELETE
+	FROM TM_RCDFL_INF
+	WHERE CLS_CD = #{cls_cd}
+    AND REQ_DEPT_CD = #{req_dept_cd}
+    AND FIN_CD = #{fin_cd}
+    AND REQ_DT = #{req_dt}
+    </delete>
+	
+</mapper>

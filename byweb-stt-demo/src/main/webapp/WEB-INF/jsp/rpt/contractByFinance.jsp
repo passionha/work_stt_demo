@@ -56,6 +56,47 @@
 		margin-bottom: 10px;
 	}
 </style>
+<script type="text/javascript">
+/* 
+var red_fin_cd = '${red_fin_cd}';
+var req_dt = '${req_dt}';
+console.log('red_fin_cd : '+red_fin_cd);
+console.log('req_dt : '+req_dt);
+ */
+function delContract(fin_nm, sbm_dt, fin_cd, req_dt){
+	//sbm_dt .포맷 변경 필요
+	if(confirm('[ '+fin_nm+' / 제출일 : '+sbm_dt+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
+// 		var frm = document.createElement('form');
+		var frm = document.getElementById("frm");
+		
+		frm.name = 'newFrm';
+		frm.method = 'post';
+		frm.action = 'delContract';
+		frm.target = '_self';
+		
+		var input_fin_cd = document.createElement('input');
+		var input_req_dt = document.createElement('input');
+		
+		input_fin_cd.setAttribute("type", "hidden");
+		input_fin_cd.setAttribute("name", "fin_cd");
+		input_fin_cd.setAttribute("value", fin_cd);
+		
+		input_req_dt.setAttribute("type", "hidden");
+		input_req_dt.setAttribute("name", "req_dt");
+		input_req_dt.setAttribute("value", req_dt);
+		
+		frm.appendChild(input_fin_cd);
+		frm.appendChild(input_req_dt);
+		
+		document.body.appendChild(frm);
+		
+		frm.submit();
+	}else{
+		return;
+	}
+}
+
+</script>
 </head>
 <body>
 <div id="wrapper">
@@ -63,7 +104,7 @@
 <%@ include file="/WEB-INF/jsp/common/nav.jsp" %>
 	<section>
 		<h3>회사별 제출현황</h3>
-		<form action="getContractList" method="post">
+		<form id="frm" action="getContractList" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀">
 				<input type="submit" value="조회">
@@ -74,7 +115,7 @@
 					<li>▶</li>
 					<li>회사명</li>
 					<li>
-						<select name="fin_cd" >
+						<select id="sel_fin_cd" name="sel_fin_cd">
 							<c:forEach var="fin" items="${finList}" begin="0" step="1">
 								<option value="${fin.finance_cd}" <c:if test="${fin_cd eq fin.finance_cd}">selected</c:if>>${fin.finance_name}</option>
 							</c:forEach>
@@ -82,10 +123,7 @@
 					</li>
 					<li>▶</li>
 					<li>제출일자</li>
-					
 					<li>
-						<p>${sdate}</p>
-						<p>${edate}</p>
 						<input type="text" name="sdate" <c:if test="${sdate ne ''}">value="${sdate}"</c:if>>
 						<img src="/user/images/calendar.gif" onclick="">
 					</li>
@@ -114,19 +152,21 @@
 				</tr>
 			</thead>
 			<tbody>
+				<c:forEach var="con" items="${conList}" begin="0" step="1">
 				<tr>
-					<td>A보험회사</td>
-					<td>TM_20190920_1.txt</td>
-					<td>2019-09-20</td>
-					<td>2019-09-20</td>
-					<td>A보험_190920.zip</td>
-					<td>15</td>
-					<td>15</td>
-					<td>6</td>
+					<td>${con.fin_nm}</td>
+					<td>${con.sbm_file_nm}</td>
+					<td>${con.req_dt}</td>
+					<td>${con.sbm_dt}</td>
+					<td>${con.upl_file_nm}</td>
+					<td>${con.ctt_cnt}</td>
+					<td>${con.file_cnt}</td>
+					<td>${con.mismatch_cnt}</td>
 					<td><input type="button" value="업로드" onclick="window.open('recUplPopup','recUplPopup','width=800,height=600,location=no,status=no,scrollbars=no');"></td>
-					<td>완료</td>
-					<td><input type="button" value="삭제" onclick="confirm('[ A보험회사 / 제출일 : 2019.09.20 ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')"></td>
+					<td>${con.anly_st}</td>
+					<td><input type="button" value="삭제" onclick="delContract('금융감독원', ${con.sbm_dt}, ${con.fin_cd}, ${con.req_dt})"></td>
 				</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 	</section>

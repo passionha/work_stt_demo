@@ -3,7 +3,7 @@
 <mapper namespace="kr.byweb.stt.demo.cm.mapper.TmCommonCodeMapper">
 	
 	<!-- 상품군 목록 조회 -->
-	<select id="getPrdlnList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.cm.model.PrdlnMngVo">
+	<select id="getPrdlnList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.cm.model.TmCmCdVo">
 		SELECT
 	          '0' AS REQ_DEPT_CD
 	        , 'SEL' AS PRDLN_CD
@@ -58,7 +58,7 @@
 	</select>
    
 	<!-- 회사 목록 조회 -->
-	<select id="getReqDeptList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.cm.model.FinanceVo">
+	<select id="getReqDeptList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.cm.model.TmCmCdVo">
 		SELECT
 		      'ALL' AS CLASS_CD
 		    , '전체' AS CLASS_NAME
