@@ -214,14 +214,4 @@ public class ContractByFinanceController {
 			}
 		}
 	}
-	
-	/**
-	 * 녹취파일 업로드 팝업
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping("/recUplPopup")
-	public String recUplPopup(Model model) {
-		return "rpt/recordingUploadPopup";
-	}
 }

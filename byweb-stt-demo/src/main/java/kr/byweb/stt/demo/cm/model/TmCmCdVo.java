@@ -10,7 +10,6 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor
 public class TmCmCdVo {
-	
 	//공통코드 테이블 : TM_CD_INF
 	private String grp_cd;
 	private String cd;
@@ -28,8 +27,8 @@ public class TmCmCdVo {
 	private String class_cd;
 	private String finance_cd;
 	private String finance_name;
-	private Timestamp busi_strt_day;
-	private Timestamp busi_end_day;
+	private String busi_strt_day;
+	private String busi_end_day;
 	
 	//상품군 관리 테이블 : TM_PRDLN_MNG
 	private String req_dept_cd;

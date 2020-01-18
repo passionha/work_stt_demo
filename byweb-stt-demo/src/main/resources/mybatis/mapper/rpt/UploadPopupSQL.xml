@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.byweb.stt.demo.rpt.mapper.UploadPopupMapper">
+	<!-- 회사 기본 정보 -->
+	<select id="getDefInfo" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rpt.model.ContractVo">
+		SELECT
+		      FINANCE_NAME AS FIN_NM
+		    , TO_CHAR(TO_DATE(#{req_dt}, 'YYYYMMDD'), 'YYYY-MM-DD') AS REQ_DT
+		FROM RR_FINANCE
+		WHERE FINANCE_CD=#{fin_cd}
+	</select>
+	
+	<!-- 업로드 조회 결과 -->
+	<select id="getHisList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rpt.model.ContractVo">
+		SELECT
+		      FIN_CD
+		    , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=A.FIN_CD) AS FIN_NM
+		    , UPL_FILE_NM
+		    , TO_CHAR(REG_DT, 'YYYY-MM-DD HH24:MI:SS') AS REG_DT
+		    , REG_DT AS REG_DTM
+		    , (SELECT NM FROM PI_EMP WHERE EMP_NO = A.EMP_NO) || '(' || A.EMP_NO || ')' AS EMP_NM
+		FROM TM_FLUPL_INF A
+		WHERE REQ_DEPT_CD = #{req_dept_cd}
+		  AND FIN_CD = #{fin_cd}
+		  AND REQ_DT = #{req_dt}
+		  AND UPL_SPR = #{upl_spr}
+		ORDER BY REG_DTM DESC, UPL_FILE_NM ASC
+	</select>
+	
+	<!-- 비매칭 녹취파일 목록 -->
+	<select id="getMismatchList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rpt.model.ContractVo">
+		SELECT DISTINCT
+		      REQ_DEPT_CD
+		    , FIN_CD
+		    , REQ_DT
+		    , SCRTS_NO
+		    , RCD_FILE_NM
+		FROM (
+		    SELECT * FROM RR_TM002
+		    WHERE REQ_DEPT_CD = #{req_dept_cd}
+			  AND FIN_CD = #{fin_cd}
+			  AND REQ_DT = #{req_dt}
+		) A
+		WHERE NOT EXISTS (
+		    SELECT 'X' FROM TM_RCDFL_INF
+		    WHERE REQ_DEPT_CD = A.REQ_DEPT_CD
+		      AND FIN_CD = A.FIN_CD
+		      AND REQ_DT = A.REQ_DT
+		      AND UPL_SPR = #{upl_spr}
+		      AND FILE_NM = A.RCD_FILE_NM
+		      AND TRNS_STTS NOT IN ('2', '9')
+		)
+		ORDER BY SCRTS_NO, RCD_FILE_NM
+	</select>
+</mapper>

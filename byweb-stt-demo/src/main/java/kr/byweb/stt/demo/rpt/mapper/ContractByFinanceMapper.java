@@ -11,21 +11,21 @@ import kr.byweb.stt.demo.rpt.model.ContractVo;
 public interface ContractByFinanceMapper {
 	public List<ContractVo> getContractList(Map pMap) throws Exception;
 
-	public void deleteContract(Map pMap);
+	public void deleteContract(Map pMap) throws Exception;
 
-	public void deleteContractMatch(Map pMap);
+	public void deleteContractMatch(Map pMap) throws Exception;
 
-	public void deleteInspectionResult(Map pMap);
+	public void deleteInspectionResult(Map pMap) throws Exception;
 
-	public void deleteUseKeyword(Map pMap);
+	public void deleteUseKeyword(Map pMap) throws Exception;
 
-	public void deleteKeywordLineInfo(Map pMap);
+	public void deleteKeywordLineInfo(Map pMap) throws Exception;
 
-	public void deleteKeywordResult(Map pMap);
+	public void deleteKeywordResult(Map pMap) throws Exception;
 
-	public void deleteUploadFileInfo(Map pMap);
+	public void deleteUploadFileInfo(Map pMap) throws Exception;
 
-	public void deleteRecordingFile(Map pMap);
+	public void deleteRecordingFile(Map pMap) throws Exception;
 
-	public List<Map> getDeleteFileList(Map pMap);
+	public List<Map> getDeleteFileList(Map pMap) throws Exception;
 }

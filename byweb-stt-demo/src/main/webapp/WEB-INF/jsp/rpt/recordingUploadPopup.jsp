@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,17 +23,14 @@
 				<h4>□비매칭 녹취파일</h4>
 			</div>
 			<div id="mismatchList>">
-				<table>
+				<table border="1">
 					<thead>
 						<tr><th>파일명</th></tr>
 					</thead>
 					<tbody>
-						<tr><td>123456_4.wav</td></tr>
-						<tr><td>123456_5.wav</td></tr>
-						<tr><td>123456_6.wav</td></tr>
-						<tr><td>123456_7.wav</td></tr>
-						<tr><td>123456_8.wav</td></tr>
-						<tr><td>123456_9.wav</td></tr>
+						<c:forEach var="mismatchList" items="${mismatchList}" begin="0" step="1">
+						<tr><td>${mismatchList.rcd_file_nm}</td></tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
@@ -52,8 +50,8 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>A보험회사</td>
-							<td>2019-09-20</td>
+							<td>${contractVo.fin_nm}</td>
+							<td>${contractVo.req_dt}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -67,16 +65,18 @@
 					<thead>
 						<tr>
 							<th>업로드파일명</th>
-							<th>등록일</th>
+							<th>등록일자</th>
 							<th>등록자</th>
 						</tr>
 					</thead>
 					<tbody>
+						<c:forEach var="hisList" items="${hisList}" begin="0" step="1">
 						<tr>
-							<td>A보험_190920.zip</td>
-							<td>2019-09-20</td>
-							<td>홍길동(123456)</td>
+							<td>${hisList.upl_file_nm}</td>
+							<td>${hisList.reg_dt}</td>
+							<td>${hisList.emp_nm}</td>
 						</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
@@ -89,7 +89,7 @@
 			
 			<div id="btn_uplAndDel">
 				<input type="button" value="업로드">
-				<input type="button" value="취소">
+				<input type="button" value="취소" onclick="self.close()">
 			</div>
 		</div>
 	</div>
