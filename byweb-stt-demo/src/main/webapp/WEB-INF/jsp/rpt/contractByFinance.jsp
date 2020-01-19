@@ -57,6 +57,18 @@
 	}
 </style>
 <script type="text/javascript">
+//조회조건 유효성 검사 및 submit
+function sbmFrm(){
+	if(validDate(document.getElementById("sdate"))){
+		return;
+	}
+	if(validDate(document.getElementById("edate"))){
+		return;
+	}
+	
+	frm.submit();
+}
+
 function delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 	//sbm_dt .포맷 변경 필요
 	if(confirm('[ '+fin_nm+' / 제출일 : '+sbm_dt+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
@@ -119,44 +131,39 @@ function openUploadPop(fin_cd, req_dt){
 	frm_uplPop.submit();
 }
 
+//제출일자 조회조건 유효성 검사
 function validDate(obj){
-	var sdtVal = inputDateSplit(document.getElementById("sdate").value);
-	var edtVal = inputDateSplit(document.getElementById("edate").value);
-	var objVal = inputDateSplit(obj.value);
-	console.log("isEmpty : "+isEmpty(objVal));
-	//***************************************value 공백 validation 진행중
-	if(isEmpty(objVal)){
+	var sdtVal = onlyNum(document.getElementById("sdate").value);
+	var edtVal = onlyNum(document.getElementById("edate").value);
+	var objVal = onlyNum(obj.value);
+	
+	var checkLength = /^\d{8}$/;
+	if(!checkLength.test(objVal)){
+		alert("올바른 일자를 입력해주세요.");
+		obj.focus();
+	}else if(!obj.value.trim() && obj.value == document.getElementById("sdate").value){
 		alert("시작일자를 입력해주세요.");
 		obj.focus();
-	}else if(objVal == sdtVal && objVal == ""){
+	}else if(!obj.value.trim() && obj.value == document.getElementById("edate").value){
 		alert("종료일자를 입력해주세요.");
 		obj.focus();
 	}else if(objVal == edtVal && edtVal < sdtVal){
 		alert("시작일자 이후의 종료일자를 입력해주세요.");
-		document.getElementById("edate").value = "";
 		obj.focus();
 	}else if(objVal == sdtVal && sdtVal > edtVal){
 		alert("종료일자 이전의 시작일자를 입력해주세요.");
-		document.getElementById("sdate").value = "";
 		obj.focus();
 	}else{
 		return false;
 	}
+	return true;
 }
 
-function inputDateSplit(obj) {
-    var dateArray = obj.split("-");
-    return dateArray[0] + dateArray[1] + dateArray[2];
+//숫자만 추출
+function onlyNum(value) {
+    return value.replace(/[^0-9]/g,"");
 }
 
-function isEmpty(value){
-	//***************************************value 공백 validation 진행중
-	if( value == "" || value == null || value == "undefined" || ( value != null && typeof value == "object" && !Object.keys(value).length ) ) {
-		return true;
-	}else{
-		return false;
-	}
-}
 </script>
 </head>
 <body>
@@ -168,7 +175,7 @@ function isEmpty(value){
 		<form id="frm" action="getContractList" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀">
-				<input type="submit" value="조회">
+				<input type="button" value="조회" onclick="sbmFrm()">
 			</div>
 			<br>
 			<div id="searchBar">
