@@ -7,5 +7,9 @@ import kr.byweb.stt.demo.conf.model.AnlysStdVo;
 
 public interface KeywordManagementService {
 	public List<AnlysStdVo> getAnalysisStandardList(Map pMap) throws Exception;
+
+	public void insertAnalysisStandard(Map pMap) throws Exception;
+
+	public String getKeywordDuplicationList(Map pMap) throws Exception;
 	
 }

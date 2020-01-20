@@ -19,6 +19,16 @@ public class KeywordManagementServiceImpl implements KeywordManagementService{
 	public List<AnlysStdVo> getAnalysisStandardList(Map pMap) throws Exception {
 		return keywordManagementMapper.getAnalysisStandardList(pMap);
 	}
+
+	@Override
+	public void insertAnalysisStandard(Map pMap) throws Exception {
+		keywordManagementMapper.insertAnalysisStandard(pMap);
+	}
+
+	@Override
+	public String getKeywordDuplicationList(Map pMap) throws Exception {
+		return keywordManagementMapper.getKeywordDuplicationList(pMap);
+	}
 	
 	
 }

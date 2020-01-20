@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.byweb.stt.demo.conf.mapper.KeywordManagementMapper">
-	
+	<!-- 키워드 목록 조회 -->
 	<select id="getAnalysisStandardList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.conf.model.AnlysStdVo">
 		SELECT 
 		      REQ_DEPT_CD
@@ -17,7 +17,7 @@
 		    , USE_YN
 		    , EMP_NO
 		    , (SELECT NM FROM PI_EMP B WHERE B.EMP_NO = A.EMP_NO) AS USER_NM
-		    , REG_DT
+		    , TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT
 		    , '0' AS CHK_DEL
 		FROM TM_ANLYS_STD A
 		WHERE
@@ -27,5 +27,54 @@
 		ORDER BY KWD_NM
 	</select>
 	
+	<!-- 키워드 등록 -->
+	<insert id="insertAnalysisStandard" parameterType="java.util.Map">
+		MERGE INTO
+		    TM_ANLYS_STD A
+		USING DUAL
+		ON(
+		        A.REQ_DEPT_CD = #{req_dept_cd}
+		    AND A.PRDLN_CD = #{prdln_cd}
+		    AND (A.KWD_NM = #{kwd_nm}
+		    <if test="scrng_spr eq 'Y'.toString()">
+	             OR A.KWD_NM = TRIM(REGEXP_SUBSTR(#{kwd_nm}, '[^/]+', 1, 2)) || '/' || TRIM(REGEXP_SUBSTR(#{kwd_nm}, '[^/]+', 1, 1))
+            </if>
+	            )
+		)
+		WHEN NOT MATCHED THEN
+		    INSERT(
+		          REQ_DEPT_CD
+		        , PRDLN_CD
+		        , KWD_SPR
+		        , SCRNG_SPR
+		        , KWD_NM
+		        , USE_YN
+		        , EMP_NO
+		        , REG_DT
+		    )VALUES(
+		          #{req_dept_cd}
+		        , #{prdln_cd}
+		        , #{kwd_spr}
+		        , #{scrng_spr}
+		        , #{kwd_nm}
+		        , 'N'
+		        , #{emp_no}
+		        , SYSDATE
+		    )
+	</insert>
+	
+	<!-- 키워드 등록 전 중복검사 -->
+	<select id="getKeywordDuplicationList" parameterType="java.util.Map" resultType="java.lang.String">
+		SELECT
+			  KWD_NM
+		FROM TM_ANLYS_STD
+		WHERE
+				REQ_DEPT_CD = #{req_dept_cd}
+			AND PRDLN_CD = #{prdln_cd}
+			AND KWD_NM = #{kwd_nm}
+			<if test="scrng_spr eq 'Y'.toString()">
+            OR KWD_NM = TRIM(REGEXP_SUBSTR(#{kwd_nm}, '[^/]+', 1, 2)) || '/' || TRIM(REGEXP_SUBSTR(#{kwd_nm}, '[^/]+', 1, 1))
+            </if>
+	</select>
    
  </mapper>

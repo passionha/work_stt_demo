@@ -192,12 +192,12 @@ function onlyNum(value) {
 					<li>▶</li>
 					<li>제출일자</li>
 					<li>
-						<input type="text" id="sdate" name="sdate" <c:if test="${sdate ne ''}">value="${sdate}"</c:if> onchange="validDate(this)">
+						<input type="text" id="sdate" name="sdate" <c:if test="${sdate ne ''}">value="${sdate}"</c:if>>
 						<img src="/user/images/calendar.gif">
 					</li>
 					<li>~</li>
 					<li>
-						<input type="text" id="edate" name="edate" <c:if test="${edate ne ''}">value="${edate}"</c:if> onchange="validDate(this)">
+						<input type="text" id="edate" name="edate" <c:if test="${edate ne ''}">value="${edate}"</c:if>>
 						<img src="/user/images/calendar.gif">
 					</li>
 				</ul>
