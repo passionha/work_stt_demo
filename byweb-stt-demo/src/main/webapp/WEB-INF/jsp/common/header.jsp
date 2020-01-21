@@ -17,7 +17,7 @@
 	}
 </style>
 <script type="text/javascript">
-	function sbmReqCd(reqCd){
+	function fn_sbmReqCd(reqCd){
 		var frm = document.createElement('form');
 		frm.name = 'newFrm';
 		frm.method = 'post';
@@ -41,9 +41,9 @@
 	<header>
 		<div>
 			<ul>
-				<li onclick="sbmReqCd(1)">생명보험</li>
-				<li onclick="sbmReqCd(2)">손해보험</li>
-				<li onclick="sbmReqCd(3)">보험대리점</li>
+				<li onclick="fn_sbmReqCd(1)">생명보험</li>
+				<li onclick="fn_sbmReqCd(2)">손해보험</li>
+				<li onclick="fn_sbmReqCd(3)">보험대리점</li>
 			</ul>
 		</div>
 	</header>

@@ -14,7 +14,9 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -216,9 +218,106 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/synPopup")
-	public String synPopup(Model model) {
+	@RequestMapping("/getSynonymKeywordList")
+	public String getSynonymKeywordList(HttpServletRequest request, HttpSession session, Model model) {
+		Map pMap = new HashMap();
+		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
+		String prdln_cd = request.getParameter("prdln_cd") == null ? "" : request.getParameter("prdln_cd"); 
+		String kwd_spr = request.getParameter("kwd_spr") == null ? "" : request.getParameter("kwd_spr");
+		String kwd_nm = request.getParameter("kwd_nm") == null ? "" : request.getParameter("kwd_nm");
+		String syn_nm = request.getParameter("syn_nm") == null ? "" : request.getParameter("syn_nm");
+		List<AnlysStdVo> synList = null;
+		pMap.put("req_dept_cd", req_dept_cd);
+		pMap.put("prdln_cd", prdln_cd);
+		pMap.put("kwd_spr", kwd_spr);
+		pMap.put("kwd_nm", kwd_nm);
+		pMap.put("syn_nm", syn_nm);
+		try {
+			synList = keywordManagementService.getSynonymKeywordList(pMap);
+			model.addAttribute("prdln_cd", prdln_cd);
+			model.addAttribute("kwd_spr", kwd_spr);
+			model.addAttribute("kwd_nm", kwd_nm);
+			model.addAttribute("syn_nm", syn_nm);
+			model.addAttribute("synList", synList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "conf/synonymPopup";
+	}
+	
+	/**
+	 * 동의어 갱신
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/updateSynonym")
+	@ResponseBody
+	public Object updateSynonym(@RequestParam(value="chkKwds[]") List<String> chkKwds, @RequestParam(value="unchkKwds[]") List<String> unchkKwds, HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+		Map pMap = new HashMap();
+		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
+		String prdln_cd = request.getParameter("prdln_cd") == null ? "" : request.getParameter("prdln_cd"); 
+		String kwd_spr = request.getParameter("kwd_spr") == null ? "" : request.getParameter("kwd_spr");
+		String syn_nm = request.getParameter("syn_nm") == null ? "" : request.getParameter("syn_nm");
+		String kwd_nm = request.getParameter("kwd_nm") == null ? "" : request.getParameter("kwd_nm");
+		String org_syn_nm = request.getParameter("org_syn_nm") == null ? "" : request.getParameter("org_syn_nm");
+		
+		//체크된 키워드 및 기준키워드 동의어 설정
+		chkKwds.add(kwd_nm);
+        for(String kwdNm : chkKwds) {
+            pMap.put("chk_sel", "1");
+            pMap.put("req_dept_cd", req_dept_cd);
+            pMap.put("prdln_cd", prdln_cd);
+            pMap.put("kwd_spr", kwd_spr);
+            pMap.put("org_syn_nm", org_syn_nm);
+            pMap.put("syn_nm", syn_nm);
+            pMap.put("kwd_nm", kwdNm);
+            pMap.put("emp_no", "A219090");	//EMP_NO 로그인 개발 후 수정 필요
+            if(kwdNm.toString().contains("/")) {
+            	pMap.put("scrng_spr", "Y");
+            }else {
+            	pMap.put("scrng_spr", "N");
+            }
+            
+            try {
+				keywordManagementService.updateSynonym(pMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+        
+        pMap = new HashMap();
+        //체크해제 키워드 동의어 초기화
+        for(String kwdNm : unchkKwds) {
+        	pMap.put("chk_sel", "0");
+        	pMap.put("req_dept_cd", req_dept_cd);
+            pMap.put("prdln_cd", prdln_cd);
+            pMap.put("kwd_spr", kwd_spr);
+            pMap.put("org_syn_nm", org_syn_nm);
+            pMap.put("syn_nm", syn_nm);
+            pMap.put("kwd_nm", kwdNm);
+            pMap.put("emp_no", "A219090");	//EMP_NO 로그인 개발 후 수정 필요
+            if(kwdNm.toString().contains("/")) {
+            	pMap.put("scrng_spr", "Y");
+            }else {
+            	pMap.put("scrng_spr", "N");
+            }
+            
+            try {
+				keywordManagementService.updateSynonym(pMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+        
+        //리턴값
+        Map<String, Object> retVal = new HashMap<String, Object>();
+        
+        //성공결과 처리
+        retVal.put("code", "OK");
+        retVal.put("message", "등록에 성공 하였습니다.");
+        
+        return retVal;
 	}
 	
 }

@@ -58,18 +58,18 @@
 </style>
 <script type="text/javascript">
 //조회조건 유효성 검사 및 submit
-function sbmFrm(){
-	if(validDate(document.getElementById("sdate"))){
+function fn_search(){
+	if(fn_validDate(document.getElementById("sdate"))){
 		return;
 	}
-	if(validDate(document.getElementById("edate"))){
+	if(fn_validDate(document.getElementById("edate"))){
 		return;
 	}
 	
 	frm.submit();
 }
 
-function delContract(fin_nm, sbm_dt, fin_cd, req_dt){
+function fn_delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 	//sbm_dt .포맷 변경 필요
 	if(confirm('[ '+fin_nm+' / 제출일 : '+sbm_dt+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
 // 		var frm = document.createElement('form');
@@ -102,7 +102,7 @@ function delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 	}
 }
 
-function openUploadPop(fin_cd, req_dt){
+function fn_openUploadPop(fin_cd, req_dt){
 	window.open('','recUplPopup','width=800,height=600,location=no,status=no,scrollbars=no');
 	
 	var frm_uplPop = document.createElement('form');
@@ -132,10 +132,10 @@ function openUploadPop(fin_cd, req_dt){
 }
 
 //제출일자 조회조건 유효성 검사
-function validDate(obj){
-	var sdtVal = onlyNum(document.getElementById("sdate").value);
-	var edtVal = onlyNum(document.getElementById("edate").value);
-	var objVal = onlyNum(obj.value);
+function fn_validDate(obj){
+	var sdtVal = fn_onlyNum(document.getElementById("sdate").value);
+	var edtVal = fn_onlyNum(document.getElementById("edate").value);
+	var objVal = fn_onlyNum(obj.value);
 	
 	var checkLength = /^\d{8}$/;
 	if(!checkLength.test(objVal)){
@@ -160,10 +160,16 @@ function validDate(obj){
 }
 
 //숫자만 추출
-function onlyNum(value) {
+function fn_onlyNum(value) {
     return value.replace(/[^0-9]/g,"");
 }
 
+//엑셀 다운로드
+function fn_excel(){
+	var frm = document.getElementById("frm");
+	frm.action = 'getContract_exl';
+	frm.submit();
+}
 </script>
 </head>
 <body>
@@ -174,10 +180,13 @@ function onlyNum(value) {
 		<h3>회사별 제출현황</h3>
 		<form id="frm" action="getContractList" method="post">
 			<div id="btn_top">
-				<input type="button" value="엑셀">
-				<input type="button" value="조회" onclick="sbmFrm()">
+				<input type="button" value="엑셀" onclick="fn_excel()">
+				<input type="button" value="조회" onclick="fn_search()">
 			</div>
 			<br>
+			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
+			<input type="hidden" id="org_sdate" name="org_sdate" value="${sdate}">
+			<input type="hidden" id="org_edate" name="org_edate" value="${edate}">
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>
@@ -230,9 +239,9 @@ function onlyNum(value) {
 					<td>${conList.ctt_cnt}</td>
 					<td>${conList.file_cnt}</td>
 					<td>${conList.mismatch_cnt}</td>
-					<td><input type="button" value="업로드" onclick="openUploadPop('${conList.fin_cd}', '${conList.req_dt}')"></td>
+					<td><input type="button" value="업로드" onclick="fn_openUploadPop('${conList.fin_cd}', '${conList.req_dt}')"></td>
 					<td>${conList.anly_st}</td>
-					<td><input type="button" value="삭제" onclick="delContract('${conList.fin_nm}', '${conList.sbm_dt}', '${conList.fin_cd}', '${conList.req_dt}')"></td>
+					<td><input type="button" value="삭제" onclick="fn_delContract('${conList.fin_nm}', '${conList.sbm_dt}', '${conList.fin_cd}', '${conList.req_dt}')"></td>
 				</tr>
 				</c:forEach>
 			</tbody>

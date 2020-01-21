@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,6 +191,35 @@ public class ContractByFinanceController {
 		redirectAttributes.addFlashAttribute("edate", edate);
 		
 		return "redirect:/getContractList";
+	}
+	
+	/**
+	 * 엑셀 다운로드
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/getContract_exl")
+	public String getContract_exl(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map pMap1 = new HashMap();
+		Map pMap2 = new HashMap();
+		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
+		String fin_cd = request.getParameter("org_fin_cd") == null ? "" : (String) request.getParameter("org_fin_cd");
+		String sdate = request.getParameter("org_sdate") == null ? "" : (String) request.getParameter("org_sdate");
+		String edate = request.getParameter("org_edate") == null ? "" : (String) request.getParameter("org_edate");
+		
+		pMap2.put("req_dept_cd", req_dept_cd);
+		pMap2.put("fin_cd", fin_cd);
+		pMap2.put("sdate", sdate);
+		pMap2.put("edate", edate);
+		
+		try {
+			List<ContractVo> conList = contractByFinanceService.getContractList(pMap2);
+			model.addAttribute("conList", conList);
+			model.addAttribute("filename", "계약정보.xls");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "rpt/contractByFinance_exl";
 	}
 	
 	/**

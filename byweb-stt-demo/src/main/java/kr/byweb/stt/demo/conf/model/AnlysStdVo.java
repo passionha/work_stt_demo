@@ -2,6 +2,8 @@ package kr.byweb.stt.demo.conf.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,4 +31,5 @@ public class AnlysStdVo {
 	private String org_kwd_nm;
 	private String user_nm;
 	private String chk_del;
+	private String chk_sel;
 }

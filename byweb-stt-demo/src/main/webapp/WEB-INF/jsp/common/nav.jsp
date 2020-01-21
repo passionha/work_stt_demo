@@ -17,7 +17,9 @@
 </style>
 </head>
 <body>
+	
 	<nav>
+	<% if(session.getAttribute("req_dept_cd") != null){ %>
 		<ul>
 			<li><a href="getContractList">회사별 제출현황</a></li>
 			<br>
@@ -27,6 +29,7 @@
 			<br>
 			<li><a href="">상품군 관리</a></li>
 		</ul>
+	<% } %>
 	</nav>
 </body>
 </html>

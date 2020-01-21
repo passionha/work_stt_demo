@@ -29,6 +29,16 @@ public class KeywordManagementServiceImpl implements KeywordManagementService{
 	public String getKeywordDuplicationList(Map pMap) throws Exception {
 		return keywordManagementMapper.getKeywordDuplicationList(pMap);
 	}
+
+	@Override
+	public List<AnlysStdVo> getSynonymKeywordList(Map pMap) throws Exception {
+		return keywordManagementMapper.getSynonymKeywordList(pMap);
+	}
+
+	@Override
+	public void updateSynonym(Map pMap) throws Exception {
+		keywordManagementMapper.updateSynonym(pMap);
+	}
 	
 	
 }

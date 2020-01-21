@@ -14,4 +14,8 @@ public interface KeywordManagementMapper {
 	public void insertAnalysisStandard(Map pMap) throws Exception;
 
 	public String getKeywordDuplicationList(Map pMap) throws Exception;
+
+	public List<AnlysStdVo> getSynonymKeywordList(Map pMap) throws Exception;
+
+	public void updateSynonym(Map pMap) throws Exception;
 }

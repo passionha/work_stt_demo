@@ -96,10 +96,9 @@
 	}
 </style>
 <script type="text/javascript">
-var kwdDupYn;	//키워드 중복결과 변수
-
+var f_kwdDupYn;	//키워드 중복결과 변수
 //키워드목록 조회
-function kwdListSearch() {
+function fn_search() {
 	if(document.getElementById("sel_kwdKnd").value != 'SEL' && document.getElementById("sel_prdln").value == 'SEL'){
 		alert("상품군을 선택하세요.");
 		$("#tbl_kwdList tbody tr").remove();
@@ -108,24 +107,25 @@ function kwdListSearch() {
 		document.getElementById("sel_prdln").focus();
 		return;
 	}else if(document.getElementById("sel_kwdKnd").value != 'SEL'){
-		document.searchFrm.submit();
+// 		document.searchFrm.submit();
+		document.getElementById('searchFrm').submit();
 	}
 }
 
 //상품군, 키워드종류 조회조건 선택여부 검사 후 키워드목록 조회
-function prdlnSelYn(obj) {
+function fn_prdlnSelYn(obj) {
 	if(obj.value=='SEL'){
 		$("#tbl_kwdList tbody tr").remove();
 		$("#ta_writeKwd").val("");
 		return;
 	}else{
-		kwdListSearch();
+		fn_search();
 	}
 }
 
 //키워드 등록
-function insertKwdList(){
-	if(kwdDupDtn()){
+function fn_insertKwdList(){
+	if(fn_kwdDupDtn()){
 		document.getElementById("ins_prdln_cd").value = document.getElementById("sel_prdln").value;
 		document.getElementById("ins_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
 		var frm = document.getElementById("insertKwdListFrm");
@@ -134,9 +134,8 @@ function insertKwdList(){
 }
 
 //키워드 등록 전 입력키워드 중복검사
-function kwdDupDtn(){
+function fn_kwdDupDtn(){
 	var sel_prdln = document.getElementById("sel_prdln").value;
-// 	var sel_kwdKnd = document.getElementById("sel_kwdKnd").value;
 	var kwd_nms = document.getElementById("ta_writeKwd").value;
 	$.ajax({
 		type: "POST",
@@ -148,26 +147,32 @@ function kwdDupDtn(){
         	if(data != ''){
 	        	alert("["+data+"]은(는) 이미 등록된 키워드입니다.");
 	        	$("#ta_writeKwd").focus();
-	        	kwdDupYn = false;
+	        	f_kwdDupYn = false;
         	}else{
-        		kwdDupYn = true;
+        		f_kwdDupYn = true;
         	}
-        	/*
-	        var arrDupKwd = data.toString().split(',');
-	        alert("arrDupKwd : "+arrDupKwd);
-	        for(var i in arrDupKwd){
-	        	alert("dupKwd : "+arrDupKwd[i]);
-	        }
-	        var arrKwdList = new Array();
-	        <c:forEach var="kwdList" items="${kwdList}" begin="0" step="1" varStatus="status">
-	        	arrKwdList.push("${kwdList.kwd_nm}");
-	        </c:forEach>
-	        */
          }
 	});
-	return kwdDupYn;
+	return f_kwdDupYn;
 }
 
+//동의어관리 팝업
+function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
+	window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=no');
+	
+	var frm_synPop = document.getElementById('frm_synPop');
+	frm_synPop.method = 'post';
+	frm_synPop.action = 'getSynonymKeywordList';
+	frm_synPop.target = 'synPop';
+	
+	document.getElementById("prdln_cd").value = document.getElementById("sel_prdln").value;
+	document.getElementById("kwd_spr").value = document.getElementById("sel_kwdKnd").value;
+	document.getElementById("kwd_nm").value = kwd_nm;
+	document.getElementById("syn_nm").value = syn_nm;
+// 	document.getElementById("scrng_spr").value = scrng_spr;
+	
+	frm_synPop.submit();
+}
 </script>
 </head>
 <body>
@@ -176,13 +181,13 @@ function kwdDupDtn(){
 <%@ include file="/WEB-INF/jsp/common/nav.jsp" %>
 	<section>
 		<h3>녹취파일 분석기준 설정</h3>
-		<form name="searchFrm" action="getAnalysisStandardList" method="post">
+		<form name="searchFrm" id="searchFrm" action="getAnalysisStandardList" method="post">
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>
 					<li>상품군</li>
 					<li>
-						<select id="sel_prdln" name="prdln_cd" onchange="kwdListSearch()">
+						<select id="sel_prdln" name="prdln_cd" onchange="fn_search()">
 							<c:forEach var="prdlnMng" items="${prdlnMngVos}" begin="0" step="1">
 								<c:if test="${prdlnMng.prdln_cd != 'ALL'}">
 								<option value="${prdlnMng.prdln_cd}" <c:if test="${prdln_cd eq prdlnMng.prdln_cd}">selected</c:if>>${prdlnMng.prdln_nm}</option>
@@ -193,7 +198,7 @@ function kwdDupDtn(){
 					<li>▶</li>
 					<li>키워드종류</li>
 					<li>
-						<select id="sel_kwdKnd" name="kwd_spr" onchange="prdlnSelYn(this)">
+						<select id="sel_kwdKnd" name="kwd_spr" onchange="fn_prdlnSelYn(this)">
 							<c:forEach var="tmCmCd" items="${tmCmCdVos}" begin="0" step="1">
 								<option value="${tmCmCd.cd}" <c:if test="${kwd_spr eq tmCmCd.cd}">selected</c:if>>${tmCmCd.cd_nm}</option>
 							</c:forEach>
@@ -208,7 +213,7 @@ function kwdDupDtn(){
 				<h4>[ 필수키워드 등록 ]</h4>
 			</div>
 			<div id="btn_kwdSet">
-				<input type="button" value="키워드 등록" onclick="insertKwdList()">
+				<input type="button" value="키워드 등록" onclick="fn_insertKwdList()">
 			</div>
 			<form id="insertKwdListFrm" action="insertAnalysisStandard" method="post">
 				<textarea id="ta_writeKwd" name="kwd_nms" rows="4" placeholder="여러 키워드 등록 시 구분자를 ','단위로 등록하세요. 한 키워드는 50자 이상을 넘을 수 없습니다.">${kwd_nms}</textarea>
@@ -223,7 +228,7 @@ function kwdDupDtn(){
 			<div id="btn_kwdList">
 				<input type="button" value="저장">
 				<input type="button" value="삭제">
-				<input type="button" value="동의어" onclick="window.open('synPopup','synPopup','width=430,height=500,location=no,status=no,scrollbars=no');">
+<!-- 				<input type="button" value="동의어" onclick="fn_synPopup()"> -->
 			</div>
 			<table id="tbl_kwdList">
 				<thead>
@@ -245,7 +250,7 @@ function kwdDupDtn(){
 						<td>${status.count}</td>
 						<td><input type="checkbox" value="${kwdList.chk_del}"></td>
 						<td><input type="text" value="${kwdList.kwd_nm}"></td>
-						<td><input type="text" value="${kwdList.syn_nm}" readonly onclick="window.open('synPopup','synPopup','width=430,height=500,location=no,status=no,scrollbars=no');"></td>
+						<td onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}')">${kwdList.syn_nm}</td>
 						<td><input type="text" value="${kwdList.rng}"></td>
 						<td><input type="text" value="${kwdList.use_yn}"></td>
 						<td><input type="text" value="${kwdList.scr}"></td>
@@ -255,6 +260,13 @@ function kwdDupDtn(){
 					</c:forEach>
 				</tbody>
 			</table>
+			<form id="frm_synPop">
+				<input type="hidden" id="prdln_cd" name="prdln_cd">
+				<input type="hidden" id="kwd_spr" name="kwd_spr">
+				<input type="hidden" id="kwd_nm" name="kwd_nm">
+				<input type="hidden" id="syn_nm" name="syn_nm">
+<!-- 				<input type="hidden" id="scrng_spr" name="scrng_spr"> -->
+			</form>
 		</div>
 	</section>
 <%@ include file="/WEB-INF/jsp/common/footer.jsp" %>
