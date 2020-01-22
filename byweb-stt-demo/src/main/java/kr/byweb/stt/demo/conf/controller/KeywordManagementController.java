@@ -261,7 +261,7 @@ public class KeywordManagementController {
 		String syn_nm = request.getParameter("syn_nm") == null ? "" : request.getParameter("syn_nm");
 		String kwd_nm = request.getParameter("kwd_nm") == null ? "" : request.getParameter("kwd_nm");
 		String org_syn_nm = request.getParameter("org_syn_nm") == null ? "" : request.getParameter("org_syn_nm");
-		
+		System.out.println("org_syn_nm===============> : "+org_syn_nm);
 		//체크된 키워드 및 기준키워드 동의어 설정
 		chkKwds.add(kwd_nm);
         for(String kwdNm : chkKwds) {

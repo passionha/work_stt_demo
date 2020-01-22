@@ -29,6 +29,11 @@ public class TmCommonCodeServiceImpl implements TmCommonCodeService{
 	public List<TmCmCdVo> getReqDeptList(Map pMap) throws Exception {
 		return tmCommonCodeMapper.getReqDeptList(pMap);
 	}
+
+	@Override
+	public List<TmCmCdVo> getTitleList() throws Exception {
+		return tmCommonCodeMapper.getTitleList();
+	}
 	
 	
 }

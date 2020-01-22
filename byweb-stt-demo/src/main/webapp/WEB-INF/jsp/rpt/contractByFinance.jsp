@@ -69,32 +69,17 @@ function fn_search(){
 	frm.submit();
 }
 
+//계약정보 삭제
 function fn_delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 	//sbm_dt .포맷 변경 필요
 	if(confirm('[ '+fin_nm+' / 제출일 : '+sbm_dt+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
-// 		var frm = document.createElement('form');
-		var frm = document.getElementById("frm");
+		var frm = document.getElementById("frm_del");
 		
-		frm.name = 'newFrm';
-		frm.method = 'post';
-		frm.action = 'delContract';
-		frm.target = '_self';
-		
-		var ipt_fin_cd = document.createElement('input');
-		var ipt_req_dt = document.createElement('input');
-		
-		ipt_fin_cd.setAttribute("type", "hidden");
-		ipt_fin_cd.setAttribute("name", "fin_cd");
-		ipt_fin_cd.setAttribute("value", fin_cd);
-		
-		ipt_req_dt.setAttribute("type", "hidden");
-		ipt_req_dt.setAttribute("name", "req_dt");
-		ipt_req_dt.setAttribute("value", req_dt);
-		
-		frm.appendChild(ipt_fin_cd);
-		frm.appendChild(ipt_req_dt);
-		
-		document.body.appendChild(frm);
+		document.getElementById("del_sdate").value = document.getElementById("sdate").value;
+		document.getElementById("del_edate").value = document.getElementById("edate").value;
+		document.getElementById("del_sel_fin_cd").value = document.getElementById("sel_fin_cd").value;
+		document.getElementById("del_fin_cd").value = fin_cd;
+		document.getElementById("del_req_dt").value = req_dt;
 		
 		frm.submit();
 	}else{
@@ -102,31 +87,14 @@ function fn_delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 	}
 }
 
+//녹취파일 업로드 팝업
 function fn_openUploadPop(fin_cd, req_dt){
 	window.open('','recUplPopup','width=800,height=600,location=no,status=no,scrollbars=no');
 	
-	var frm_uplPop = document.createElement('form');
+	var frm_uplPop = document.getElementById("frm_uplPop");
 	
-	frm_uplPop.name = 'frm_uplPop';
-	frm_uplPop.method = 'post';
-	frm_uplPop.action = 'getDefInfo';
-	frm_uplPop.target = 'recUplPopup';
-	
-	var ipt_fin_cd = document.createElement('input');
-	var ipt_req_dt = document.createElement('input');
-	
-	ipt_fin_cd.setAttribute("type", "hidden");
-	ipt_fin_cd.setAttribute("name", "fin_cd");
-	ipt_fin_cd.setAttribute("value", fin_cd);
-	
-	ipt_req_dt.setAttribute("type", "hidden");
-	ipt_req_dt.setAttribute("name", "req_dt");
-	ipt_req_dt.setAttribute("value", req_dt);
-	
-	frm_uplPop.appendChild(ipt_fin_cd);
-	frm_uplPop.appendChild(ipt_req_dt);
-	
-	document.body.appendChild(frm_uplPop);
+	document.getElementById("upl_fin_cd").value = fin_cd;
+	document.getElementById("upl_req_dt").value = req_dt;
 	
 	frm_uplPop.submit();
 }
@@ -136,9 +104,8 @@ function fn_validDate(obj){
 	var sdtVal = fn_onlyNum(document.getElementById("sdate").value);
 	var edtVal = fn_onlyNum(document.getElementById("edate").value);
 	var objVal = fn_onlyNum(obj.value);
-	
-	var checkLength = /^\d{8}$/;
-	if(!checkLength.test(objVal)){
+	var date_pattern = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/; 
+	if(!date_pattern.test(objVal)){
 		alert("올바른 일자를 입력해주세요.");
 		obj.focus();
 	}else if(!obj.value.trim() && obj.value == document.getElementById("sdate").value){
@@ -164,9 +131,23 @@ function fn_onlyNum(value) {
     return value.replace(/[^0-9]/g,"");
 }
 
+//제출일자 입력 시 '-' 자동 입력
+function fn_addSlash( event, obj ){
+    var num_arr = [ 
+        97, 98, 99, 100, 101, 102, 103, 104, 105, 96,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57
+    ]
+    var key_code = ( event.which ) ? event.which : event.keyCode;
+    if( num_arr.indexOf( Number( key_code ) ) != -1 ){
+        var len = obj.value.length;
+        if( len == 4 ) obj.value += "-";
+        if( len == 7 ) obj.value += "-";
+    }
+}
+
 //엑셀 다운로드
 function fn_excel(){
-	var frm = document.getElementById("frm");
+	var frm = document.getElementById("frm_exl");
 	frm.action = 'getContract_exl';
 	frm.submit();
 }
@@ -184,9 +165,6 @@ function fn_excel(){
 				<input type="button" value="조회" onclick="fn_search()">
 			</div>
 			<br>
-			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
-			<input type="hidden" id="org_sdate" name="org_sdate" value="${sdate}">
-			<input type="hidden" id="org_edate" name="org_edate" value="${edate}">
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>
@@ -201,12 +179,14 @@ function fn_excel(){
 					<li>▶</li>
 					<li>제출일자</li>
 					<li>
-						<input type="text" id="sdate" name="sdate" <c:if test="${sdate ne ''}">value="${sdate}"</c:if>>
+						<fmt:parseDate value="${sdate}" var="sdate_dt" pattern="yyyyMMdd"/>
+						<input type="text" id="sdate" name="sdate" <c:if test="${sdate ne ''}">value="<fmt:formatDate value="${sdate_dt}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
 						<img src="/user/images/calendar.gif">
 					</li>
 					<li>~</li>
 					<li>
-						<input type="text" id="edate" name="edate" <c:if test="${edate ne ''}">value="${edate}"</c:if>>
+						<fmt:parseDate value="${edate}" var="edate_dt" pattern="yyyyMMdd"/>
+						<input type="text" id="edate" name="edate" <c:if test="${edate ne ''}">value="<fmt:formatDate value="${edate_dt}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
 						<img src="/user/images/calendar.gif">
 					</li>
 				</ul>
@@ -230,11 +210,13 @@ function fn_excel(){
 			</thead>
 			<tbody>
 				<c:forEach var="conList" items="${conList}" begin="0" step="1">
+				<fmt:parseDate value="${conList.req_dt}" var="fmt_req_dt" pattern="yyyyMMdd"/>
+				<fmt:parseDate value="${conList.sbm_dt}" var="fmt_sbm_dt" pattern="yyyyMMdd"/>
 				<tr>
 					<td>${conList.fin_nm}</td>
 					<td>${conList.sbm_file_nm}</td>
-					<td>${conList.req_dt}</td>
-					<td>${conList.sbm_dt}</td>
+					<td><fmt:formatDate value="${fmt_req_dt}" pattern="yyyy-MM-dd"/></td>
+					<td><fmt:formatDate value="${fmt_sbm_dt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.upl_file_nm}</td>
 					<td>${conList.ctt_cnt}</td>
 					<td>${conList.file_cnt}</td>
@@ -246,6 +228,22 @@ function fn_excel(){
 				</c:forEach>
 			</tbody>
 		</table>
+		<form id="frm_del" name="frm_del" method="post" action="delContract" target="_self">
+			<input type="hidden" id="del_fin_cd" name="fin_cd">
+			<input type="hidden" id="del_req_dt" name="req_dt">
+			<input type="hidden" id="del_sdate" name="sdate">
+			<input type="hidden" id="del_edate" name="edate">
+			<input type="hidden" id="del_sel_fin_cd" name="sel_fin_cd">
+		</form>
+		<form id="frm_uplPop" name="frm_uplPop" method="post" action="getDefInfo" target="recUplPopup">
+			<input type="hidden" id="upl_fin_cd" name="fin_cd">
+			<input type="hidden" id="upl_req_dt" name="req_dt">
+		</form>
+		<form id="frm_exl" name="frm_exl" method="post" action="getContract_exl">
+			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
+			<input type="hidden" id="org_sdate" name="org_sdate" value="${sdate}">
+			<input type="hidden" id="org_edate" name="org_edate" value="${edate}">
+		</form>
 	</section>
 <%@ include file="/WEB-INF/jsp/common/footer.jsp" %>
 </div>

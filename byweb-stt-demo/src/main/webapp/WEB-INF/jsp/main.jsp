@@ -39,8 +39,6 @@
 <div id="wrapper">
 	<jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include>
 	<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
-<%-- <%@ include file="/WEB-INF/jsp/common/header.jsp" %>
-<%@ include file="/WEB-INF/jsp/common/nav.jsp" %> --%>
 	<section>
 		<p><%=localUrl %></p>
 		<p><%=iPage %></p>

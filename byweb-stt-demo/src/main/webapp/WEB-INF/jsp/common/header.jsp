@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,20 +18,9 @@
 </style>
 <script type="text/javascript">
 	function fn_sbmReqCd(reqCd){
-		var frm = document.createElement('form');
-		frm.name = 'newFrm';
-		frm.method = 'post';
-		frm.action = 'selHeader';
-		frm.target = '_self';
+		var frm = document.getElementById("frm_selHeader");
 		
-		var input_reqCd = document.createElement('input');
-		input_reqCd.setAttribute("type", "hidden");
-		input_reqCd.setAttribute("name", "req_dept_cd");
-		input_reqCd.setAttribute("value", reqCd);
-		
-		frm.appendChild(input_reqCd);
-		
-		document.body.appendChild(frm);
+		document.getElementById("req_dept_cd").value = reqCd;
 		
 		frm.submit();
 	}
@@ -41,11 +30,14 @@
 	<header>
 		<div>
 			<ul>
-				<li onclick="fn_sbmReqCd(1)">생명보험</li>
-				<li onclick="fn_sbmReqCd(2)">손해보험</li>
-				<li onclick="fn_sbmReqCd(3)">보험대리점</li>
+				<c:forEach var="headerTitles" items="${headerTitles}" begin="0" step="1">
+				<li onclick="fn_sbmReqCd('${headerTitles.class_cd}')">${headerTitles.class_name}</li>
+				</c:forEach>
 			</ul>
 		</div>
+		<form id="frm_selHeader" action="selHeader" method="post" target="_self">
+			<input type="hidden" id="req_dept_cd" name="req_dept_cd">
+		</form>
 	</header>
 </body>
 </html>

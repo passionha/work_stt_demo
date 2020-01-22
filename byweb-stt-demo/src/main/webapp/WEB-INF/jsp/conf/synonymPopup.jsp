@@ -9,7 +9,7 @@
 <script type="text/javascript">
 $(document).ready(function fn_save(){
     $("#btn_save").click(function() {
-        var chkedKwds = [];
+    	var chkedKwds = [];
         var unchkedKwds = [];
         
         $('input[name="kwdNm"]:checked').each(function(i){//체크된 리스트 저장
@@ -37,7 +37,8 @@ $(document).ready(function fn_save(){
             data        :   objParams,
             success     :   function(retVal){
             	window.opener.fn_search();
-                /*
+            	$("#org_syn_nm").val($("#syn_nm").val());
+            	/*
                 if(retVal.code == "OK") {
                     alert(retVal.message);
                 } else {
@@ -51,7 +52,7 @@ $(document).ready(function fn_save(){
         });
     })
 });
-
+// ing
 $("#btn_save").click(function() {
 	if(confirm('해당 동의어를 삭제하시겠습니까?')){
 		

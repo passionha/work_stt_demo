@@ -165,13 +165,50 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
 	frm_synPop.action = 'getSynonymKeywordList';
 	frm_synPop.target = 'synPop';
 	
-	document.getElementById("prdln_cd").value = document.getElementById("sel_prdln").value;
-	document.getElementById("kwd_spr").value = document.getElementById("sel_kwdKnd").value;
-	document.getElementById("kwd_nm").value = kwd_nm;
-	document.getElementById("syn_nm").value = syn_nm;
-// 	document.getElementById("scrng_spr").value = scrng_spr;
+	document.getElementById("pop_prdln_cd").value = document.getElementById("sel_prdln").value;
+	document.getElementById("pop_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
+	document.getElementById("pop_kwd_nm").value = kwd_nm;
+	document.getElementById("pop_syn_nm").value = syn_nm;
 	
 	frm_synPop.submit();
+}
+
+//배점 입력 시 사용여부 자동 변경
+function fn_scrInsert(idx){
+	if($('.scr').eq(idx).val() > 0){
+		$('.sel_useYn').eq(idx).val('Y');
+	}else{
+		$('.sel_useYn').eq(idx).val('N');
+	}
+}
+
+//배점, 범위 항목 내 정수만 입력 가능
+function fn_inNumber(obj){
+	var regexp = /^[0-9]*$/
+	if(!regexp.test(obj.value)){
+		obj.value = obj.value.replace(/[^0-9]/g,'');
+	}
+}
+
+//키워드목록 전체 선택
+function fn_chkAll(){
+	if($('#chkAll').is(':checked')){
+		$('.chk').prop("checked", true);
+    } else {
+        $('.chk').prop("checked", false);
+    }
+}
+
+function fn_chkMod(obj, idx){
+// 	console.log("serializeArray : "+$('#searchFrm').serializeArray());
+	/*
+	var idxVar = {idx : idx};
+	
+	const kwdNmMap = new Map();
+	kwdNmMap.set(idxVar, obj.value);
+	console.log(kwdNmMap.has(idxVar));
+	console.log(kwdNmMap.get(idxVar));
+	*/
 }
 </script>
 </head>
@@ -187,7 +224,7 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
 					<li>▶</li>
 					<li>상품군</li>
 					<li>
-						<select id="sel_prdln" name="prdln_cd" onchange="fn_search()">
+						<select id="sel_prdln" name="prdln_cd" onchange="fn_search();">
 							<c:forEach var="prdlnMng" items="${prdlnMngVos}" begin="0" step="1">
 								<c:if test="${prdlnMng.prdln_cd != 'ALL'}">
 								<option value="${prdlnMng.prdln_cd}" <c:if test="${prdln_cd eq prdlnMng.prdln_cd}">selected</c:if>>${prdlnMng.prdln_nm}</option>
@@ -198,7 +235,7 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
 					<li>▶</li>
 					<li>키워드종류</li>
 					<li>
-						<select id="sel_kwdKnd" name="kwd_spr" onchange="fn_prdlnSelYn(this)">
+						<select id="sel_kwdKnd" name="kwd_spr" onchange="fn_prdlnSelYn(this);">
 							<c:forEach var="tmCmCd" items="${tmCmCdVos}" begin="0" step="1">
 								<option value="${tmCmCd.cd}" <c:if test="${kwd_spr eq tmCmCd.cd}">selected</c:if>>${tmCmCd.cd_nm}</option>
 							</c:forEach>
@@ -213,7 +250,7 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
 				<h4>[ 필수키워드 등록 ]</h4>
 			</div>
 			<div id="btn_kwdSet">
-				<input type="button" value="키워드 등록" onclick="fn_insertKwdList()">
+				<input type="button" value="키워드 등록" onclick="fn_insertKwdList();">
 			</div>
 			<form id="insertKwdListFrm" action="insertAnalysisStandard" method="post">
 				<textarea id="ta_writeKwd" name="kwd_nms" rows="4" placeholder="여러 키워드 등록 시 구분자를 ','단위로 등록하세요. 한 키워드는 50자 이상을 넘을 수 없습니다.">${kwd_nms}</textarea>
@@ -234,7 +271,7 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
 				<thead>
 					<tr>
 						<th>NO</th>
-						<th><input type="checkbox"></th>
+						<th><input type="checkbox" id="chkAll" onclick="fn_chkAll();"></th>
 						<th>키워드</th>
 						<th>동의어</th>
 						<th>범위(단어 수)</th>
@@ -248,24 +285,32 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
 					<c:forEach var="kwdList" items="${kwdList}" begin="0" step="1" varStatus="status">
 					<tr>
 						<td>${status.count}</td>
-						<td><input type="checkbox" value="${kwdList.chk_del}"></td>
-						<td><input type="text" value="${kwdList.kwd_nm}"></td>
+						<td><input type="checkbox" class="chk" value="${kwdList.chk_del}"></td>
+						<td><input type="text" value="${kwdList.kwd_nm}" onchange="fn_chkMod(this,'${status.index}')"></td>
 						<td onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}')">${kwdList.syn_nm}</td>
-						<td><input type="text" value="${kwdList.rng}"></td>
-						<td><input type="text" value="${kwdList.use_yn}"></td>
-						<td><input type="text" value="${kwdList.scr}"></td>
+						<td><input type="text" value="${kwdList.rng}" onkeyup="fn_inNumber(this)"></td>
+						<td>
+							<select class="sel_useYn">
+								<option value="Y" <c:if test="${kwdList.use_yn eq 'Y'}">selected</c:if>>Y</option>
+								<option value="N" <c:if test="${kwdList.use_yn eq 'N'}">selected</c:if>>N</option>
+							</select>
+						</td>
+						<td><input type="text" class="scr" value="${kwdList.scr}" maxlength="10" onkeyup="fn_inNumber(this);" onchange="fn_scrInsert('${status.index}');"></td>
 						<td>${kwdList.user_nm}(${kwdList.emp_no})</td>
 						<td>${kwdList.reg_dt}</td>
 					</tr>
+					<input type="hidden" id="org_scrng_spr" name="org_scrng_spr" value="${kwdList.org_scrng_spr}">
+					<input type="hidden" id="org_kwd_nm" name="org_kwd_nm" value="${kwdList.org_kwd_nm}">
 					</c:forEach>
 				</tbody>
 			</table>
 			<form id="frm_synPop">
-				<input type="hidden" id="prdln_cd" name="prdln_cd">
-				<input type="hidden" id="kwd_spr" name="kwd_spr">
-				<input type="hidden" id="kwd_nm" name="kwd_nm">
-				<input type="hidden" id="syn_nm" name="syn_nm">
-<!-- 				<input type="hidden" id="scrng_spr" name="scrng_spr"> -->
+				<input type="hidden" id="pop_prdln_cd" name="prdln_cd">
+				<input type="hidden" id="pop_kwd_spr" name="kwd_spr">
+				<input type="hidden" id="pop_kwd_nm" name="kwd_nm">
+				<input type="hidden" id="pop_syn_nm" name="syn_nm">
+			</form>
+			<form id="frm_saveKwdList">
 			</form>
 		</div>
 	</section>

@@ -106,11 +106,13 @@
 		    , REG_DT = SYSDATE
 		    , EMP_NO = #{emp_no}
 		WHERE
-			  REQ_DEPT_CD = #{req_dept_cd}
-		  AND PRDLN_CD = #{prdln_cd}
-		  AND KWD_SPR = #{kwd_spr}
-		  AND SCRNG_SPR = #{scrng_spr}
-		  AND KWD_NM = #{kwd_nm}
-		  AND SYN_NM = #{org_syn_nm}
+				REQ_DEPT_CD = #{req_dept_cd}
+		  	AND PRDLN_CD = #{prdln_cd}
+		  	AND KWD_SPR = #{kwd_spr}
+		  	AND SCRNG_SPR = #{scrng_spr}
+		  	AND KWD_NM = #{kwd_nm}
+		  	<if test="chk_sel eq '0'.toString()">
+	  		AND SYN_NM = #{org_syn_nm}
+		  	</if>
 	</update>
  </mapper>

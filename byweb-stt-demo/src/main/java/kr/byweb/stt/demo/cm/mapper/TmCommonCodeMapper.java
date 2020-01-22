@@ -14,4 +14,6 @@ public interface TmCommonCodeMapper {
 	public List<TmCmCdVo> getKwdKndCd() throws Exception;
 	
 	public List<TmCmCdVo> getReqDeptList(Map pMap) throws Exception;
+
+	public List<TmCmCdVo> getTitleList() throws Exception;
 }
