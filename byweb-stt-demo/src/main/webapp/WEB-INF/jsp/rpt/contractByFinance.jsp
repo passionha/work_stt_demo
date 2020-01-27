@@ -8,7 +8,6 @@
 <title>회사별 제출현황</title>
 <style type="text/css">
 	body {
-		text-align: center;
 		color: black;
 		width: 1400px;
 	}
@@ -29,15 +28,15 @@
 		width: 1235px;
 	}
 	
-	li {
+	#wrapper li {
 		display: inline;
 	}
 	
-	li:nth-child(2), :nth-child(5) {
+	#wrapper li:nth-child(2), :nth-child(5) {
 		padding-right: 5px;
 	}
 	
-	li:nth-child(3) {
+	#wrapper li:nth-child(3) {
 		padding-right: 100px;
 	}
 	
@@ -90,12 +89,9 @@ function fn_delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 //녹취파일 업로드 팝업
 function fn_openUploadPop(fin_cd, req_dt){
 	window.open('','recUplPopup','width=800,height=600,location=no,status=no,scrollbars=no');
-	
 	var frm_uplPop = document.getElementById("frm_uplPop");
-	
 	document.getElementById("upl_fin_cd").value = fin_cd;
 	document.getElementById("upl_req_dt").value = req_dt;
-	
 	frm_uplPop.submit();
 }
 
@@ -148,18 +144,20 @@ function fn_addSlash( event, obj ){
 //엑셀 다운로드
 function fn_excel(){
 	var frm = document.getElementById("frm_exl");
-	frm.action = 'getContract_exl';
+	frm.action = 'getContract_exl.do';
 	frm.submit();
 }
 </script>
 </head>
 <body>
+<jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
 <div id="wrapper">
-<%@ include file="/WEB-INF/jsp/common/header.jsp" %>
-<%@ include file="/WEB-INF/jsp/common/nav.jsp" %>
+<%-- <%@ include file="/WEB-INF/jsp/common/header.jsp" %> --%>
+<%-- <%@ include file="/WEB-INF/jsp/common/nav.jsp" %> --%>
 	<section>
 		<h3>회사별 제출현황</h3>
-		<form id="frm" action="getContractList" method="post">
+		<form id="frm" action="getContractList.do" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀" onclick="fn_excel()">
 				<input type="button" value="조회" onclick="fn_search()">
@@ -228,24 +226,25 @@ function fn_excel(){
 				</c:forEach>
 			</tbody>
 		</table>
-		<form id="frm_del" name="frm_del" method="post" action="delContract" target="_self">
+		<form id="frm_del" name="frm_del" method="post" action="delContract.do" target="_self">
 			<input type="hidden" id="del_fin_cd" name="fin_cd">
 			<input type="hidden" id="del_req_dt" name="req_dt">
 			<input type="hidden" id="del_sdate" name="sdate">
 			<input type="hidden" id="del_edate" name="edate">
 			<input type="hidden" id="del_sel_fin_cd" name="sel_fin_cd">
 		</form>
-		<form id="frm_uplPop" name="frm_uplPop" method="post" action="getDefInfo" target="recUplPopup">
+		<form id="frm_uplPop" name="frm_uplPop" method="post" action="getDefInfo.do" target="recUplPopup">
 			<input type="hidden" id="upl_fin_cd" name="fin_cd">
 			<input type="hidden" id="upl_req_dt" name="req_dt">
 		</form>
-		<form id="frm_exl" name="frm_exl" method="post" action="getContract_exl">
+		<form id="frm_exl" name="frm_exl" method="post" action="getContract_exl.do">
 			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
 			<input type="hidden" id="org_sdate" name="org_sdate" value="${sdate}">
 			<input type="hidden" id="org_edate" name="org_edate" value="${edate}">
 		</form>
 	</section>
-<%@ include file="/WEB-INF/jsp/common/footer.jsp" %>
+<%-- <%@ include file="/WEB-INF/jsp/common/footer.jsp" %> --%>
+<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>
 </div>
 </body>
 </html>

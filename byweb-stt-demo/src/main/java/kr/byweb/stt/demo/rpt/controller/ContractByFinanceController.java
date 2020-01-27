@@ -40,7 +40,7 @@ public class ContractByFinanceController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getContractList")
+	@RequestMapping("/getContractList.do")
 	public String getContractList(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap1 = new HashMap();
 		Map pMap2 = new HashMap();
@@ -120,7 +120,7 @@ public class ContractByFinanceController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/delContract")
+	@RequestMapping("/delContract.do")
 	public String delContract(HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		List<Map> files = new ArrayList<Map>();
@@ -190,7 +190,7 @@ public class ContractByFinanceController {
 		redirectAttributes.addFlashAttribute("sdate", sdate);
 		redirectAttributes.addFlashAttribute("edate", edate);
 		
-		return "redirect:/getContractList";
+		return "redirect:/getContractList.do";
 	}
 	
 	/**
@@ -198,7 +198,7 @@ public class ContractByFinanceController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getContract_exl")
+	@RequestMapping("/getContract_exl.do")
 	public String getContract_exl(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map pMap1 = new HashMap();
 		Map pMap2 = new HashMap();

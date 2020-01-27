@@ -26,7 +26,7 @@ public class UploadPopupController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getDefInfo")
+	@RequestMapping("/getDefInfo.do")
 	public String getDefInfo(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap1 = new HashMap();
 		Map pMap2 = new HashMap();

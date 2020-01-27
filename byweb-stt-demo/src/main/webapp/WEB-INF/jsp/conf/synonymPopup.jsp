@@ -30,7 +30,7 @@ $(document).ready(function fn_save(){
         };
         
         $.ajax({
-            url         :   "updateSynonym",
+            url         :   "updateSynonym.do",
             dataType    :   "json",
             contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
             type        :   "post",
@@ -76,7 +76,7 @@ $("#btn_save").click(function() {
     };
     
     $.ajax({
-        url         :   "updateSynonym",
+        url         :   "updateSynonym.do",
         dataType    :   "json",
         contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
         type        :   "post",
@@ -105,7 +105,7 @@ $("#btn_save").click(function() {
 			<h3>※동의어 관리</h3>
 		</div> 
 		
-		<form id="synSetFrm" action="updateSynonym" method="post">
+		<form id="synSetFrm" action="updateSynonym.do" method="post">
 			<input type="hidden" id="prdln_cd" name="prdln_cd" value="${prdln_cd}">
 			<input type="hidden" id="kwd_spr" name="kwd_spr" value="${kwd_spr}">
 			<input type="hidden" id="kwd_nm" name="kwd_nm" value="${kwd_nm}">

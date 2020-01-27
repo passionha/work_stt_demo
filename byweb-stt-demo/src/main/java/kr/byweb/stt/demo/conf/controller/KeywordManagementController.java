@@ -40,7 +40,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getAnlysStdList")
+	@RequestMapping("/getAnlysStdList.do")
 	public String getAnlysStdList(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -85,7 +85,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getAnalysisStandardList")
+	@RequestMapping("/getAnalysisStandardList.do")
 	public String getAnalysisStandardList(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -119,7 +119,7 @@ public class KeywordManagementController {
 		redirectAttributes.addFlashAttribute("kwd_spr", kwd_spr);
 		redirectAttributes.addFlashAttribute("kwd_nms", kwd_nms);
 		redirectAttributes.addFlashAttribute("kwdList", kwdList);
-		return "redirect:/getAnlysStdList";
+		return "redirect:/getAnlysStdList.do";
 	}	
 	
 	/**
@@ -128,7 +128,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/insertAnalysisStandard")
+	@RequestMapping("/insertAnalysisStandard.do")
 	public String insertAnalysisStandard(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -165,7 +165,7 @@ public class KeywordManagementController {
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
 		redirectAttributes.addFlashAttribute("kwd_spr", kwd_spr);
 		redirectAttributes.addFlashAttribute("kwd_nms", kwd_nms);
-		return "redirect:/getAnalysisStandardList";
+		return "redirect:/getAnalysisStandardList.do";
 	}
 	
 	/**
@@ -174,23 +174,31 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getKeywordDuplicationList")
+	@RequestMapping("/getKeywordDuplicationList.do")
 	@ResponseBody
 	public ArrayList getKeywordDuplicationList(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		ArrayList kwdNms = new ArrayList();
 		ArrayList dupKwdNms = new ArrayList();
 		
+		//각 키워드별 콤마분리 후 길이검사 필요 100이하
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
 		String prdln_cd = request.getParameter("prdln_cd") == null ? "" : request.getParameter("prdln_cd"); 
 		String kwd_nms = request.getParameter("kwd_nms") == null ? "" : request.getParameter("kwd_nms");
+		System.out.println("kwd_nms : "+kwd_nms);
 		
 		String[] commaSaps = kwd_nms.split(",");
 		for(int i=0; i<commaSaps.length; i++) {
+			
+			String res = commaSaps[i].replaceAll("\r|\n", "");
+			System.out.println("res : "+res);
+			
+			
 			if(!commaSaps[i].replaceAll("\\p{Z}", "").equals("")) {
 				kwdNms.add(commaSaps[i].replaceAll("\\p{Z}", ""));
 			}
 		}
+		/*
 		for(int k=0; k<kwdNms.size(); k++) {
 			if(kwdNms.get(k).toString().contains("/")) {
 				pMap.put("scrng_spr", "Y");
@@ -209,7 +217,7 @@ public class KeywordManagementController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		return dupKwdNms;
 	}
 	
@@ -218,7 +226,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getSynonymKeywordList")
+	@RequestMapping("/getSynonymKeywordList.do")
 	public String getSynonymKeywordList(HttpServletRequest request, HttpSession session, Model model) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -251,7 +259,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/updateSynonym")
+	@RequestMapping("/updateSynonym.do")
 	@ResponseBody
 	public Object updateSynonym(@RequestParam(value="chkKwds[]") List<String> chkKwds, @RequestParam(value="unchkKwds[]") List<String> unchkKwds, HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
@@ -318,6 +326,62 @@ public class KeywordManagementController {
         retVal.put("message", "등록에 성공 하였습니다.");
         
         return retVal;
+	}
+	
+	/**
+	 * 키워드목록 수정사항 저장
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/updateAnalysisStandard.do")
+	public String updateAnalysisStandard(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+		String[] mod_kwd_nm = request.getParameterValues("mod_kwd_nm");
+		String[] mod_rng = request.getParameterValues("mod_rng");
+		String[] mod_use_yn = request.getParameterValues("mod_use_yn");
+		String[] mod_scr = request.getParameterValues("mod_scr");
+		System.out.println(mod_kwd_nm.length);
+		System.out.println(mod_rng.length);
+		System.out.println(mod_use_yn.length);
+		System.out.println(mod_scr.length);
+		/*
+		Map pMap = new HashMap();
+		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
+		String prdln_cd = request.getParameter("ins_prdln_cd") == null ? "" : request.getParameter("ins_prdln_cd"); 
+		String kwd_spr = request.getParameter("ins_kwd_spr") == null ? "" : request.getParameter("ins_kwd_spr"); 
+		String kwd_nms = request.getParameter("kwd_nms") == null ? "" : request.getParameter("kwd_nms");
+		
+		ArrayList kwdNms = new ArrayList();
+		String[] commaSaps = kwd_nms.split(",");
+		for(int i=0; i<commaSaps.length; i++) {
+			if(!commaSaps[i].replaceAll("\\p{Z}", "").equals("")) {
+				kwdNms.add(commaSaps[i].replaceAll("\\p{Z}", ""));
+			}
+		}
+		for(int k=0; k<kwdNms.size(); k++) {
+			if(kwdNms.get(k).toString().contains("/")) {
+				pMap.put("scrng_spr", "Y");
+			}else {
+				pMap.put("scrng_spr", "N");
+			}
+			pMap.put("kwd_nm", kwdNms.get(k).toString());
+//			추후 session 통해 emp_no 추출 필요
+			pMap.put("emp_no", "A219090");
+			pMap.put("req_dept_cd", req_dept_cd);
+			pMap.put("prdln_cd", prdln_cd);
+			pMap.put("kwd_spr", kwd_spr);
+			
+			try {
+				keywordManagementService.insertAnalysisStandard(pMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
+		redirectAttributes.addFlashAttribute("kwd_spr", kwd_spr);
+		redirectAttributes.addFlashAttribute("kwd_nms", kwd_nms);
+		*/
+		return "redirect:/getAnalysisStandardList.do";
 	}
 	
 }

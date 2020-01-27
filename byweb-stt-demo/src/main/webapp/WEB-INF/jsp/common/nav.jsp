@@ -13,17 +13,17 @@
 		float: left;
 		height: 550px;
 		width: 100px;
+		color: black;
 	}
 </style>
 </head>
 <body>
-	
 	<nav>
 	<% if(session.getAttribute("req_dept_cd") != null){ %>
 		<ul>
-			<li><a href="getContractList">회사별 제출현황</a></li>
+			<li><a href="getContractList.do">회사별 제출현황</a></li>
 			<br>
-			<li><a href="getAnlysStdList">분석기준 설정</a></li>
+			<li><a href="getAnlysStdList.do">분석기준 설정</a></li>
 			<br>
 			<li><a href="">결과 확인</a></li>
 			<br>

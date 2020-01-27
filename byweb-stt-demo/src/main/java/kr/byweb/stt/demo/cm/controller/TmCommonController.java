@@ -20,17 +20,18 @@ public class TmCommonController {
 	TmCommonCodeService tmCommonCodeService;
 	
 	@RequestMapping("/")
-	public String goMain(Model model) {
+	public String goMain(HttpSession session, Model model) {
 		try {
 			List<TmCmCdVo> headerTitles = tmCommonCodeService.getTitleList();
-			model.addAttribute("headerTitles", headerTitles);
+			session.setAttribute("headerTitles", headerTitles);
+//			model.addAttribute("headerTitles", headerTitles);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "main";
 	}
 	
-	@RequestMapping("/selHeader")
+	@RequestMapping("/selHeader.do")
 	public String selHeader(HttpSession session, HttpServletRequest request, Model model) {
 		String reqCd = request.getParameter("req_dept_cd") == null ? "" : request.getParameter("req_dept_cd");
 		String req_dept_cd = "";

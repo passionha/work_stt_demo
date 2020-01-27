@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.*" %>
+<%
+	List<String> headerTitles = (List<String>)session.getAttribute("headerTitles");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,9 +23,7 @@
 <script type="text/javascript">
 	function fn_sbmReqCd(reqCd){
 		var frm = document.getElementById("frm_selHeader");
-		
 		document.getElementById("req_dept_cd").value = reqCd;
-		
 		frm.submit();
 	}
 </script>
@@ -35,7 +37,7 @@
 				</c:forEach>
 			</ul>
 		</div>
-		<form id="frm_selHeader" action="selHeader" method="post" target="_self">
+		<form id="frm_selHeader" action="selHeader.do" method="post" target="_self">
 			<input type="hidden" id="req_dept_cd" name="req_dept_cd">
 		</form>
 	</header>

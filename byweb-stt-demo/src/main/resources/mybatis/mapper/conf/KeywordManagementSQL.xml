@@ -63,7 +63,7 @@
 		    )
 	</insert>
 	
-	<!-- 키워드 등록 전 중복검사 -->
+	<!-- 키워드 등록 전 선택 상품군 내 중복검사 -->
 	<select id="getKeywordDuplicationList" parameterType="java.util.Map" resultType="java.lang.String">
 		SELECT
 			  KWD_NM
