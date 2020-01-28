@@ -33,7 +33,7 @@
 		<div>
 			<ul>
 				<c:forEach var="headerTitles" items="${headerTitles}" begin="0" step="1">
-				<li onclick="fn_sbmReqCd('${headerTitles.class_cd}')">${headerTitles.class_name}</li>
+				<li onclick="fn_sbmReqCd('${headerTitles.menu_id}')">${headerTitles.menu_nm}</li>
 				</c:forEach>
 			</ul>
 		</div>

@@ -34,6 +34,11 @@ public class TmCommonCodeServiceImpl implements TmCommonCodeService{
 	public List<TmCmCdVo> getTitleList() throws Exception {
 		return tmCommonCodeMapper.getTitleList();
 	}
+
+	@Override
+	public List<TmCmCdVo> getNavTitleList(String req_cd) throws Exception {
+		return tmCommonCodeMapper.getNavTitleList(req_cd);
+	}
 	
 	
 }

@@ -38,6 +38,16 @@ public class TmCmCdVo {
 //	private String emp_no;
 //	private Timestamp reg_dt;
 	
+	//메뉴 관리 테이블 : TM_MENU_MNG
+	private String menu_id;
+	private String menu_nm;
+	private String menu_url;
+	private int menu_level;
+//	private String use_yn;
+	private String menu_target;
+	private String upper_menu_id;
+	private String menu_desc;
+	   
 	//기타 화면 정의 파라미터
 	private String class_name;
 }

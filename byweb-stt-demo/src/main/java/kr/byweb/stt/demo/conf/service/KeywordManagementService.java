@@ -15,5 +15,11 @@ public interface KeywordManagementService {
 	public List<AnlysStdVo> getSynonymKeywordList(Map pMap) throws Exception;
 
 	public void updateSynonym(Map pMap) throws Exception;
+
+	public void updateAnalysisStandard(Map pMap) throws Exception;
+
+	public void deleteAnalysisStandard(Map pMap) throws Exception;
+
+	public void updateDelSynonym(Map pMap) throws Exception;
 	
 }

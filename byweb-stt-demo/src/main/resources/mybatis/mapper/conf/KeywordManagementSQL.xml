@@ -98,6 +98,7 @@
 		ORDER BY KWD_NM
 	</select>
 	
+	<!-- 동의어관리 팝업 수정사항 저장 -->
 	<update id="updateSynonym" parameterType="java.util.Map">
 		UPDATE
 		    TM_ANLYS_STD
@@ -115,4 +116,53 @@
 	  		AND SYN_NM = #{org_syn_nm}
 		  	</if>
 	</update>
+	
+	<!-- 동의어관리 팝업 동의어 삭제 -->
+	<update id="updateDelSynonym" parameterType="java.util.Map">
+		UPDATE
+		    TM_ANLYS_STD
+		SET
+		      SYN_NM = ''
+		    , REG_DT = SYSDATE
+		    , EMP_NO = #{emp_no}
+		WHERE
+		    REQ_DEPT_CD = #{req_dept_cd}
+		    AND PRDLN_CD = #{prdln_cd}
+		    AND KWD_SPR = #{kwd_spr}
+		    AND SYN_NM = #{syn_nm}
+	</update>
+	
+	<!-- 키워드목록 수정사항 저장 -->
+	<update id="updateAnalysisStandard" parameterType="java.util.Map">
+		UPDATE
+		    TM_ANLYS_STD
+		SET
+		      USE_YN=#{use_yn}
+		    , EMP_NO=#{emp_no}
+		    , REG_DT=SYSDATE
+		    <if test="kwd_nm != org_kwd_nm">
+		    , KWD_NM=#{kwd_nm}
+		    </if>
+		    , RNG=#{rng}
+		    , SCR=#{scr}
+		    , SCRNG_SPR=#{scrng_spr}
+		WHERE
+	            REQ_DEPT_CD=#{req_dept_cd}
+		    AND PRDLN_CD=#{prdln_cd}
+		    AND KWD_SPR=#{kwd_spr}
+		    AND SCRNG_SPR=#{org_scrng_spr}
+		    AND KWD_NM=#{org_kwd_nm}
+	</update>
+	
+	<!-- 키워드목록 삭제 -->
+	<delete id="deleteAnalysisStandard">
+		DELETE
+		FROM TM_ANLYS_STD
+		WHERE
+		        REQ_DEPT_CD=#{req_dept_cd}
+		    AND PRDLN_CD=#{prdln_cd}
+		    AND KWD_SPR=#{kwd_spr}
+		    AND SCRNG_SPR=#{scrng_spr}
+		    AND KWD_NM=#{kwd_nm}
+	</delete>
  </mapper>

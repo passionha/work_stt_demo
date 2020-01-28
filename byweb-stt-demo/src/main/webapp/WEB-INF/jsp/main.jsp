@@ -3,7 +3,9 @@
 <%
 	String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String)session.getAttribute("req_dept_cd");
 	String localUrl = request.getServletPath().toString();
-	String iPage = localUrl.substring(localUrl.lastIndexOf("/WEB-INF/jsp/")+13);
+	if(localUrl.equals("/WEB-INF/jsp/main.jsp")){
+		localUrl = "/WEB-INF/jsp/common/mainSection.jsp";
+	}
 %>
 <!DOCTYPE html>
 <html>
@@ -17,7 +19,7 @@
 		width: 1400px;
 	}
 
-	div#wrapper {
+	#wrap {
 		width: 100%;
 		text-align: left;
 		min-height: 300px;
@@ -35,19 +37,19 @@
 </style>
 </head>
 <body>
-<div id="wrapper">
-	<jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include>
-	<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
-	<section>
-		<article>
-			<p>Main Page.</p>
-			<p>Select Header</p>
-			<p>localUrl : <%= localUrl%></p>
-			<p>iPage : <%= iPage%></p>
-			<p>req_dept_cd : <%= req_dept_cd%></p>
-		</article>
-	</section>
-	<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>
+<div id="wrap">
+	<div id="header">
+		<jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include>
+	</div>
+	<div id="nav">
+		<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
+	</div>
+	<div id="section">
+		<jsp:include page="<%=localUrl%>"></jsp:include>
+	</div>
+	<div id="footer">
+		<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>
+	</div>
 </div>
 </body>
 </html>

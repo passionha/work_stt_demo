@@ -39,6 +39,21 @@ public class KeywordManagementServiceImpl implements KeywordManagementService{
 	public void updateSynonym(Map pMap) throws Exception {
 		keywordManagementMapper.updateSynonym(pMap);
 	}
+
+	@Override
+	public void updateAnalysisStandard(Map pMap) throws Exception {
+		keywordManagementMapper.updateAnalysisStandard(pMap);
+	}
+
+	@Override
+	public void deleteAnalysisStandard(Map pMap) throws Exception {
+		keywordManagementMapper.deleteAnalysisStandard(pMap);
+	}
+
+	@Override
+	public void updateDelSynonym(Map pMap) throws Exception {
+		keywordManagementMapper.updateDelSynonym(pMap);
+	}
 	
 	
 }

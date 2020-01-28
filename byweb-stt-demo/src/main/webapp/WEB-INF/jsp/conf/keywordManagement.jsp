@@ -97,6 +97,23 @@
 <script type="text/javascript">
 var f_kwdDupYn;					//키워드 중복결과 변수
 var f_arrModIdx = new Array();	//키워드목록 중 수정된 인덱스 배열
+
+//키워드목록 초기 설정
+$(document).ready(function(){
+	//배점에 따른 사용여부element 초기 비활성화
+   	$('input[name="mod_scr"]').each(function (i, element) {
+   		if($(element).val() == null || $(element).val() == '0'){
+			$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",true);
+   		}
+    });
+  	//키워드명 내 슬래시포함여부에 따른 범위element 초기 비활성화
+   	$('input[name="mod_kwd_nm"]').each(function (i, element) {
+   		if($(element).val().indexOf("/") == -1){
+			$("input[name=mod_rng]:eq("+i+")").prop("disabled",true);
+   		}
+    });
+});
+
 //키워드목록 조회
 function fn_search() {
 	if(document.getElementById("sel_kwdKnd").value != 'SEL' && document.getElementById("sel_prdln").value == 'SEL'){
@@ -124,25 +141,28 @@ function fn_prdlnSelYn(obj) {
 
 //키워드 등록
 function fn_insertKwdList(){
-	//입력키워드 유효성 검사
-	 if(fn_kwdValid(document.getElementById("ta_writeKwd").value)){
-		//입력키워드 상품군 내 중복검사
-		if(fn_kwdDupDtn()){
-			document.getElementById("ins_prdln_cd").value = document.getElementById("sel_prdln").value;
-			document.getElementById("ins_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
-			var frm = document.getElementById("insertKwdListFrm");
-			frm.submit();
-		}
-	 }else{
-		 document.getElementById("ta_writeKwd").focus();
-		 return;
-	 }
+	if(confirm("입력하신 키워드를 등록하시겠습니까?")){
+		//입력키워드 유효성 검사
+		 if(fn_kwdValid(document.getElementById("ta_writeKwd").value)){
+			//입력키워드 상품군 내 중복검사
+			if(fn_kwdDupDtn(document.getElementById("ins_kwd_nms").value)){
+				document.getElementById("ins_prdln_cd").value = document.getElementById("sel_prdln").value;
+				document.getElementById("ins_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
+				var frm = document.getElementById("insertKwdListFrm");
+				frm.submit();
+				alert("등록되었습니다.");
+			}
+		 }else{
+			 document.getElementById("ta_writeKwd").focus();
+			 return;
+		 }
+	}
 }
 
-//입력키워드 선택 상품군 내 중복검사
-function fn_kwdDupDtn(){
+//입력키워드 상품군 내 중복검사
+function fn_kwdDupDtn(kwdStr){
 	var sel_prdln = document.getElementById("sel_prdln").value;
-	var kwd_nms = document.getElementById("ta_writeKwd").value;
+	var kwd_nms = kwdStr;
 	$.ajax({
 		type: "POST",
         url: "getKeywordDuplicationList.do",
@@ -166,7 +186,7 @@ function fn_kwdDupDtn(){
 }
 
 //동의어관리 팝업
-function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
+function fn_synPopup(kwd_nm, syn_nm, scrng_spr, scr){
 	window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=no');
 	var frm_synPop = document.getElementById('frm_synPop');
 	frm_synPop.method = 'post';
@@ -174,18 +194,35 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr){
 	frm_synPop.target = 'synPop';
 	document.getElementById("pop_prdln_cd").value = document.getElementById("sel_prdln").value;
 	document.getElementById("pop_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
+	document.getElementById("pop_scrng_spr").value = scrng_spr;
 	document.getElementById("pop_kwd_nm").value = kwd_nm;
 	document.getElementById("pop_syn_nm").value = syn_nm;
+	document.getElementById("pop_scr").value = scr;
 	frm_synPop.submit();
 }
 
 //배점 입력 시 사용여부 자동 변경
 function fn_scrInsert(idx){
+	//수정된 row index 저장
 	fn_setModIdx(idx);
-	if($('.scr').eq(idx).val() > 0){
-		$('.sel_useYn').eq(idx).val('Y');
+	if($('input[name="mod_scr"]').eq(idx).val() > 0){
+		$('select[name="mod_use_yn"]').eq(idx).val('Y');
+		$('select[name="mod_use_yn"]').eq(idx).prop("disabled",false);
 	}else{
-		$('.sel_useYn').eq(idx).val('N');
+		$('select[name="mod_use_yn"]').eq(idx).val('N');
+		$('select[name="mod_use_yn"]').eq(idx).prop("disabled",true);
+	}
+}
+
+//키워드명에 슬래시 입력 시 범위 자동 변경
+function fn_kwdInsert(idx){
+	//수정된 row index 저장
+	fn_setModIdx(idx);
+	if($('input[name="mod_kwd_nm"]').eq(idx).val().indexOf("/") != -1){
+		$('input[name="mod_rng"]').eq(idx).prop("disabled",false);
+	}else{
+		$('input[name="mod_rng"]').eq(idx).val('0');
+		$('input[name="mod_rng"]').eq(idx).prop("disabled",true);
 	}
 }
 
@@ -206,7 +243,7 @@ function fn_chkAll(){
     }
 }
 
-//수정된 row index를 모두 배열 저장 후 submit 시 Set()<->Array.from()으로 중복제거 후 배열 외 idx input disabled화
+//수정된 row index를 전역 배열변수에 저장
 function fn_setModIdx(idx){
 	f_arrModIdx.push(idx);
 }
@@ -233,7 +270,7 @@ function fn_kwdValid(val){
 	//연속된 콤마 제거
 	var consctvComma = /\,{2,}/gm;
 	resultVal = resultVal.replace(consctvComma,",");
-	/*
+	
 	//연속된 슬래시 검사
 	var consctvSlash = /\/{2,}/gm;
 	if(consctvSlash.test(resultVal)){
@@ -247,9 +284,10 @@ function fn_kwdValid(val){
 		alert("키워드는 한글만 입력할 수 있습니다.");
 		return false;
 	}
-	*/
+	
 	//각 키워드 길이검사(100byte 미만)
-	var arrKwdNm = new Array();
+	var arrDupKwdNm = new Array();	//중복키워드 배열
+	var arrKwdNm = new Array();		//입력키워드 배열
 	var arrCommaSplit = resultVal.split(",");
 	for(var i in arrCommaSplit){
 		if(arrCommaSplit[i].length >= 50){
@@ -261,39 +299,137 @@ function fn_kwdValid(val){
 		}
 	}
 	
-	//콤마구분 각 키워드 간 중복검사*************************************************
+	//입력키워드 간 중복검사
+	for(var i=0; i<arrKwdNm.length; i++){
+		var reversalKwd = "";
+		for(var j=i+1; j<arrKwdNm.length; j++){
+			//키워드에 슬래시포함 시 슬래시전후단어 전환 후 중복검사
+			if(arrKwdNm[i].indexOf("/") != -1){
+				var befWrd = arrKwdNm[i].substring(0, arrKwdNm[i].indexOf("/"));
+				var aftWrd = arrKwdNm[i].substring(arrKwdNm[i].indexOf("/")+1, arrKwdNm[i].length);
+				reversalKwd = aftWrd+"/"+befWrd;
+				if(arrKwdNm[i] == arrKwdNm[j] || reversalKwd == arrKwdNm[j]){
+					arrDupKwdNm.push(arrKwdNm[i]);
+				}
+			}else{
+				if(arrKwdNm[i] == arrKwdNm[j]){
+					arrDupKwdNm.push(arrKwdNm[i]);
+				}
+			}
+		}
+	}
+	var arrDupKwdSet = new Set(arrDupKwdNm);
+	arrDupKwdNm = Array.from(arrDupKwdSet);
+	var dupStr = "";
+	for(var i in arrDupKwdNm){
+		dupStr += arrDupKwdNm[i]+",";
+	}
+	dupStr = dupStr.substring(0, dupStr.length-1);
+	if(arrDupKwdNm.length > 0){
+		alert("["+dupStr+"]은(는) 중복된 키워드입니다.");
+		return false;
+	}
+	
+	//입력키워드별 슬래시기준 전후 단어 간 중복검사
+	var arrSlashDupKwd = new Array();	//슬래시 전후단어 중복 키워드 배열
+	for(var i in arrKwdNm){
+		if(arrKwdNm[i].indexOf("/") != -1){
+			var befWrd = arrKwdNm[i].substring(0, arrKwdNm[i].indexOf("/"));
+			var aftWrd = arrKwdNm[i].substring(arrKwdNm[i].indexOf("/")+1, arrKwdNm[i].length);
+			if(befWrd == aftWrd){
+				arrSlashDupKwd.push(arrKwdNm[i]);
+			}
+		}
+	}
+	var dupStr = "";
+	for(var i in arrSlashDupKwd){
+		dupStr += arrSlashDupKwd[i]+",";
+	}
+	dupStr = dupStr.substring(0, dupStr.length-1);
+	if(arrSlashDupKwd.length > 0){
+		alert("["+dupStr+"]은(는) 슬래시\(\"\/\"\) 전후 단어가 중복된 키워드입니다.");
+		return false;
+	}
 	
 	//중복키워드 제거
-	var arrSet = new Set(arrKwdNm);
-	console.log(arrSet);
-	console.log(Array.from(arrSet));
+	var arrKwdSet = new Set(arrKwdNm);
+	arrKwdNm = Array.from(arrKwdSet)
 	
-	//슬래시구분 단어 간 중복검사
+	//키워드 문자열 치환 결과 저장
+	document.getElementById('ins_kwd_nms').value = arrKwdNm.join(",");
 	
 	return true;
 }
 
 //키워드목록 수정사항 저장
 function fn_saveKwdList(){
-	console.log("f_arrModIdx : "+f_arrModIdx);
-	var arrSet = new Set(f_arrModIdx);
-	console.log("arrSet : "+arrSet);
-	console.log("from : "+Array.from(arrSet));
-	var arrModIdxs = Array.from(arrSet);
-	var totInputLength = $("input[name=mod_kwd_nm]").length;
-	for(var i=0; i<totInputLength; i++){
-		console.log("i.toString() : "+i.toString());
-		console.log("idxof : "+arrModIdxs.indexOf(i.toString()));
-		if(arrModIdxs.indexOf(i.toString()) == -1){
-			$("input[name=mod_kwd_nm]:eq("+i+")").prop("disabled",true);
-			$("input[name=mod_rng]:eq("+i+")").prop("disabled",true);
-			$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",true);
-			$("input[name=mod_scr]:eq("+i+")").prop("disabled",true);
+	if(confirm("수정사항을 저장하시겠습니까?")){
+		var kwdStr = "";		//유효성검사 대상 전체 입력키워드
+		var dtnKwdStr = "";		//중복검사 대상 입력키워드
+		var arrSet = new Set(f_arrModIdx);
+		var arrModIdxs = Array.from(arrSet);
+		var totInputLength = $("input[name=mod_kwd_nm]").length;
+		for(var i=0; i<totInputLength; i++){
+			if(arrModIdxs.indexOf(i.toString()) != -1){
+				kwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
+				if($("input[name=mod_kwd_nm]:eq("+i+")").val() != $("input[name=org_kwd_nm]:eq("+i+")").val()){
+					 dtnKwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
+				}
+			}
 		}
+		kwdStr = kwdStr.substring(0, kwdStr.length-1);
+		dtnKwdStr = dtnKwdStr.substring(0, dtnKwdStr.length-1);
+		//입력키워드 유효성 검사
+		 if(fn_kwdValid(kwdStr)){
+			//입력키워드 상품군 내 중복검사
+			if(fn_kwdDupDtn(dtnKwdStr)){
+				for(var i=0; i<totInputLength; i++){
+					if(arrModIdxs.indexOf(i.toString()) == -1){
+						$("input[name=mod_kwd_nm]:eq("+i+")").prop("disabled",true);
+						$("input[name=mod_rng]:eq("+i+")").prop("disabled",true);
+						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",true);
+						$("input[name=mod_scr]:eq("+i+")").prop("disabled",true);
+						$("input[name=org_scrng_spr]:eq("+i+")").prop("disabled",true);
+						$("input[name=org_kwd_nm]:eq("+i+")").prop("disabled",true);
+					}else{
+						//수정된 row의 value submit을 위해 배점 입력에 따른 사용여부element 활성화
+						$("input[name=mod_rng]:eq("+i+")").prop("disabled",false);
+						//수정된 row의 value submit을 위해 슬래시 입력에 따른 범위element 활성화
+						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",false);
+					}
+				}
+				document.getElementById('mod_prdln_cd').value = document.getElementById('sel_prdln').value;
+				document.getElementById('mod_kwd_spr').value = document.getElementById('sel_kwdKnd').value;
+				document.getElementById('mod_kwd_nms').value = document.getElementById('ta_writeKwd').value;
+				
+				var frm_kwdList = document.getElementById('frm_kwdList');
+				frm_kwdList.action = "updateAnalysisStandard.do"
+				frm_kwdList.submit();
+				alert("저장되었습니다.");
+			}
+		 }else{
+			 return;
+		 }
 	}
-	
-	var frm_kwdList = document.getElementById('frm_kwdList');
-	frm_kwdList.submit();
+}
+
+//키워드목록 삭제
+function fn_deleteKwdList(){
+	if(confirm("선택하신 키워드를 삭제하시겠습니까?")){
+		$('input[name="chk_kwd"]:not(:checked)').each(function (i, elements) {
+			index = $(elements).index("input:checkbox[name=chk_kwd]");
+			$("input[name=org_scrng_spr]:eq("+index+")").prop("disabled",true);
+			$("input[name=org_kwd_nm]:eq("+index+")").prop("disabled",true);
+	    });
+		document.getElementById('mod_prdln_cd').value = document.getElementById('sel_prdln').value;
+		document.getElementById('mod_kwd_spr').value = document.getElementById('sel_kwdKnd').value;
+		document.getElementById('mod_kwd_nms').value = document.getElementById('ta_writeKwd').value;
+		
+		var frm_delList = document.getElementById('frm_kwdList');
+		frm_delList.action = "deleteAnalysisStandard.do"
+		frm_delList.submit();
+		alert("삭제되었습니다.");
+	}
 }
 </script>
 </head>
@@ -341,6 +477,7 @@ function fn_saveKwdList(){
 				<textarea id="ta_writeKwd" name="kwd_nms" rows="4" placeholder="여러 키워드 등록 시 구분자를 ','단위로 등록하세요. 한 키워드는 50자 이상을 넘을 수 없습니다.">${kwd_nms}</textarea>
 				<input type="hidden" id="ins_prdln_cd" name="ins_prdln_cd">
 				<input type="hidden" id="ins_kwd_spr" name="ins_kwd_spr">
+				<input type="hidden" id="ins_kwd_nms" name="ins_kwd_nms">
 			</form>
 		</div>
 		<div id="kwdListBox">
@@ -349,10 +486,13 @@ function fn_saveKwdList(){
 			</div>
 			<div id="btn_kwdList">
 				<input type="button" value="저장" onclick="fn_saveKwdList()">
-				<input type="button" value="삭제">
+				<input type="button" value="삭제" onclick="fn_deleteKwdList()">
 <!-- 				<input type="button" value="동의어" onclick="fn_synPopup()"> -->
 			</div>
-			<form id="frm_kwdList" action="updateAnalysisStandard.do" method="post">
+			<form id="frm_kwdList" method="post">
+				<input type="hidden" id="mod_prdln_cd" name="mod_prdln_cd">
+				<input type="hidden" id="mod_kwd_spr" name="mod_kwd_spr">
+				<input type="hidden" id="mod_kwd_nms" name="mod_kwd_nms">
 				<table id="tbl_kwdList">
 					<thead>
 						<tr>
@@ -371,33 +511,34 @@ function fn_saveKwdList(){
 						<c:forEach var="kwdList" items="${kwdList}" begin="0" step="1" varStatus="status">
 						<tr>
 							<td>${status.count}</td>
-							<td><input type="checkbox" class="chk" value="${kwdList.chk_del}"></td>
-							<td><input type="text" name="mod_kwd_nm" value="${kwdList.kwd_nm}" onchange="fn_setModIdx('${status.index}')"></td>
-							<td onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}')">${kwdList.syn_nm}</td>
+							<td><input type="checkbox" name="chk_kwd" class="chk" value="${kwdList.chk_del}"></td>
+							<td><input type="text" name="mod_kwd_nm" class="kwd_nm" value="${kwdList.kwd_nm}" onchange="fn_kwdInsert('${status.index}')"></td>
+							<td onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}','${kwdList.scr}')">${kwdList.syn_nm}</td>
 							<td><input type="text" name="mod_rng" value="${kwdList.rng}" onkeyup="fn_inNumber(this)" onchange="fn_setModIdx('${status.index}')"></td>
 							<td>
 								<!-- 사용여부 수정 시 배점 미입력/0이면 수정 불가&툴팁텍스트 뜨게 -->
-								<select class="sel_useYn" name="mod_use_yn" onchange="fn_setModIdx('${status.index}')">
+								<select name="mod_use_yn" onchange="fn_setModIdx('${status.index}')">
 									<option value="Y" <c:if test="${kwdList.use_yn eq 'Y'}">selected</c:if>>Y</option>
 									<option value="N" <c:if test="${kwdList.use_yn eq 'N'}">selected</c:if>>N</option>
 								</select>
 							</td>
-							<td><input type="text" name="mod_scr" class="scr" value="${kwdList.scr}" maxlength="10" onkeyup="fn_inNumber(this);" onchange="fn_scrInsert('${status.index}');"></td>
+							<td><input type="text" name="mod_scr" value="${kwdList.scr}" maxlength="10" onkeyup="fn_inNumber(this);" onchange="fn_scrInsert('${status.index}');"></td>
 							<td>${kwdList.user_nm}(${kwdList.emp_no})</td>
 							<td>${kwdList.reg_dt}</td>
 						</tr>
-						<input type="hidden" id="org_scrng_spr" name="org_scrng_spr" value="${kwdList.org_scrng_spr}">
-						<input type="hidden" id="org_kwd_nm" name="org_kwd_nm" value="${kwdList.org_kwd_nm}">
+						<input type="hidden" name="org_scrng_spr" value="${kwdList.org_scrng_spr}">
+						<input type="hidden" name="org_kwd_nm" value="${kwdList.org_kwd_nm}">
 						</c:forEach>
-					
 					</tbody>
 				</table>
 			</form>
 			<form id="frm_synPop">
 				<input type="hidden" id="pop_prdln_cd" name="prdln_cd">
 				<input type="hidden" id="pop_kwd_spr" name="kwd_spr">
+				<input type="hidden" id="pop_scrng_spr" name="scrng_spr">
 				<input type="hidden" id="pop_kwd_nm" name="kwd_nm">
 				<input type="hidden" id="pop_syn_nm" name="syn_nm">
+				<input type="hidden" id="pop_scr" name="scr">
 			</form>
 			<form id="frm_saveKwdList">
 			</form>
