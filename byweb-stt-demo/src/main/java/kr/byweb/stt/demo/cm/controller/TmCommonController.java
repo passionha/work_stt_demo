@@ -23,21 +23,18 @@ public class TmCommonController {
 	TmCommonCodeService tmCommonCodeService;
 	
 	@RequestMapping("/")
-	public String goMain(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-		/*
+	public String goMain(HttpSession session, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		List<TmCmCdVo> navTitles = null;
 		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
 		if(inputFlashMap != null) {
-			kwd_spr = (String) inputFlashMap.get("kwd_spr");
-			prdln_cd = (String) inputFlashMap.get("prdln_cd");
-			kwd_nms = (String) inputFlashMap.get("kwd_nms");
-		}else {
-			prdln_cd = request.getParameter("prdln_cd") == null ? "" : request.getParameter("prdln_cd");
-			kwd_spr = request.getParameter("kwd_spr") == null ? "" : request.getParameter("kwd_spr");
+			navTitles = (List<TmCmCdVo>) inputFlashMap.get("navTitles");
+			model.addAttribute("navTitles", navTitles);
 		}
-		*/
+		
 		try {
 			List<TmCmCdVo> headerTitles = tmCommonCodeService.getTitleList();
-			session.setAttribute("headerTitles", headerTitles);
+//			session.setAttribute("headerTitles", headerTitles);
+			model.addAttribute("headerTitles", headerTitles);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
