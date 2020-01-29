@@ -148,7 +148,9 @@ function fn_onlyNum(value) {
 					<li>
 						<select id="sel_fin_cd" name="fin_cd">
 							<c:forEach var="finList" items="${finList}" begin="0" step="1">
+								<c:if test="${finList.finance_cd != 'ALL' || finList.finance_cd != 'SEL'}">
 								<option value="${finList.finance_cd}" <c:if test="${fin_cd eq finList.finance_cd}">selected</c:if>>${finList.finance_name}</option>
+								</c:if>
 							</c:forEach>
 						</select>
 						<c:forEach var="finList" items="${finList}" begin="0" step="1">
@@ -177,7 +179,7 @@ function fn_onlyNum(value) {
 					<li>▶</li>
 					<li>증권번호</li>
 					<li>
-						<input type="text" id="scrts_no" name="scrts_no">
+						<input type="text" id="scrts_no" name="scrts_no" value="${scrts_no}">
 					</li>
 					
 					<li>▶</li>
