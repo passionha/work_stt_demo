@@ -17,9 +17,11 @@
 		      MENU_ID
 		    , MENU_NM
 		    , MENU_URL
+		    , MENU_LEVEL
+		    , UPPER_MENU_ID
 		FROM TM_MENU_MNG
-		WHERE
-		    UPPER_MENU_ID = #{req_cd}
+		START WITH UPPER_MENU_ID = 'TM-01'
+		CONNECT BY UPPER_MENU_ID  = PRIOR MENU_ID
 	</select>
 	
 	<!-- 상품군 목록 조회 -->

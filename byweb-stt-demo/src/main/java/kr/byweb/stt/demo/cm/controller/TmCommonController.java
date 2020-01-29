@@ -23,18 +23,10 @@ public class TmCommonController {
 	TmCommonCodeService tmCommonCodeService;
 	
 	@RequestMapping("/")
-	public String goMain(HttpSession session, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-		List<TmCmCdVo> navTitles = null;
-		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
-		if(inputFlashMap != null) {
-			navTitles = (List<TmCmCdVo>) inputFlashMap.get("navTitles");
-			model.addAttribute("navTitles", navTitles);
-		}
-		
+	public String goMain(HttpSession session, HttpServletRequest request) {
 		try {
 			List<TmCmCdVo> headerTitles = tmCommonCodeService.getTitleList();
-//			session.setAttribute("headerTitles", headerTitles);
-			model.addAttribute("headerTitles", headerTitles);
+			session.setAttribute("headerTitles", headerTitles);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -42,7 +34,7 @@ public class TmCommonController {
 	}
 	
 	@RequestMapping("/selHeader.do")
-	public String selHeader(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+	public String selHeader(HttpSession session, HttpServletRequest request) {
 		String req_cd = request.getParameter("req_dept_cd") == null ? "" : request.getParameter("req_dept_cd");
 		String req_dept_cd = "";
 		switch(req_cd) {
@@ -56,14 +48,14 @@ public class TmCommonController {
 			req_dept_cd = "3";
 			break;
 		}
+		session.setAttribute("sel_req_cd", req_cd);
 		session.setAttribute("req_dept_cd", req_dept_cd);
-		List<TmCmCdVo> navTitles = null;
 		try {
-			navTitles = tmCommonCodeService.getNavTitleList(req_cd);
+			List<TmCmCdVo> navTitles = tmCommonCodeService.getNavTitleList(req_cd);
+			session.setAttribute("navTitles", navTitles);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		redirectAttributes.addFlashAttribute("navTitles", navTitles);
 		return "redirect:/";
 	}
 }

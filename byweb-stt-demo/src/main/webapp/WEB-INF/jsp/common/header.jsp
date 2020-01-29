@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*" %>
 <%
-// 	List<String> headerTitles = (List<String>)session.getAttribute("headerTitles");
+	List<String> headerTitles = (List<String>)session.getAttribute("headerTitles");
 %>
 <!DOCTYPE html>
 <html>

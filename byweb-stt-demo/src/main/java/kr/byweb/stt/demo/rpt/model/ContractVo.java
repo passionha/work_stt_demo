@@ -16,20 +16,20 @@ public class ContractVo {
 	private String req_dt;
 	private String sbm_file_nm;
 	private String sbm_dt;
-//	private String ga_rno;
-//	private String ga_nm;
-//	private String rcrt_chnl;
-//	private String rcrt_sto_nm;
-//	private String hpycl_scpt_file_nm;
-//	private String pdesc_scpt_file_nm;
-//	private String cttor_nm;
-//	private String ctt_stts_efdt;
-//	private String ctt_stts;
-//	private String ctt_dt;
-//	private String prd_nm;
-//	private int sno;
-//	private String prdln_cd;
-//	private String scrts_no;
+	private String ga_rno;
+	private String ga_nm;
+	private String rcrt_chnl;
+	private String rcrt_sto_nm;
+	private String hpycl_scpt_file_nm;
+	private String pdesc_scpt_file_nm;
+	private String cttor_nm;
+	private String ctt_stts_efdt;
+	private String ctt_stts;
+	private String ctt_dt;
+	private String prd_nm;
+	private int sno;
+	private String prdln_cd;
+	private String scrts_no;
 //	private Timestamp reg_dt;
 	
 	//파일업로드 정보 테이블 : TM_FLUPL_INF
@@ -60,4 +60,5 @@ public class ContractVo {
 	private String reg_dtm;
 	private String emp_nm;
 	private String rcd_file_nm;
+	private String prdln_nm;
 }

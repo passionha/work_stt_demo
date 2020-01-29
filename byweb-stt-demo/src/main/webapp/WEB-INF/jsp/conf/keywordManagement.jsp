@@ -2,6 +2,31 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%-- <%@ page import="java.util.*, kr.byweb.stt.demo.conf.model.*" %> --%>
+<%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
+<%
+	String sectionTitle = "";
+	String sel_req_cd = (String)session.getAttribute("sel_req_cd");
+	String contentPage = (String)request.getAttribute("contentPage");
+	List<TmCmCdVo> headerTitles = (List<TmCmCdVo>)session.getAttribute("headerTitles");
+	List<TmCmCdVo> navTitles = (List<TmCmCdVo>)session.getAttribute("navTitles");
+	
+	Iterator<TmCmCdVo> hdIt = headerTitles.iterator();
+	TmCmCdVo hdTitleInfo;
+	while(hdIt.hasNext()){
+		hdTitleInfo = hdIt.next();
+		if(hdTitleInfo.getMenu_id().equals(sel_req_cd)){
+			sectionTitle = hdTitleInfo.getMenu_nm().toString();
+		}
+	}
+	Iterator<TmCmCdVo> navIt = navTitles.iterator();
+	TmCmCdVo navTitleInfo;
+	while(navIt.hasNext()){
+		navTitleInfo = navIt.next();
+		if(navTitleInfo.getMenu_id().equals(sel_req_cd.toString()+"-02")){
+			sectionTitle += " > "+navTitleInfo.getMenu_nm().toString();
+		}
+	}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -434,11 +459,11 @@ function fn_deleteKwdList(){
 </script>
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include>
-<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
+<%-- <jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include> --%>
+<%-- <jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include> --%>
 <div id="wrapper">
 	<section>
-		<h3>녹취파일 분석기준 설정</h3>
+		<h3><%=sectionTitle%></h3>
 		<form name="searchFrm" id="searchFrm" action="getAnalysisStandardList.do" method="post">
 			<div id="searchBar">
 				<ul>
@@ -544,7 +569,7 @@ function fn_deleteKwdList(){
 			</form>
 		</div>
 	</section>
-<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>
+<%-- <jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include> --%>
 </div>
 </body>
 </html>

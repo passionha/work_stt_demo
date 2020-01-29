@@ -1,11 +1,11 @@
 <%-- <%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%> --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String)session.getAttribute("req_dept_cd");
-	String localUrl = request.getServletPath().toString();
-	if(localUrl.equals("/WEB-INF/jsp/main.jsp")){
-		localUrl = "/WEB-INF/jsp/common/mainSection.jsp";
+	String contentPage = (String)request.getAttribute("contentPage");
+	if(contentPage==null){
+		contentPage = "common/mainSection";
 	}
+	contentPage = "/WEB-INF/jsp/"+contentPage+".jsp";
 %>
 <!DOCTYPE html>
 <html>
@@ -45,7 +45,7 @@
 		<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
 	</div>
 	<div id="section">
-		<jsp:include page="<%=localUrl%>"></jsp:include>
+		<jsp:include page="<%=contentPage%>"></jsp:include>
 	</div>
 	<div id="footer">
 		<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>

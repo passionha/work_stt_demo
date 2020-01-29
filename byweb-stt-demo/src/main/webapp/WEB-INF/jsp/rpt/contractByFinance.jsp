@@ -1,18 +1,44 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
+<%
+	String sectionTitle = "";
+	String sel_req_cd = (String)session.getAttribute("sel_req_cd");
+	String contentPage = (String)request.getAttribute("contentPage");
+	List<TmCmCdVo> headerTitles = (List<TmCmCdVo>)session.getAttribute("headerTitles");
+	List<TmCmCdVo> navTitles = (List<TmCmCdVo>)session.getAttribute("navTitles");
+	
+	Iterator<TmCmCdVo> hdIt = headerTitles.iterator();
+	TmCmCdVo hdTitleInfo;
+	while(hdIt.hasNext()){
+		hdTitleInfo = hdIt.next();
+		if(hdTitleInfo.getMenu_id().equals(sel_req_cd)){
+			sectionTitle = hdTitleInfo.getMenu_nm().toString();
+		}
+	}
+	Iterator<TmCmCdVo> navIt = navTitles.iterator();
+	TmCmCdVo navTitleInfo;
+	while(navIt.hasNext()){
+		navTitleInfo = navIt.next();
+		if(navTitleInfo.getMenu_id().equals(sel_req_cd.toString()+"-01")){
+			sectionTitle += " > "+navTitleInfo.getMenu_nm().toString();
+		}
+	}
+%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>회사별 제출현황</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style type="text/css">
 	body {
 		color: black;
 		width: 1400px;
 	}
 
-	#wrapper {
+	#wrap {
 		width: 100%;
 		text-align: left;
 		min-height: 300px;
@@ -28,15 +54,15 @@
 		width: 1235px;
 	}
 	
-	#wrapper li {
+	#wrap li {
 		display: inline;
 	}
 	
-	#wrapper li:nth-child(2), :nth-child(5) {
+	#wrap li:nth-child(2), :nth-child(5) {
 		padding-right: 5px;
 	}
 	
-	#wrapper li:nth-child(3) {
+	#wrap li:nth-child(3) {
 		padding-right: 100px;
 	}
 	
@@ -64,7 +90,7 @@ function fn_search(){
 	if(fn_validDate(document.getElementById("edate"))){
 		return;
 	}
-	
+	var frm = document.getElementById("frm");
 	frm.submit();
 }
 
@@ -72,7 +98,7 @@ function fn_search(){
 function fn_delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 	//sbm_dt .포맷 변경 필요
 	if(confirm('[ '+fin_nm+' / 제출일 : '+sbm_dt+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
-		var frm = document.getElementById("frm_del");
+		var frm_del = document.getElementById("frm_del");
 		
 		document.getElementById("del_sdate").value = document.getElementById("sdate").value;
 		document.getElementById("del_edate").value = document.getElementById("edate").value;
@@ -80,7 +106,7 @@ function fn_delContract(fin_nm, sbm_dt, fin_cd, req_dt){
 		document.getElementById("del_fin_cd").value = fin_cd;
 		document.getElementById("del_req_dt").value = req_dt;
 		
-		frm.submit();
+		frm_del.submit();
 	}else{
 		return;
 	}
@@ -128,7 +154,7 @@ function fn_onlyNum(value) {
 }
 
 //제출일자 입력 시 '-' 자동 입력
-function fn_addSlash( event, obj ){
+function fn_addDash( event, obj ){
     var num_arr = [ 
         97, 98, 99, 100, 101, 102, 103, 104, 105, 96,
         48, 49, 50, 51, 52, 53, 54, 55, 56, 57
@@ -147,16 +173,24 @@ function fn_excel(){
 	frm.action = 'getContract_exl.do';
 	frm.submit();
 }
+
+//녹취파일 계약정보 화면 전환
+function fn_goDetail(idx){
+	document.getElementById("det_cls_cd").value = $('input[name="clist_cls_cd"]').eq(idx).val();
+	document.getElementById("det_req_dept_cd").value = $('input[name="clist_req_dept_cd"]').eq(idx).val();
+	document.getElementById("det_fin_cd").value = $('input[name="clist_fin_cd"]').eq(idx).val();
+	document.getElementById("det_req_dt").value = $('input[name="clist_req_dt"]').eq(idx).val();
+	
+	var frm_goDetail = document.getElementById("frm_goDetail");
+	frm_goDetail.submit();
+}
+
 </script>
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include>
-<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
-<div id="wrapper">
-<%-- <%@ include file="/WEB-INF/jsp/common/header.jsp" %> --%>
-<%-- <%@ include file="/WEB-INF/jsp/common/nav.jsp" %> --%>
+<div id="wrap">
 	<section>
-		<h3>회사별 제출현황</h3>
+		<h3><%=sectionTitle%></h3>
 		<form id="frm" action="getContractList.do" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀" onclick="fn_excel()">
@@ -207,10 +241,14 @@ function fn_excel(){
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="conList" items="${conList}" begin="0" step="1">
+				<c:forEach var="conList" items="${conList}" begin="0" step="1" varStatus="status">
 				<fmt:parseDate value="${conList.req_dt}" var="fmt_req_dt" pattern="yyyyMMdd"/>
 				<fmt:parseDate value="${conList.sbm_dt}" var="fmt_sbm_dt" pattern="yyyyMMdd"/>
-				<tr>
+				<input type="hidden" id="clist_cls_cd" name="clist_cls_cd" value="${conList.cls_cd}">
+				<input type="hidden" id="clist_req_dept_cd" name="clist_req_dept_cd" value="${conList.req_dept_cd}">
+				<input type="hidden" id="clist_fin_cd" name="clist_fin_cd" value="${conList.fin_cd}">
+				<input type="hidden" id="clist_req_dt" name="clist_req_dt" value="${conList.req_dt}">
+				<tr ondblclick="fn_goDetail('${status.index}')">
 					<td>${conList.fin_nm}</td>
 					<td>${conList.sbm_file_nm}</td>
 					<td><fmt:formatDate value="${fmt_req_dt}" pattern="yyyy-MM-dd"/></td>
@@ -226,6 +264,12 @@ function fn_excel(){
 				</c:forEach>
 			</tbody>
 		</table>
+		<form id="frm_goDetail" name="frm_goDetail" method="post" action="getContractDetailList.do">
+			<input type="hidden" id="det_cls_cd" name="cls_cd">
+			<input type="hidden" id="det_req_dept_cd" name="req_dept_cd">
+			<input type="hidden" id="det_fin_cd" name="fin_cd">
+			<input type="hidden" id="det_req_dt" name="req_dt">
+		</form>
 		<form id="frm_del" name="frm_del" method="post" action="delContract.do" target="_self">
 			<input type="hidden" id="del_fin_cd" name="fin_cd">
 			<input type="hidden" id="del_req_dt" name="req_dt">
@@ -243,8 +287,6 @@ function fn_excel(){
 			<input type="hidden" id="org_edate" name="org_edate" value="${edate}">
 		</form>
 	</section>
-<%-- <%@ include file="/WEB-INF/jsp/common/footer.jsp" %> --%>
-<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>
 </div>
 </body>
 </html>

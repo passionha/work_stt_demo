@@ -1,5 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.*" %>
+<%
+	List<String> navTitles = (List<String>)session.getAttribute("navTitles");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,13 +25,11 @@
 	<nav>
 	<% if(session.getAttribute("req_dept_cd") != null){ %>
 		<ul>
-			<li><a href="getContractList.do">회사별 제출현황</a></li>
-			<br>
-			<li><a href="getAnlysStdList.do">분석기준 설정</a></li>
-			<br>
-			<li><a href="">결과 확인</a></li>
-			<br>
-			<li><a href="">상품군 관리</a></li>
+			<c:forEach var="navTitles" items="${navTitles}" begin="0" step="1">
+			<c:if test="${navTitles.menu_level == '2'}">
+			<li><a href="${navTitles.menu_url}">${navTitles.menu_nm}</a></li>
+			</c:if>
+			</c:forEach>
 		</ul>
 	<% } %>
 	</nav>

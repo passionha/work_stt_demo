@@ -42,6 +42,7 @@ public class KeywordManagementController {
 	 */
 	@RequestMapping("/getAnlysStdList.do")
 	public String getAnlysStdList(HttpSession session, HttpServletRequest request, Model model) {
+		model.addAttribute("contentPage", "conf/keywordManagement");
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
 		String use_yn = request.getParameter("use_yn") == null ? "" : request.getParameter("use_yn");
@@ -76,7 +77,7 @@ public class KeywordManagementController {
 			e.printStackTrace();
 		}
 		
-		return "conf/keywordManagement";
+		return "main";
 	}
 	
 	/**

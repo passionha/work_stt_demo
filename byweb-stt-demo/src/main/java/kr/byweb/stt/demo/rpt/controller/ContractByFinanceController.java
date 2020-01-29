@@ -42,6 +42,7 @@ public class ContractByFinanceController {
 	 */
 	@RequestMapping("/getContractList.do")
 	public String getContractList(HttpSession session, HttpServletRequest request, Model model) {
+		model.addAttribute("contentPage", "rpt/contractByFinance");
 		Map pMap1 = new HashMap();
 		Map pMap2 = new HashMap();
 		String fin_cd = "";
@@ -78,16 +79,16 @@ public class ContractByFinanceController {
 			}
 		}
 		
-		String cls_cd = "";
+		String class_cd = "";
 		switch(req_dept_cd) {
 		case "1" :
-			cls_cd = "050100";
+			class_cd = "050100";
 			break;
 		case "2" :
-			cls_cd = "050200";
+			class_cd = "050200";
 			break;
 		case "3" :
-			cls_cd = "ALL";
+			class_cd = "ALL";
 			break;
 		}
 		
@@ -95,7 +96,7 @@ public class ContractByFinanceController {
 		model.addAttribute("edate", edate);
 		model.addAttribute("fin_cd", fin_cd);
 		
-		pMap1.put("cls_cd", cls_cd);
+		pMap1.put("cls_cd", class_cd);
 		pMap1.put("sdate", sdate);
 		
 		pMap2.put("req_dept_cd", req_dept_cd);
@@ -112,7 +113,7 @@ public class ContractByFinanceController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "rpt/contractByFinance";
+		return "main";
 	}
 	
 	/**

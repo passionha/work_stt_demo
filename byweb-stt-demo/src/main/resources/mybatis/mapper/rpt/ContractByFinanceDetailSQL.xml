@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.byweb.stt.demo.rpt.mapper.ContractByFinanceDetailMapper">
+	<!-- 녹취파일 계약정보 목록 조회 -->
+	<select id="getContractDetailList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rpt.model.ContractVo">
+		SELECT
+		      T.*
+		    , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=T.FIN_CD) AS FIN_NM
+		    , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE CLS_CD = T.CLS_CD AND REQ_DEPT_CD = T.REQ_DEPT_CD AND PRDLN_CD = T.PRDLN_CD) AS PRDLN_NM
+		    , DECODE(T.TRNS_STTS, '4', DECODE(T.REQ_YN, 'Y', '변환요청', '업로드완료'), (SELECT CD_NM FROM TM_CD_INF WHERE GRP_CD = 'AnlySt' AND USE_YN = 'Y' AND CD = NVL(T.TRNS_STTS, '4')))||'('||NVL(COMPL_CNT, '0' ) || '/' || TOT_CNT||')' AS ANLY_ST
+		FROM
+		    (SELECT A.*
+		        , B.TRNS_STTS
+		        , B.COMPL_CNT
+		        , B.PDESC_FILE_PATH
+		        , B.PDESC_FILE_NM
+		        , B.HPYCL_FILE_PATH
+		        , B.HPYCL_FILE_NM
+		        , B.SAVE_FILE_PATH
+		        , B.SAVE_FILE_NM
+		        , (SELECT COUNT(*) FROM RR_TM002
+		           WHERE CLS_CD=A.CLS_CD AND REQ_DEPT_CD=A.REQ_DEPT_CD
+		                AND FIN_CD=A.FIN_CD AND REQ_DT=A.REQ_DT
+		                AND SCRTS_NO=A.SCRTS_NO 
+		          ) AS TOT_CNT
+		        , (SELECT REQ_YN FROM TM_FLUPL_INF WHERE SAVE_FILE_NM=B.SAVE_FILE_NM) AS REQ_YN
+		     FROM RR_TM001 A, (
+		        SELECT * FROM (
+		            SELECT
+		                  CLS_CD
+		                , REQ_DEPT_CD
+		                , FIN_CD
+		                , REQ_DT
+		                , PRDLN_CD
+		                , SCRTS_NO
+		                , NVL2(FILE_SPR, FILE_NM, SAVE_FILE_NM) AS FILE_NM
+		                , FILE_PATH
+		                , NVL(FILE_SPR, '3') AS FILE_SPR
+		                , MAX(DECODE(FILE_SPR, NULL, TRNS_STTS, NULL)
+		                  ) OVER(PARTITION BY CLS_CD, REQ_DEPT_CD, FIN_CD, REQ_DT, PRDLN_CD, SCRTS_NO) AS TRNS_STTS
+		                , COUNT(DISTINCT CASE WHEN FILE_SPR IS NULL THEN FILE_NM END) OVER(PARTITION BY CLS_CD, REQ_DEPT_CD, FIN_CD, REQ_DT, PRDLN_CD, SCRTS_NO) AS COMPL_CNT
+		            FROM TM_RCDFL_INF A
+		            WHERE USE_YN='Y'
+		                AND TRNS_STTS NOT IN ('5', '9')
+		        ) PIVOT (
+		            MAX(FILE_NM) AS FILE_NM
+		            , MAX(FILE_PATH) AS FILE_PATH
+		            FOR FILE_SPR IN ('1' AS PDESC, '2' AS HPYCL, '3' AS SAVE)
+		        )
+		     ) B
+		     WHERE A.CLS_CD=B.CLS_CD(+)
+		        AND A.REQ_DEPT_CD=B.REQ_DEPT_CD(+)
+		        AND A.FIN_CD=B.FIN_CD(+)
+		        AND A.REQ_DT=B.REQ_DT(+)
+		        AND A.PRDLN_CD=B.PRDLN_CD(+)
+		        AND A.SCRTS_NO=B.SCRTS_NO(+)
+		        AND A.CLS_CD=#{cls_cd}
+		        AND A.REQ_DEPT_CD=#{req_dept_cd}
+		        AND A.FIN_CD=#{fin_cd}
+		        AND A.REQ_DT=#{req_dt}
+				<if test="scrts_no != ''">
+		        AND A.SCRTS_NO LIKE '%'||#{scrts_no}||'%'
+		        </if>
+				<if test="prdln_cd != ''">
+				<if test="prdln_cd != 'ALL'">
+		        AND A.PRDLN_CD=#{prdln_cd}
+		        </if>
+		        </if>
+		        <if test="ctt_sdate != ''">
+		        <if test="ctt_edate != ''">
+		        AND A.CTT_DT BETWEEN #{ctt_sdate} AND #{ctt_edate}
+		        </if>
+		        </if>
+		) T
+		ORDER BY T.SCRTS_NO, T.PRDLN_CD
+	</select>
+</mapper>
