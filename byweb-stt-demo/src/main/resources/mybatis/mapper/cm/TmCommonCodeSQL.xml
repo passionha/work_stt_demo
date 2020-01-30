@@ -8,7 +8,8 @@
 		    , MENU_NM
 		FROM TM_MENU_MNG
 		WHERE
-		    UPPER_MENU_ID = 'TM'
+			  UPPER_MENU_ID = 'TM'
+		  AND USE_YN = 'Y'
 	</select>
 	
 	<!-- 네비 타이틀 목록 조회 -->
@@ -20,7 +21,8 @@
 		    , MENU_LEVEL
 		    , UPPER_MENU_ID
 		FROM TM_MENU_MNG
-		START WITH UPPER_MENU_ID = 'TM-01'
+		WHERE USE_YN = 'Y'
+		START WITH UPPER_MENU_ID = #{req_cd}
 		CONNECT BY UPPER_MENU_ID  = PRIOR MENU_ID
 	</select>
 	

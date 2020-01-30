@@ -43,8 +43,8 @@ public class ContractByFinanceController {
 	@RequestMapping("/getContractList.do")
 	public String getContractList(HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "rpt/contractByFinance");
-		Map pMap1 = new HashMap();
-		Map pMap2 = new HashMap();
+		Map finPMap = new HashMap();
+		Map conPMap = new HashMap();
 		String fin_cd = "";
 		String sdate = "";
 		String edate = "";
@@ -58,10 +58,6 @@ public class ContractByFinanceController {
 			sdate = (String) inputFlashMap.get("sdate");
 			edate = (String) inputFlashMap.get("edate");
 			fin_cd = (String) inputFlashMap.get("fin_cd");
-			
-			System.out.println("====================*** : "+sdate);
-			System.out.println("====================*** : "+edate);
-			System.out.println("====================*** : "+fin_cd);
 		}else {
 			fin_cd = request.getParameter("sel_fin_cd") == null ? "" : (String) request.getParameter("sel_fin_cd");
 			
@@ -96,19 +92,19 @@ public class ContractByFinanceController {
 		model.addAttribute("edate", edate);
 		model.addAttribute("fin_cd", fin_cd);
 		
-		pMap1.put("cls_cd", class_cd);
-		pMap1.put("sdate", sdate);
+		finPMap.put("cls_cd", class_cd);
+		finPMap.put("sdate", sdate);
 		
-		pMap2.put("req_dept_cd", req_dept_cd);
-		pMap2.put("fin_cd", fin_cd);
-		pMap2.put("sdate", sdate);
-		pMap2.put("edate", edate);
+		conPMap.put("req_dept_cd", req_dept_cd);
+		conPMap.put("fin_cd", fin_cd);
+		conPMap.put("sdate", sdate);
+		conPMap.put("edate", edate);
 		
 		try {
-			List<TmCmCdVo> finList = tmCommonCodeService.getReqDeptList(pMap1);
+			List<TmCmCdVo> finList = tmCommonCodeService.getReqDeptList(finPMap);
 			model.addAttribute("finList", finList);
 			
-			List<ContractVo> conList = contractByFinanceService.getContractList(pMap2);
+			List<ContractVo> conList = contractByFinanceService.getContractList(conPMap);
 			model.addAttribute("conList", conList);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,17 +121,15 @@ public class ContractByFinanceController {
 	public String delContract(HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		List<Map> files = new ArrayList<Map>();
-		
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
-		
 		String sdate = request.getParameter("sdate") == null ? "" : (String) request.getParameter("sdate");
 		String edate = request.getParameter("edate") == null ? "" : (String) request.getParameter("edate");
 		String sel_fin_cd = request.getParameter("sel_fin_cd") == null ? "" : (String) request.getParameter("sel_fin_cd");
-		
+		String cls_cd = request.getParameter("cls_cd") == null ? "" : (String) request.getParameter("cls_cd");
 		String fin_cd = request.getParameter("fin_cd") == null ? "" : (String) request.getParameter("fin_cd");
 		String req_dt = request.getParameter("req_dt") == null ? "" : (String) request.getParameter("req_dt");
 		
-		//cls_cd 필요
+		pMap.put("cls_cd", cls_cd);
 		pMap.put("req_dept_cd", req_dept_cd);
 		pMap.put("fin_cd", fin_cd);
 		pMap.put("req_dt", req_dt);
@@ -145,7 +139,7 @@ public class ContractByFinanceController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		/*
 		//property설정 필요
 		String rootPath = "";
 		String rcdFilePath = "";
@@ -182,9 +176,7 @@ public class ContractByFinanceController {
 				e.printStackTrace();
 			}
 		}
-		
-		System.out.println("==================="+fin_cd+", "+req_dt);
-		System.out.println("==================="+fin_cd+", "+sdate+", "+edate);
+		*/
 		
 		//redirect경로로 전달할 파라미터 저장
 		redirectAttributes.addFlashAttribute("fin_cd", sel_fin_cd);
@@ -195,7 +187,7 @@ public class ContractByFinanceController {
 	}
 	
 	/**
-	 * 엑셀 다운로드
+	 * 회사별 제출현황 엑셀 다운로드
 	 * @param model
 	 * @return
 	 */
@@ -216,7 +208,7 @@ public class ContractByFinanceController {
 		try {
 			List<ContractVo> conList = contractByFinanceService.getContractList(pMap2);
 			model.addAttribute("conList", conList);
-			model.addAttribute("filename", "계약정보.xls");
+			model.addAttribute("filename", "제출현황.xls");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

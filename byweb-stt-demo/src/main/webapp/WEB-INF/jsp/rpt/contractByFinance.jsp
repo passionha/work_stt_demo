@@ -95,18 +95,21 @@ function fn_search(){
 }
 
 //계약정보 삭제
-function fn_delContract(fin_nm, sbm_dt, fin_cd, req_dt){
-	//sbm_dt .포맷 변경 필요
-	if(confirm('[ '+fin_nm+' / 제출일 : '+sbm_dt+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
+function fn_delContract(cls_cd, req_dt, fin_cd, fin_nm, sbm_dt){
+	//메시지 내 sbm_dt 포맷 변경 필요
+	var sbmDt_dash = sbm_dt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+	if(confirm('[ '+fin_nm+' / 제출일 : '+sbmDt_dash+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
 		var frm_del = document.getElementById("frm_del");
 		
-		document.getElementById("del_sdate").value = document.getElementById("sdate").value;
-		document.getElementById("del_edate").value = document.getElementById("edate").value;
+		document.getElementById("del_sdate").value = document.getElementById("sdate").value.replace(/[^0-9]/g, "");
+		document.getElementById("del_edate").value = document.getElementById("edate").value.replace(/[^0-9]/g, "");
 		document.getElementById("del_sel_fin_cd").value = document.getElementById("sel_fin_cd").value;
+		document.getElementById("del_cls_cd").value = cls_cd;
 		document.getElementById("del_fin_cd").value = fin_cd;
 		document.getElementById("del_req_dt").value = req_dt;
 		
 		frm_del.submit();
+		alert("삭제되었습니다.");
 	}else{
 		return;
 	}
@@ -177,7 +180,6 @@ function fn_excel(){
 //녹취파일 계약정보 화면 전환
 function fn_goDetail(idx){
 	document.getElementById("det_cls_cd").value = $('input[name="clist_cls_cd"]').eq(idx).val();
-	document.getElementById("det_req_dept_cd").value = $('input[name="clist_req_dept_cd"]').eq(idx).val();
 	document.getElementById("det_fin_cd").value = $('input[name="clist_fin_cd"]').eq(idx).val();
 	document.getElementById("det_req_dt").value = $('input[name="clist_req_dt"]').eq(idx).val();
 	
@@ -245,7 +247,6 @@ function fn_goDetail(idx){
 				<fmt:parseDate value="${conList.req_dt}" var="fmt_req_dt" pattern="yyyyMMdd"/>
 				<fmt:parseDate value="${conList.sbm_dt}" var="fmt_sbm_dt" pattern="yyyyMMdd"/>
 				<input type="hidden" id="clist_cls_cd" name="clist_cls_cd" value="${conList.cls_cd}">
-				<input type="hidden" id="clist_req_dept_cd" name="clist_req_dept_cd" value="${conList.req_dept_cd}">
 				<input type="hidden" id="clist_fin_cd" name="clist_fin_cd" value="${conList.fin_cd}">
 				<input type="hidden" id="clist_req_dt" name="clist_req_dt" value="${conList.req_dt}">
 				<tr ondblclick="fn_goDetail('${status.index}')">
@@ -259,18 +260,18 @@ function fn_goDetail(idx){
 					<td>${conList.mismatch_cnt}</td>
 					<td><input type="button" value="업로드" onclick="fn_openUploadPop('${conList.fin_cd}', '${conList.req_dt}')"></td>
 					<td>${conList.anly_st}</td>
-					<td><input type="button" value="삭제" onclick="fn_delContract('${conList.fin_nm}', '${conList.sbm_dt}', '${conList.fin_cd}', '${conList.req_dt}')"></td>
+					<td><input type="button" value="삭제" onclick="fn_delContract('${conList.cls_cd}','${conList.req_dt}','${conList.fin_cd}','${conList.fin_nm}','${conList.sbm_dt}')"></td>
 				</tr>
 				</c:forEach>
 			</tbody>
 		</table>
 		<form id="frm_goDetail" name="frm_goDetail" method="post" action="getContractDetailList.do">
 			<input type="hidden" id="det_cls_cd" name="cls_cd">
-			<input type="hidden" id="det_req_dept_cd" name="req_dept_cd">
 			<input type="hidden" id="det_fin_cd" name="fin_cd">
 			<input type="hidden" id="det_req_dt" name="req_dt">
 		</form>
 		<form id="frm_del" name="frm_del" method="post" action="delContract.do" target="_self">
+			<input type="hidden" id="del_cls_cd" name="cls_cd">
 			<input type="hidden" id="del_fin_cd" name="fin_cd">
 			<input type="hidden" id="del_req_dt" name="req_dt">
 			<input type="hidden" id="del_sdate" name="sdate">

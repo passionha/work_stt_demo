@@ -91,7 +91,7 @@ function fn_search(){
 		return;
 	}*/
 	var idx = $("#sel_fin_cd option").index( $("#sel_fin_cd option:selected") );
-	document.getElementById("det_cls_cd").value = $('input[name="fin_cls_cd"]').eq(idx).val();
+	document.getElementById("det_class_cd").value = $('input[name="fin_cls_cd"]').eq(idx).val();
 	var frm = document.getElementById("frm");
 	frm.submit();
 }
@@ -127,6 +127,13 @@ function fn_validDate(obj){
 function fn_onlyNum(value) {
     return value.replace(/[^0-9]/g,"");
 }
+
+//엑셀 다운로드
+function fn_excel(){
+	var frm = document.getElementById("frm_exl");
+	frm.action = 'getContractDetail_exl.do';
+	frm.submit();
+}
 </script>
 </head>
 <body>
@@ -134,7 +141,7 @@ function fn_onlyNum(value) {
 	<section>
 		<h3><%=sectionTitle%></h3>
 		<form id="frm" action="getContractDetailList.do" method="post">
-			<input type="hidden" id="det_cls_cd" name="det_cls_cd">
+			<input type="hidden" id="det_class_cd" name="det_class_cd">
 			<div id="btn_top">
 				<input type="button" value="녹취파일변환" onclick="">
 				<input type="button" value="엑셀" onclick="fn_excel()">
@@ -148,13 +155,15 @@ function fn_onlyNum(value) {
 					<li>
 						<select id="sel_fin_cd" name="fin_cd">
 							<c:forEach var="finList" items="${finList}" begin="0" step="1">
-								<c:if test="${finList.finance_cd != 'ALL' || finList.finance_cd != 'SEL'}">
+								<c:if test="${finList.finance_cd ne 'ALL'}">
 								<option value="${finList.finance_cd}" <c:if test="${fin_cd eq finList.finance_cd}">selected</c:if>>${finList.finance_name}</option>
 								</c:if>
 							</c:forEach>
 						</select>
 						<c:forEach var="finList" items="${finList}" begin="0" step="1">
+							<c:if test="${finList.finance_cd ne 'ALL'}">
 							<input type="hidden" name="fin_cls_cd" value="${finList.class_cd}">
+							</c:if>
 						</c:forEach>
 					</li>
 					
@@ -237,6 +246,15 @@ function fn_onlyNum(value) {
 				</c:forEach>
 			</tbody>
 		</table>
+		<form id="frm_exl" name="frm_exl" method="post" action="getContractDetail_exl.do">
+			<input type="hidden" id="org_cls_cd" name="org_cls_cd" value="${org_cls_cd}">
+			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
+			<input type="hidden" id="org_req_dt" name="org_req_dt" value="${req_dt}">
+			<input type="hidden" id="org_prdln_cd" name="org_prdln_cd" value="${prdln_cd}">
+			<input type="hidden" id="org_scrts_no" name="org_scrts_no" value="${scrts_no}">
+			<input type="hidden" id="org_ctt_sdate" name="org_ctt_sdate" value="${ctt_sdate}">
+			<input type="hidden" id="org_ctt_edate" name="org_ctt_edate" value="${ctt_edate}">
+		</form>
 	</section>
 </div>
 </body>

@@ -28,6 +28,7 @@
 			<c:forEach var="navTitles" items="${navTitles}" begin="0" step="1">
 			<c:if test="${navTitles.menu_level == '2'}">
 			<li><a href="${navTitles.menu_url}">${navTitles.menu_nm}</a></li>
+			<br>
 			</c:if>
 			</c:forEach>
 		</ul>
