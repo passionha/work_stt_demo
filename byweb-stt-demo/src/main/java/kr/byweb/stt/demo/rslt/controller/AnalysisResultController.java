@@ -40,7 +40,7 @@ public class AnalysisResultController {
 		List<TmCmCdVo> finList = new ArrayList<TmCmCdVo>();
 		List<AnlysRsltVo> uplList = new ArrayList<AnlysRsltVo>();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
-		String fin_cd = request.getParameter("fin_cd") == null ? "" : request.getParameter("fin_cd");
+		String fin_cd = request.getParameter("sel_fin_cd") == null ? "" : request.getParameter("sel_fin_cd");
 		
 		//조회조건 회사목록 조회 시 사용될 CLASS_CD를 요청부서에 따라 부여
 		String class_cd = "";
@@ -66,8 +66,8 @@ public class AnalysisResultController {
 		
 		//선택 회사의 업로드파일 조회 시 사용될 권역코드를 CLASS_CD에 따라 부여
 		String sel_cls_cd = "";
-		if(request.getParameter("sel_class_cd") != null) {
-			switch(request.getParameter("sel_class_cd").substring(0, 4)) {
+		if(request.getParameter("upl_class_cd") != null) {
+			switch(request.getParameter("upl_class_cd").substring(0, 4)) {
 			case "0501" :
 				sel_cls_cd = "1";
 				break;

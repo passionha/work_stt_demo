@@ -74,4 +74,44 @@
 		) T
 		ORDER BY T.SCRTS_NO, T.PRDLN_CD
 	</select>
+	
+	<!-- TM_FLUPL_INF 목록 변환 요청 -->
+	<update id="updateAnalysisUploadFile" parameterType="java.util.Map">
+		UPDATE
+		    TM_FLUPL_INF
+		SET
+		      REQ_YN = 'Y'
+		    , TRNS_STTS = '4'
+		WHERE SAVE_FILE_NM IN (
+		    SELECT DISTINCT A.SAVE_FILE_NM
+		    FROM TM_FLUPL_INF A, (SELECT * FROM TM_RCDFL_INF WHERE USE_YN = 'Y') B
+		    WHERE A.CLS_CD = B.CLS_CD
+		      AND A.REQ_DEPT_CD = B.REQ_DEPT_CD
+		      AND A.REQ_DT = B.REQ_DT
+		      AND A.FIN_CD = B.FIN_CD
+		      AND A.UPL_SPR = B.UPL_SPR
+		      AND A.SAVE_FILE_NM = B.SAVE_FILE_NM
+		      AND A.CLS_CD = #{cls_cd}
+		      AND A.REQ_DEPT_CD = #{req_dept_cd}
+		      AND A.FIN_CD = #{fin_cd}
+		      AND A.REQ_DT = #{req_dt}
+		      AND A.UPL_SPR = '1'
+		      AND A.TRNS_STTS = '4'
+		      AND A.REQ_YN = 'N'
+		)
+	</update>
+	
+	<!-- TM_RCDFL_INF 목록 변환 요청 시 진행상태 변경 -->
+	<update id="updateAnalysisRecordingFile" parameterType="java.util.Map">
+		UPDATE
+		    TM_RCDFL_INF
+		SET TRNS_STTS = '4'
+		WHERE CLS_CD = #{cls_cd}
+		  AND REQ_DEPT_CD = #{req_dept_cd}
+		  AND FIN_CD = #{fin_cd}
+		  AND REQ_DT = #{req_dt}
+		  AND USE_YN = 'Y'
+		  AND TRNS_STTS = '4'
+		  AND UPL_SPR = '1'
+	</update>
 </mapper>

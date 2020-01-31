@@ -31,6 +31,7 @@
 <head>
 <meta charset="UTF-8">
 <title>결과 확인</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style type="text/css">
 	#upl_file_sel {
   		float: left;
@@ -67,20 +68,55 @@
 	#srch_con_rslt ul {
 		border: 3px solid #00b0f0;
 	}
+	
+    #fin_sel_rslt input[name^=chk_hid_lv_] {
+        display:none;
+    }
+/*
+	#fin_sel_rslt input[name^=chk_hid_lv_]:checked ~ul {
+        display: none;
+    }
+*/
 </style>
+<script type="text/javascript">
+//업로드파일 조회
+function fn_selFin(){
+	if(document.getElementById("sel_fin_cd").value == 'SEL'){
+		$("#fin_sel_rslt").children().remove();
+// 		return;
+	}else{
+		var idx = $("#sel_fin_cd option").index( $("#sel_fin_cd option:selected") );
+		document.getElementById("upl_class_cd").value = $('input[name="fin_cls_cd"]').eq(idx).val();
+		document.getElementById('frm_getUplList').submit();
+	}
+}
+
+//트리뷰 +,-이미지 클릭
+function fn_foldClick(lv, idx){
+	if($('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked") == true){
+		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).children('ul').css( 'display', 'none' );
+		console.log($('input[name="chk_hid_lv_'+lv+'"]').eq(idx).children('ul'));
+		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",false);
+	}else{
+		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",true);
+	}
+}
+</script>
 </head>
 <body>
 <div id="wrap">
 	<section>
 		<h3><%=sectionTitle%></h3>
 		<div id="upl_file_sel">
+			<form id="frm_getUplList" action="getAnlysRsltList.do" method="post">
+			<input type="hidden" id="upl_class_cd" name="upl_class_cd">
 			<div id="sel_fin_nm">
 				<h5>> 업로드파일 선택</h5>
 				<ul>
 					<li>▶</li>
 					<li>회사명</li>
 					<li>
-						<select id="sel_fin_cd" name="sel_fin_cd">
+						<select id="sel_fin_cd" name="sel_fin_cd" onchange="fn_selFin()">
 							<option value="SEL" <c:if test="${fin_cd eq ''}">selected</c:if>>선택</option>
 							<c:forEach var="finList" items="${finList}" begin="0" step="1">
 							<c:if test="${finList.finance_cd ne 'ALL'}">
@@ -88,12 +124,45 @@
 							</c:if>
 							</c:forEach>
 						</select>
+						<c:forEach var="finList" items="${finList}" begin="0" step="1">
+							<c:if test="${finList.finance_cd ne 'ALL'}">
+							<input type="hidden" name="fin_cls_cd" value="${finList.class_cd}">
+							</c:if>
+						</c:forEach>
 					</li>
 				</ul>
 			</div>
+			</form>
 			<div id="fin_sel_rslt">
 				<ul>
-					<li>file list treeView</li>
+					<li>
+						<c:forEach var="uplList" items="${uplList}" begin="0" step="1" varStatus="status">
+						<c:if test="${uplList.lv eq '1'}">
+						<input type="checkbox" name="chk_hid_lv_1">
+						<img onclick="fn_foldClick('1', ${status.index})" src="/user/images/icon_plus.jpg">
+						<input type="checkbox" id="upl_fin_nm">
+						<label for="upl_fin_nm">${uplList.node_nm}</label>
+						</c:if>
+						<ul>
+							<li>
+								<c:if test="${uplList.lv eq '2'}">
+								<input type="checkbox" name="chk_hid_lv_2">
+								<img onclick="fn_foldClick('2', ${status.index})" src="/user/images/icon_plus.jpg">
+								<input type="checkbox" id="upl_req_dt">
+								<label for="upl_req_dt">${uplList.node_nm}</label>
+								</c:if>
+								<ul>
+									<c:if test="${uplList.lv eq '3'}">
+									<li>
+										<input type="checkbox" id="chk_[]status1">
+										<label for="chk_[]status1">${uplList.node_nm}</label>
+									</li>
+									</c:if>
+								</ul>
+							</li>
+						</ul>
+						</c:forEach>
+					</li>
 				</ul>
 			</div>
 		</div>

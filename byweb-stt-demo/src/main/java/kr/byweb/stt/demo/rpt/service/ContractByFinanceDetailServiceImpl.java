@@ -19,5 +19,11 @@ public class ContractByFinanceDetailServiceImpl implements ContractByFinanceDeta
 	public List<ContractVo> getContractDetailList(Map pMap) throws Exception {
 		return contractByFinanceDetailMapper.getContractDetailList(pMap);
 	}
+
+	@Override
+	public void setAnalysisAll(Map pMap) throws Exception {
+		contractByFinanceDetailMapper.updateAnalysisUploadFile(pMap);
+		contractByFinanceDetailMapper.updateAnalysisRecordingFile(pMap);
+	}
 	
 }

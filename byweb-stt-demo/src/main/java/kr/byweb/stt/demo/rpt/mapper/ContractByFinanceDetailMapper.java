@@ -10,5 +10,9 @@ import kr.byweb.stt.demo.rpt.model.ContractVo;
 @Mapper
 public interface ContractByFinanceDetailMapper {
 	public List<ContractVo> getContractDetailList(Map pMap) throws Exception;
+
+	public void updateAnalysisUploadFile(Map pMap) throws Exception;
+
+	public void updateAnalysisRecordingFile(Map pMap) throws Exception;
 	
 }

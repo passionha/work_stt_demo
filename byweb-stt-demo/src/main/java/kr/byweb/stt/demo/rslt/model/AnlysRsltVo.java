@@ -110,4 +110,14 @@ public class AnlysRsltVo {
 	   
 	//기타 화면 정의 파라미터
 	private String reg_dt;
+	private String chk;
+	private String up_fin_cd;
+	private String org_fin_cd;
+	private String fin_nm;
+	private String node_nm;
+	private String trns_stts_nm;
+	private String lv;
+	private String col_img_idx;
+	private String expn_img_idx;
+	private String is_leaf;
 }

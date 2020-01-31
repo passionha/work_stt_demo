@@ -84,12 +84,12 @@
 <script type="text/javascript">
 //조회조건 유효성 검사 및 submit
 function fn_search(){
-	/*if(fn_validDate(document.getElementById("sdate"))){
+	if(fn_validDate(document.getElementById("sdate"))){
 		return;
 	}
 	if(fn_validDate(document.getElementById("edate"))){
 		return;
-	}*/
+	}
 	var idx = $("#sel_fin_cd option").index( $("#sel_fin_cd option:selected") );
 	document.getElementById("det_class_cd").value = $('input[name="fin_cls_cd"]').eq(idx).val();
 	var frm = document.getElementById("frm");
@@ -134,6 +134,28 @@ function fn_excel(){
 	frm.action = 'getContractDetail_exl.do';
 	frm.submit();
 }
+
+//녹취파일변환
+function fn_anlysAll(){
+	var req_cnt = 0;
+	$('input[name="conList_trns_stts"]').each(function (i, element) {
+		if($(element).val() == '4' && $('input[name="conList_req_yn"]').eq(i).val() == 'N'){
+			req_cnt++;
+		}
+    });
+	
+	if(req_cnt > 0){
+		if(confirm("STT진행상태가 \'업로드완료\'인 건만 녹취파일 변환요청이 진행됩니다.\n변환요청을 진행하시겠습니까?")){
+			var frm = document.getElementById("frm_anlysAll");
+			frm.action = 'setAnalysisAll.do';
+			frm.submit();
+			alert("녹취파일 변환을 요청하였습니다.");
+		}
+	}else{
+		alert("STT진행상태가 \'업로드완료\'인 건이 존재하지 않습니다.");
+	}
+}
+
 </script>
 </head>
 <body>
@@ -143,7 +165,7 @@ function fn_excel(){
 		<form id="frm" action="getContractDetailList.do" method="post">
 			<input type="hidden" id="det_class_cd" name="det_class_cd">
 			<div id="btn_top">
-				<input type="button" value="녹취파일변환" onclick="">
+				<input type="button" value="녹취파일변환" onclick="fn_anlysAll()">
 				<input type="button" value="엑셀" onclick="fn_excel()">
 				<input type="button" value="조회" onclick="fn_search()">
 			</div>
@@ -243,17 +265,28 @@ function fn_excel(){
 					<td>${conList.rcrt_chnl}</td>
 					<td>${conList.anly_st}</td>
 				</tr>
+				<input type="hidden" name="conList_trns_stts" value="${conList.trns_stts}">
+				<input type="hidden" name="conList_req_yn" value="${conList.req_yn}">
 				</c:forEach>
 			</tbody>
 		</table>
 		<form id="frm_exl" name="frm_exl" method="post" action="getContractDetail_exl.do">
-			<input type="hidden" id="org_cls_cd" name="org_cls_cd" value="${org_cls_cd}">
-			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
-			<input type="hidden" id="org_req_dt" name="org_req_dt" value="${req_dt}">
-			<input type="hidden" id="org_prdln_cd" name="org_prdln_cd" value="${prdln_cd}">
-			<input type="hidden" id="org_scrts_no" name="org_scrts_no" value="${scrts_no}">
-			<input type="hidden" id="org_ctt_sdate" name="org_ctt_sdate" value="${ctt_sdate}">
-			<input type="hidden" id="org_ctt_edate" name="org_ctt_edate" value="${ctt_edate}">
+			<input type="hidden" name="org_cls_cd" value="${org_cls_cd}">
+			<input type="hidden" name="org_fin_cd" value="${fin_cd}">
+			<input type="hidden" name="org_req_dt" value="${req_dt}">
+			<input type="hidden" name="org_prdln_cd" value="${prdln_cd}">
+			<input type="hidden" name="org_scrts_no" value="${scrts_no}">
+			<input type="hidden" name="org_ctt_sdate" value="${ctt_sdate}">
+			<input type="hidden" name="org_ctt_edate" value="${ctt_edate}">
+		</form>
+		<form id="frm_anlysAll" name="frm_anlysAll" method="post" action="setAnalysisAll.do">
+			<input type="hidden" name="org_cls_cd" value="${org_cls_cd}">
+			<input type="hidden" name="org_fin_cd" value="${fin_cd}">
+			<input type="hidden" name="org_req_dt" value="${req_dt}">
+			<input type="hidden" name="org_prdln_cd" value="${prdln_cd}">
+			<input type="hidden" name="org_scrts_no" value="${scrts_no}">
+			<input type="hidden" name="org_ctt_sdate" value="${ctt_sdate}">
+			<input type="hidden" name="org_ctt_edate" value="${ctt_edate}">
 		</form>
 	</section>
 </div>
