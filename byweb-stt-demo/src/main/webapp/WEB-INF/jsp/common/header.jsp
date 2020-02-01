@@ -1,9 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*" %>
-<%
-	List<String> headerTitles = (List<String>)session.getAttribute("headerTitles");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +29,7 @@
 	<header>
 		<div>
 			<ul>
-				<c:forEach var="headerTitles" items="${headerTitles}" begin="0" step="1">
+				<c:forEach var="headerTitles" items="${sessionScope.headerTitles}" begin="0" step="1">
 				<li onclick="fn_sbmReqCd('${headerTitles.menu_id}')">${headerTitles.menu_nm}</li>
 				</c:forEach>
 			</ul>

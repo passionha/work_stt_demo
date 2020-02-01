@@ -3,30 +3,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%-- <%@ page import="java.util.*, kr.byweb.stt.demo.conf.model.*" %> --%>
 <%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
-<%
-	String sectionTitle = "";
-	String sel_req_cd = (String)session.getAttribute("sel_req_cd");
-	String contentPage = (String)request.getAttribute("contentPage");
-	List<TmCmCdVo> headerTitles = (List<TmCmCdVo>)session.getAttribute("headerTitles");
-	List<TmCmCdVo> navTitles = (List<TmCmCdVo>)session.getAttribute("navTitles");
-	
-	Iterator<TmCmCdVo> hdIt = headerTitles.iterator();
-	TmCmCdVo hdTitleInfo;
-	while(hdIt.hasNext()){
-		hdTitleInfo = hdIt.next();
-		if(hdTitleInfo.getMenu_id().equals(sel_req_cd)){
-			sectionTitle = hdTitleInfo.getMenu_nm().toString();
-		}
-	}
-	Iterator<TmCmCdVo> navIt = navTitles.iterator();
-	TmCmCdVo navTitleInfo;
-	while(navIt.hasNext()){
-		navTitleInfo = navIt.next();
-		if(navTitleInfo.getMenu_id().equals(sel_req_cd.toString()+"-02")){
-			sectionTitle += " > "+navTitleInfo.getMenu_nm().toString();
-		}
-	}
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -463,7 +439,18 @@ function fn_deleteKwdList(){
 <%-- <jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include> --%>
 <div id="wrapper">
 	<section>
-		<h3><%=sectionTitle%></h3>
+		<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
+			<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
+				<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-02" />
+		<c:forEach var="navTitles" items="${sessionScope.navTitles}">
+			<c:if test="${navTitles.menu_id eq navMenuId}">
+				<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<h3>${sectionTitle}</h3>
 		<form name="searchFrm" id="searchFrm" action="getAnalysisStandardList.do" method="post">
 			<div id="searchBar">
 				<ul>

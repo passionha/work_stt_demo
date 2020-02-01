@@ -2,30 +2,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
-<%
-	String sectionTitle = "";
-	String sel_req_cd = (String)session.getAttribute("sel_req_cd");
-	String contentPage = (String)request.getAttribute("contentPage");
-	List<TmCmCdVo> headerTitles = (List<TmCmCdVo>)session.getAttribute("headerTitles");
-	List<TmCmCdVo> navTitles = (List<TmCmCdVo>)session.getAttribute("navTitles");
-	
-	Iterator<TmCmCdVo> hdIt = headerTitles.iterator();
-	TmCmCdVo hdTitleInfo;
-	while(hdIt.hasNext()){
-		hdTitleInfo = hdIt.next();
-		if(hdTitleInfo.getMenu_id().equals(sel_req_cd)){
-			sectionTitle = hdTitleInfo.getMenu_nm().toString();
-		}
-	}
-	Iterator<TmCmCdVo> navIt = navTitles.iterator();
-	TmCmCdVo navTitleInfo;
-	while(navIt.hasNext()){
-		navTitleInfo = navIt.next();
-		if(navTitleInfo.getMenu_id().equals(sel_req_cd.toString()+"-01")){
-			sectionTitle += " > "+navTitleInfo.getMenu_nm().toString();
-		}
-	}
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -96,7 +72,6 @@ function fn_search(){
 
 //계약정보 삭제
 function fn_delContract(cls_cd, req_dt, fin_cd, fin_nm, sbm_dt){
-	//메시지 내 sbm_dt 포맷 변경 필요
 	var sbmDt_dash = sbm_dt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
 	if(confirm('[ '+fin_nm+' / 제출일 : '+sbmDt_dash+' ]\n해당 행과 모든 데이터를 삭제하시겠습니까?')){
 		var frm_del = document.getElementById("frm_del");
@@ -192,7 +167,18 @@ function fn_goDetail(idx){
 <body>
 <div id="wrap">
 	<section>
-		<h3><%=sectionTitle%></h3>
+		<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
+			<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
+				<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-01" />
+		<c:forEach var="navTitles" items="${sessionScope.navTitles}">
+			<c:if test="${navTitles.menu_id eq navMenuId}">
+				<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<h3>${sectionTitle}</h3>
 		<form id="frm" action="getContractList.do" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀" onclick="fn_excel()">
@@ -213,14 +199,14 @@ function fn_goDetail(idx){
 					<li>▶</li>
 					<li>제출일자</li>
 					<li>
-						<fmt:parseDate value="${sdate}" var="sdate_dt" pattern="yyyyMMdd"/>
-						<input type="text" id="sdate" name="sdate" <c:if test="${sdate ne ''}">value="<fmt:formatDate value="${sdate_dt}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
+						<fmt:parseDate value="${sdate}" var="fmt_sdate" pattern="yyyyMMdd"/>
+						<input type="text" id="sdate" name="sdate" <c:if test="${sdate ne ''}">value="<fmt:formatDate value="${fmt_sdate}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
 						<img src="/user/images/calendar.gif">
 					</li>
 					<li>~</li>
 					<li>
-						<fmt:parseDate value="${edate}" var="edate_dt" pattern="yyyyMMdd"/>
-						<input type="text" id="edate" name="edate" <c:if test="${edate ne ''}">value="<fmt:formatDate value="${edate_dt}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
+						<fmt:parseDate value="${edate}" var="fmt_edate" pattern="yyyyMMdd"/>
+						<input type="text" id="edate" name="edate" <c:if test="${edate ne ''}">value="<fmt:formatDate value="${fmt_edate}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
 						<img src="/user/images/calendar.gif">
 					</li>
 				</ul>

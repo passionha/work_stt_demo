@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
@@ -28,7 +29,7 @@ public class AnalysisResultController {
 	AnalysisResultService analysisResultService;
 	
 	/**
-	 * 회사 업로드파일 목록 조회
+	 * 업로드파일 선택할 회사 목록 조회
 	 * @param model
 	 * @return
 	 */
@@ -36,11 +37,8 @@ public class AnalysisResultController {
 	public String getAnlysRsltList(HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "rslt/analysisResult");
 		Map finPMap = new HashMap();
-		Map uplPMap = new HashMap();
 		List<TmCmCdVo> finList = new ArrayList<TmCmCdVo>();
-		List<AnlysRsltVo> uplList = new ArrayList<AnlysRsltVo>();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
-		String fin_cd = request.getParameter("sel_fin_cd") == null ? "" : request.getParameter("sel_fin_cd");
 		
 		//조회조건 회사목록 조회 시 사용될 CLASS_CD를 요청부서에 따라 부여
 		String class_cd = "";
@@ -64,6 +62,24 @@ public class AnalysisResultController {
 			e.printStackTrace();
 		}
 		
+		model.addAttribute("finList", finList);
+		
+		return "main";
+	}
+	
+	/**
+	 * 선택 회사의 업로드파일 목록 조회
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/getUplFileList.do")
+	@ResponseBody
+	public List<AnlysRsltVo> getKeywordDuplicationList(HttpSession session, HttpServletRequest request, Model model) {
+		Map uplPMap = new HashMap();
+		List<AnlysRsltVo> uplList = new ArrayList<AnlysRsltVo>();
+		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
+		String fin_cd = request.getParameter("sel_fin_cd") == null ? "" : request.getParameter("sel_fin_cd");
 		//선택 회사의 업로드파일 조회 시 사용될 권역코드를 CLASS_CD에 따라 부여
 		String sel_cls_cd = "";
 		if(request.getParameter("upl_class_cd") != null) {
@@ -88,9 +104,7 @@ public class AnalysisResultController {
 				e.printStackTrace();
 			}
 		}
-		model.addAttribute("fin_cd", fin_cd);
-		model.addAttribute("finList", finList);
-		model.addAttribute("uplList", uplList);
-		return "main";
+		return uplList;
 	}
+	
 }

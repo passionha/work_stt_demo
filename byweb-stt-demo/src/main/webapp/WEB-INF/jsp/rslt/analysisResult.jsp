@@ -2,30 +2,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
-<%
-	String sectionTitle = "";
-	String sel_req_cd = (String)session.getAttribute("sel_req_cd");
-	String contentPage = (String)request.getAttribute("contentPage");
-	List<TmCmCdVo> headerTitles = (List<TmCmCdVo>)session.getAttribute("headerTitles");
-	List<TmCmCdVo> navTitles = (List<TmCmCdVo>)session.getAttribute("navTitles");
-	
-	Iterator<TmCmCdVo> hdIt = headerTitles.iterator();
-	TmCmCdVo hdTitleInfo;
-	while(hdIt.hasNext()){
-		hdTitleInfo = hdIt.next();
-		if(hdTitleInfo.getMenu_id().equals(sel_req_cd)){
-			sectionTitle = hdTitleInfo.getMenu_nm().toString();
-		}
-	}
-	Iterator<TmCmCdVo> navIt = navTitles.iterator();
-	TmCmCdVo navTitleInfo;
-	while(navIt.hasNext()){
-		navTitleInfo = navIt.next();
-		if(navTitleInfo.getMenu_id().equals(sel_req_cd.toString()+"-03")){
-			sectionTitle += " > "+navTitleInfo.getMenu_nm().toString();
-		}
-	}
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,11 +59,32 @@
 function fn_selFin(){
 	if(document.getElementById("sel_fin_cd").value == 'SEL'){
 		$("#fin_sel_rslt").children().remove();
-// 		return;
+		return;
 	}else{
 		var idx = $("#sel_fin_cd option").index( $("#sel_fin_cd option:selected") );
 		document.getElementById("upl_class_cd").value = $('input[name="fin_cls_cd"]').eq(idx).val();
-		document.getElementById('frm_getUplList').submit();
+		$.ajax({
+			type: "POST",
+	        url: "getUplFileList.do",
+	        data: {
+	        	sel_fin_cd : $("#sel_fin_cd option:selected").val(),
+	        	upl_class_cd : $('input[name="fin_cls_cd"]').eq(idx).val()
+	        },
+	        dataType:"json",
+	        async: false,
+	        success: function(data) {
+	        	console.log("data");
+	        	if(data != ''){
+		        	$.each(data, function(idx, item){
+		        		console.log(data[idx]);
+// 		        		console.log(item);
+		        	});
+	        	}
+	         },
+	         error       :   function(request, status, error){
+	             console.log("AJAX_ERROR");
+	         }
+		});
 	}
 }
 
@@ -106,7 +103,18 @@ function fn_foldClick(lv, idx){
 <body>
 <div id="wrap">
 	<section>
-		<h3><%=sectionTitle%></h3>
+		<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
+			<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
+				<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-03" />
+		<c:forEach var="navTitles" items="${sessionScope.navTitles}">
+			<c:if test="${navTitles.menu_id eq navMenuId}">
+				<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<h3>${sectionTitle}</h3>
 		<div id="upl_file_sel">
 			<form id="frm_getUplList" action="getAnlysRsltList.do" method="post">
 			<input type="hidden" id="upl_class_cd" name="upl_class_cd">

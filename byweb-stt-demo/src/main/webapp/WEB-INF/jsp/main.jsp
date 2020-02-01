@@ -1,12 +1,6 @@
 <%-- <%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%> --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-	String contentPage = (String)request.getAttribute("contentPage");
-	if(contentPage==null){
-		contentPage = "common/mainSection";
-	}
-	contentPage = "/WEB-INF/jsp/"+contentPage+".jsp";
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,7 +39,8 @@
 		<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
 	</div>
 	<div id="section">
-		<jsp:include page="<%=contentPage%>"></jsp:include>
+		<c:set var="contPage" value="/WEB-INF/jsp/${requestScope.contentPage}.jsp" />
+		<jsp:include page="${requestScope.contentPage eq null ? 'common/mainSection.jsp' : contPage}"></jsp:include>
 	</div>
 	<div id="footer">
 		<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>

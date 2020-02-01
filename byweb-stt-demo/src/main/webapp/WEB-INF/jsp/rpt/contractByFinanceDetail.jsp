@@ -2,30 +2,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
-<%
-	String sectionTitle = "";
-	String sel_req_cd = (String)session.getAttribute("sel_req_cd");
-	String contentPage = (String)request.getAttribute("contentPage");
-	List<TmCmCdVo> headerTitles = (List<TmCmCdVo>)session.getAttribute("headerTitles");
-	List<TmCmCdVo> navTitles = (List<TmCmCdVo>)session.getAttribute("navTitles");
-	
-	Iterator<TmCmCdVo> hdIt = headerTitles.iterator();
-	TmCmCdVo hdTitleInfo;
-	while(hdIt.hasNext()){
-		hdTitleInfo = hdIt.next();
-		if(hdTitleInfo.getMenu_id().equals(sel_req_cd)){
-			sectionTitle = hdTitleInfo.getMenu_nm().toString();
-		}
-	}
-	Iterator<TmCmCdVo> navIt = navTitles.iterator();
-	TmCmCdVo navTitleInfo;
-	while(navIt.hasNext()){
-		navTitleInfo = navIt.next();
-		if(navTitleInfo.getMenu_id().equals(sel_req_cd+"-01-01")){
-			sectionTitle += " > "+navTitleInfo.getMenu_nm().toString();
-		}
-	}
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -84,6 +60,7 @@
 <script type="text/javascript">
 //조회조건 유효성 검사 및 submit
 function fn_search(){
+	//회사별-녹계 전환시 / 녹계 재조회 시 계약일(sdate, edate) 최소,최대값 default지정 필요**************************************
 	if(fn_validDate(document.getElementById("sdate"))){
 		return;
 	}
@@ -92,6 +69,9 @@ function fn_search(){
 	}
 	var idx = $("#sel_fin_cd option").index( $("#sel_fin_cd option:selected") );
 	document.getElementById("det_class_cd").value = $('input[name="fin_cls_cd"]').eq(idx).val();
+	document.getElementById("req_dt").value = fn_onlyNum(document.getElementById("req_dt").value);
+	document.getElementById("sdate").value = fn_onlyNum(document.getElementById("sdate").value);
+	document.getElementById("edate").value = fn_onlyNum(document.getElementById("edate").value);
 	var frm = document.getElementById("frm");
 	frm.submit();
 }
@@ -128,6 +108,21 @@ function fn_onlyNum(value) {
     return value.replace(/[^0-9]/g,"");
 }
 
+//계약일 입력 시 '-' 자동 입력
+function fn_addDash( event, obj ){
+    var num_arr = [ 
+        97, 98, 99, 100, 101, 102, 103, 104, 105, 96,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57
+    ]
+    var key_code = ( event.which ) ? event.which : event.keyCode;
+    if( num_arr.indexOf( Number( key_code ) ) != -1 ){
+        var len = obj.value.length;
+        if( len == 4 ) obj.value += "-";
+        if( len == 7 ) obj.value += "-";
+    }
+}
+
+
 //엑셀 다운로드
 function fn_excel(){
 	var frm = document.getElementById("frm_exl");
@@ -161,7 +156,18 @@ function fn_anlysAll(){
 <body>
 <div id="wrap">
 	<section>
-		<h3><%=sectionTitle%></h3>
+		<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
+			<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
+				<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-01-01" />
+		<c:forEach var="navTitles" items="${sessionScope.navTitles}">
+			<c:if test="${navTitles.menu_id eq navMenuId}">
+				<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
+			</c:if>
+		</c:forEach>
+		<h3>${sectionTitle}</h3>
 		<form id="frm" action="getContractDetailList.do" method="post">
 			<input type="hidden" id="det_class_cd" name="det_class_cd">
 			<div id="btn_top">
@@ -192,7 +198,8 @@ function fn_anlysAll(){
 					<li>▶</li>
 					<li>요청일</li>
 					<li>
-						<input type="text" name="req_dt" value="${req_dt}" readonly>
+						<fmt:parseDate value="${req_dt}" var="fmt_req_dt" pattern="yyyyMMdd"/>
+						<input type="text" id="req_dt" name="req_dt" value="<fmt:formatDate value="${fmt_req_dt}" pattern="yyyy-MM-dd"/>" readonly>
 					</li>
 					<br>
 					<li>▶</li>
@@ -216,14 +223,14 @@ function fn_anlysAll(){
 					<li>▶</li>
 					<li>계약일</li>
 					<li>
-						<fmt:parseDate value="${ctt_sdate}" var="sdate_dt" pattern="yyyyMMdd"/>
-						<input type="text" id="sdate" name="ctt_sdate" <c:if test="${ctt_sdate ne ''}">value="<fmt:formatDate value="${sdate_dt}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
+						<fmt:parseDate value="${ctt_sdate}" var="fmt_sdate" pattern="yyyyMMdd"/>
+						<input type="text" id="sdate" name="ctt_sdate" <c:if test="${ctt_sdate ne ''}">value="<fmt:formatDate value="${fmt_sdate}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
 						<img src="/user/images/calendar.gif">
 					</li>
 					<li>~</li>
 					<li>
-						<fmt:parseDate value="${ctt_edate}" var="edate_dt" pattern="yyyyMMdd"/>
-						<input type="text" id="edate" name="ctt_edate" <c:if test="${ctt_edate ne ''}">value="<fmt:formatDate value="${edate_dt}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
+						<fmt:parseDate value="${ctt_edate}" var="fmt_edate" pattern="yyyyMMdd"/>
+						<input type="text" id="edate" name="ctt_edate" <c:if test="${ctt_edate ne ''}">value="<fmt:formatDate value="${fmt_edate}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
 						<img src="/user/images/calendar.gif">
 					</li>
 				</ul>
@@ -249,13 +256,14 @@ function fn_anlysAll(){
 			</thead>
 			<tbody>
 				<c:forEach var="conList" items="${conList}" begin="0" step="1">
+				<fmt:parseDate value="${conList.ctt_dt}" var="fmt_ctt_dt" pattern="yyyyMMdd"/>
 				<fmt:parseDate value="${conList.ctt_stts_efdt}" var="fmt_ctt_stts_efdt" pattern="yyyyMMdd"/>
 				<tr>
 					<td>${conList.fin_nm}</td>
 					<td>${conList.prdln_nm}</td>
 					<td>${conList.scrts_no}</td>
 					<td>${conList.prd_nm}</td>
-					<td>${conList.ctt_dt}</td>
+					<td><fmt:formatDate value="${fmt_ctt_dt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.ctt_stts}</td>
 					<td><fmt:formatDate value="${fmt_ctt_stts_efdt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.cttor_nm}</td>

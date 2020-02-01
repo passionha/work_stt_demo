@@ -57,10 +57,6 @@
 		                AND A.SAVE_FILE_NM=B.SAVE_FILE_NM
 		                AND A.UPL_SPR='1'
 		                AND B.USE_YN='Y'
-		                AND A.REQ_DT=B.REQ_DT
-		                AND A.SAVE_FILE_NM=B.SAVE_FILE_NM
-		                AND A.UPL_SPR='1'
-		                AND B.USE_YN='Y'
 		                AND A.TRNS_STTS != '5'
 		                AND B.TRNS_STTS != '5'
 		            ) C

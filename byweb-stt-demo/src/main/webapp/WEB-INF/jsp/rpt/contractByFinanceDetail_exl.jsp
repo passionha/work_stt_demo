@@ -29,13 +29,14 @@
 			</thead>
 			<tbody>
 				<c:forEach var="conList" items="${conList}" begin="0" step="1">
+				<fmt:parseDate value="${conList.ctt_dt}" var="fmt_ctt_dt" pattern="yyyyMMdd"/>
 				<fmt:parseDate value="${conList.ctt_stts_efdt}" var="fmt_ctt_stts_efdt" pattern="yyyyMMdd"/>
 				<tr>
 					<td>${conList.fin_nm}</td>
 					<td>${conList.prdln_nm}</td>
 					<td>${conList.scrts_no}</td>
 					<td>${conList.prd_nm}</td>
-					<td>${conList.ctt_dt}</td>
+					<td><fmt:formatDate value="${fmt_ctt_dt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.ctt_stts}</td>
 					<td><fmt:formatDate value="${fmt_ctt_stts_efdt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.cttor_nm}</td>
