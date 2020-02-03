@@ -79,5 +79,52 @@
 		ORDER SIBLINGS BY REQ_DT DESC, REG_DT DESC
 	</select>
 	
-	
+	<!-- 선택한 업로드파일의 전체 분석 진행상태 조회 -->
+	<select id="getAnlySttsList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
+		SELECT
+		      CLS_CD
+		    , REQ_DEPT_CD
+		    , FIN_CD
+		    , REQ_DT
+		    , SAVE_FILE_NM
+		    , UPL_FILE_NM
+		    , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=T.FIN_CD) AS FIN_NM
+		    , MAX(TRNS_STTS) AS TRNS_STTS
+		    , MAX(TRNS_STTS_NM) || '(' || SUM(STTS_CNT) || '/' || COUNT(*) || ')' AS TRNS_STTS_NM
+		FROM (
+		    SELECT A.CLS_CD
+		        , A.REQ_DEPT_CD
+		        , A.FIN_CD
+		        , A.REQ_DT
+		        , A.SAVE_FILE_NM
+		        , A.UPL_FILE_NM
+		        , A.TRNS_STTS
+		        , (SELECT CD_NM FROM TM_CD_INF WHERE GRP_CD='AnlySt' AND CD=A.TRNS_STTS) AS TRNS_STTS_NM
+		        , DECODE(B.TRNS_STTS, 0, 1, 1, 1, 0) AS STTS_CNT
+		        , A.REG_DT
+		    FROM TM_FLUPL_INF A, TM_RCDFL_INF B
+		    WHERE A.CLS_CD=B.CLS_CD
+		        AND A.REQ_DEPT_CD=B.REQ_DEPT_CD
+		        AND A.FIN_CD=B.FIN_CD
+		        AND A.SAVE_FILE_NM=B.SAVE_FILE_NM
+		        AND A.UPL_SPR='1'
+		        <if test="fileList == null">
+		        AND B.USE_YN='X'
+		        </if>
+				<if test="fileList != null">
+		        AND B.USE_YN='Y'
+		        AND
+				<foreach collection="fileList" item="fList" separator="OR" open="(" close=")">
+			    (
+			                A.CLS_CD=#{fList.cls_cd}
+			        AND A.REQ_DEPT_CD=#{fList.req_dept_cd}
+			        AND A.FIN_CD=#{fList.fin_cd}
+			        AND A.SAVE_FILE_NM=#{fList.save_file_nm}
+			    )
+		        </foreach>
+		        </if>
+		) T
+		GROUP BY CLS_CD, REQ_DEPT_CD, FIN_CD, REQ_DT, SAVE_FILE_NM, UPL_FILE_NM
+		ORDER BY MAX(REG_DT) ASC
+	</select>
 </mapper>

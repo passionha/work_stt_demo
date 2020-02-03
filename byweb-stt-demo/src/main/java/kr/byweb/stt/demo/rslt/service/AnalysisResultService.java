@@ -7,4 +7,6 @@ import kr.byweb.stt.demo.rslt.model.AnlysRsltVo;
 
 public interface AnalysisResultService {
 	public List<AnlysRsltVo> getUplFileList(Map pMap) throws Exception;
+
+	public List<AnlysRsltVo> getAnlySttsList(Map pMap) throws Exception;
 }

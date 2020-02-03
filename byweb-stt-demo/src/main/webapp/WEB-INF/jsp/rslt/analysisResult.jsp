@@ -64,6 +64,12 @@
         display: none;
     }
 */
+
+	#tot_anlys_stts {
+		white-space:nowrap;
+		overflow: auto;
+		height: 100px;
+	}
 </style>
 <script type="text/javascript">
 //업로드파일 조회
@@ -84,52 +90,45 @@ function fn_selFin(){
 	        dataType:"json",
 	        async: false,
 	        success: function(data) {
-	        	console.log("data");
 	        	if(data != ''){
 	        		var source = "";
-	        		var src_fin_nm = "";
-	        		var src_req_dt = "";
-	        		var scr_file_nm = "";
+// 	        		var sec_fin_cd = null;
 		        	$.each(data, function(idx, item){
 // 		        		console.log(data[idx]);
 // 		        		console.log(item);
-
+						
        					switch(item.lv){
        					case '1':
-       						source="<ul><li>"+
+       						source="<ul><li>"
        							+"<input type=\"checkbox\" name=\"chk_hid_lv_1\">"
 								+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+idx+"\">"
 								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
-								+"<div id=\""+item.fin_cd+"\"></div>"
-								+"</li></ul>"
+								+"<ul></ul>"
+								+"</li></ul>";
 							$("#fin_sel_rslt").append(source);
        						break;
        					case '2':
-       						source="<ul><li>"
+       						source="<li>"
        							+"<input type=\"checkbox\" name=\"chk_hid_lv_2\">"
-								+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+idx+"\">"
+								+"<input type=\"checkbox\" name=\"chk_upl_req_dt\" id=\"chk_upl_fin_nm_"+idx+"\">"
 								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
-								+"<div id=\""+item.fin_cd+"\"></div>"
-								+"</li></ul>"
+								+"<ul></ul>";
+								+"</li>"
+							$("#fin_sel_rslt > ul > li > ul").append(source);
        						break;
        					case '3':
-       						/*source="<ul><li>"
-       							+"<input type=\"checkbox\" name=\"chk_hid_lv_2\">"
-								+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+idx+"\">"
+       						source="<li>"
+       							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+idx+"\" onchange=\"fn_selUplFile(this,"+idx+")\">"
 								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
-								+"<div id=\"div_file_nm\"></div>"
-								+"</li></ul>"
-								*/
+								+"<input type=\"hidden\" id=\"upl_cls_cd_"+idx+"\" name=\"upl_cls_cd\" value=\""+item.cls_cd+"\">"
+       							+"<input type=\"hidden\" id=\"upl_req_dept_cd_"+idx+"\" name=\"upl_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
+       							+"<input type=\"hidden\" id=\"upl_fin_cd_"+idx+"\" name=\"upl_fin_cd\" value=\""+item.fin_cd+"\">"
+       							+"<input type=\"hidden\" id=\"upl_save_file_nm_"+idx+"\" name=\"upl_save_file_nm\" value=\""+item.save_file_nm+"\">"
+								+"</li>"
+							$("#fin_sel_rslt > ul > li > ul > li:last-child > ul").append(source);
        						break;
        					}
 		        	});
-// 		        	source="<ul><li>"+
-// 		        	+"<div id=\"div_req_dt\"></div>"
-// 		        	+"</li></ul>"
-		        	
-// 		        	$("#div_req_dt").append(source);
-// 		        	$("#div_req_dt").append(source);
-					
 					
 					
 	        	}
@@ -150,6 +149,84 @@ function fn_foldClick(lv, idx){
 	}else{
 		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",true);
 	}
+}
+
+function fn_selUplFile(obj, idx){
+	console.log("li changed id : "+obj.id);
+	console.log("li changed idx : "+idx);
+	console.log($("#"+obj.id).is(":checked"))
+	console.log($("#"+"upl_save_file_nm_"+idx).val())
+	var arrJsonObj = new Array();
+		
+	$('input[name="chk_upl_file_nm"]:checked').each(function(index, item){
+		var jsonObj = new Object();
+// 		console.log("siblings : "+$('input[name="chk_upl_file_nm"]:checked').siblings('input[name="upl_save_file_nm"]').val());
+		console.log("siblings : "+$(this).siblings('input[name="upl_save_file_nm"]').val());
+		jsonObj = {
+			cls_cd : $(this).siblings('input[name="upl_cls_cd"]').val(),
+			req_dept_cd : $(this).siblings('input[name="upl_req_dept_cd"]').val(),
+			fin_cd : $(this).siblings('input[name="upl_fin_cd"]').val(),
+			save_file_nm : $(this).siblings('input[name="upl_save_file_nm"]').val()
+		}
+		arrJsonObj.push(jsonObj);
+	});
+// 	if($("#"+obj.id).is(":checked")){
+		/*
+		$("#"+"upl_cls_cd_"+idx).val()
+		$("#"+"upl_req_dept_cd_"+idx).val()
+		$("#"+"upl_fin_cd_"+idx).val()
+		$("#"+"upl_save_file_nm_"+idx).val()
+		*/
+	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
+		$.ajax({
+			type: "POST",
+	        url: "getAnlySttsList.do",
+	        contentType:'application/json; charset=UTF-8',
+            data:JSON.stringify(arrJsonObj),
+	        dataType:"json",
+	        async: false,
+	        success: function(data) {
+	        	if(data != ''){
+// 	        		var source = "";
+		        	$.each(data, function(idx, item){
+// 		        		console.log(data[idx]);
+		        		console.log(item);
+		        		var cls_cd;
+		        		var req_dept_cd;
+		        		var fin_cd;
+		        		var save_file_nm;
+		        		/*
+		        		$('input[name="chked_cls_cd"]').each(function(index, item){
+		        			
+		        		});
+		        		if(){
+		        			continue;
+		        		}*/
+		        		var source = "<tr>"
+			        		+"<td>"+item.fin_nm+"</td>"
+			        		+"<td>"+item.req_dt+"</td>"
+			        		+"<td>"+item.upl_file_nm+"</td>"
+			        		+"<td>"+item.trns_stts_nm+"</td>"
+			        		+"</tr>";
+		        		$("#tot_anlys_stts > table").append(source);
+		        		
+		        		source = "<input type=\"hidden\" name=\"chked_cls_cd\" value=\""+item.cls_cd+"\">"
+							+"<input type=\"hidden\" name=\"chked_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
+							+"<input type=\"hidden\" name=\"chked_fin_cd\" value=\""+item.fin_cd+"\">"
+							+"<input type=\"hidden\" name=\"chked_save_file_nm\" value=\""+item.save_file_nm+"\">"
+						$("#tot_anlys_stts").append(source);
+		        	});
+	        	}
+	         },
+	         error       :   function(request, status, error){
+	             console.log("AJAX_ERROR");
+	         }
+		});
+	}else{
+// 		console.log("진행상태 전부 삭제");
+	}
+		
+// 	}
 }
 </script>
 </head>
@@ -195,71 +272,6 @@ function fn_foldClick(lv, idx){
 			</div>
 			</form>
 			<div id="fin_sel_rslt">
-			<!-- 
-				<ul>
-					<li>
-						<input type="checkbox" name="chk_hid_lv_1">
-						<input type="checkbox" name="chk_upl_fin_nm" id="chk_upl_fin_nm_idx">
-						<label for="chk_upl_fin_nm_idx">금융감독원관리자</label>
-						<ul>
-							<li>
-								<input type="checkbox" name="chk_hid_lv_2">
-								<input type="checkbox" name="chk_upl_req_dt">
-								20200130
-								
-								<ul>
-									<li>
-										<input type="checkbox" name="chk_upl_file">
-										금감원_녹취_3.zip
-									</li>
-								</ul>
-								
-							</li>
-							<li>
-								<input type="checkbox" name="chk_hid_lv_2">
-								<input type="checkbox" name="chk_upl_req_dt">
-								20190920
-								
-								<ul>
-									<li>
-										<input type="checkbox" name="chk_upl_file">
-										금감원_녹취_1.zip
-									</li>
-									<li>
-										<input type="checkbox" name="chk_upl_file">
-										금감원_녹취_2.zip
-									</li>
-								</ul>
-								
-							</li>
-						</ul>
-						
-					</li>
-				</ul>
-				 -->
-				<%-- 
-				<ul>
-					<li>
-						<input type="checkbox" name="chk_hid_lv_1">
-						<img onclick="fn_foldClick('1', ${status.index})" src="/user/images/icon_plus.jpg">
-						<input type="checkbox" id="upl_fin_nm">
-						<label for="upl_fin_nm">${uplList.node_nm}</label>
-						<ul>
-							<li>
-								<input type="checkbox" name="chk_hid_lv_2">
-								<img onclick="fn_foldClick('2', ${status.index})" src="/user/images/icon_plus.jpg">
-								<input type="checkbox" id="upl_req_dt">
-								<label for="upl_req_dt">${uplList.node_nm}</label>
-								<ul>
-									<li>
-										<input type="checkbox" id="chk_[]status1">
-										<label for="chk_[]status1">${uplList.node_nm}</label>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-				</ul> --%>
 			</div>
 		</div>
 		<div id="right_side">
@@ -273,12 +285,12 @@ function fn_foldClick(lv, idx){
 						<th>파일명</th>
 						<th>STT진행상태</th>
 					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
+<!-- 					<tr> -->
+<!-- 						<td></td> -->
+<!-- 						<td></td> -->
+<!-- 						<td></td> -->
+<!-- 						<td></td> -->
+<!-- 					</tr> -->
 				</table>
 			</div>
 			<div id="tot_rslt">

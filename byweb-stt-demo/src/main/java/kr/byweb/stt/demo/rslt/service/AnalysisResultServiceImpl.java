@@ -19,5 +19,10 @@ public class AnalysisResultServiceImpl implements AnalysisResultService{
 	public List<AnlysRsltVo> getUplFileList(Map pMap) throws Exception {
 		return analysisResultMapper.getUplFileList(pMap);
 	}
+
+	@Override
+	public List<AnlysRsltVo> getAnlySttsList(Map pMap) throws Exception {
+		return analysisResultMapper.getAnlySttsList(pMap);
+	}
 	
 }
