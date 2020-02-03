@@ -92,7 +92,6 @@ function fn_selFin(){
 	        success: function(data) {
 	        	if(data != ''){
 	        		var source = "";
-// 	        		var sec_fin_cd = null;
 		        	$.each(data, function(idx, item){
 // 		        		console.log(data[idx]);
 // 		        		console.log(item);
@@ -118,10 +117,11 @@ function fn_selFin(){
        						break;
        					case '3':
        						source="<li>"
-       							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+idx+"\" onchange=\"fn_selUplFile(this,"+idx+")\">"
+       							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+idx+"\" onchange=\"fn_chkUplFile(this,"+idx+")\">"
 								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
 								+"<input type=\"hidden\" id=\"upl_cls_cd_"+idx+"\" name=\"upl_cls_cd\" value=\""+item.cls_cd+"\">"
        							+"<input type=\"hidden\" id=\"upl_req_dept_cd_"+idx+"\" name=\"upl_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
+       							+"<input type=\"hidden\" id=\"upl_req_dt_"+idx+"\" name=\"upl_req_dt\" value=\""+item.req_dt+"\">"
        							+"<input type=\"hidden\" id=\"upl_fin_cd_"+idx+"\" name=\"upl_fin_cd\" value=\""+item.fin_cd+"\">"
        							+"<input type=\"hidden\" id=\"upl_save_file_nm_"+idx+"\" name=\"upl_save_file_nm\" value=\""+item.save_file_nm+"\">"
 								+"</li>"
@@ -151,17 +151,18 @@ function fn_foldClick(lv, idx){
 	}
 }
 
-function fn_selUplFile(obj, idx){
-	console.log("li changed id : "+obj.id);
+function fn_chkUplFile(obj, idx){
+	/* console.log("li changed id : "+obj.id);
 	console.log("li changed idx : "+idx);
 	console.log($("#"+obj.id).is(":checked"))
-	console.log($("#"+"upl_save_file_nm_"+idx).val())
+	console.log($("#"+"upl_save_file_nm_"+idx).val()) */
 	var arrJsonObj = new Array();
-		
-	$('input[name="chk_upl_file_nm"]:checked').each(function(index, item){
+	
+// 	$('input[name="chk_upl_file_nm"]:checked').each(function(index, item){
 		var jsonObj = new Object();
 // 		console.log("siblings : "+$('input[name="chk_upl_file_nm"]:checked').siblings('input[name="upl_save_file_nm"]').val());
-		console.log("siblings : "+$(this).siblings('input[name="upl_save_file_nm"]').val());
+// 		console.log("siblings : "+$(this).siblings('input[name="upl_save_file_nm"]').val());
+		/*
 		jsonObj = {
 			cls_cd : $(this).siblings('input[name="upl_cls_cd"]').val(),
 			req_dept_cd : $(this).siblings('input[name="upl_req_dept_cd"]').val(),
@@ -169,65 +170,76 @@ function fn_selUplFile(obj, idx){
 			save_file_nm : $(this).siblings('input[name="upl_save_file_nm"]').val()
 		}
 		arrJsonObj.push(jsonObj);
-	});
-// 	if($("#"+obj.id).is(":checked")){
-		/*
-		$("#"+"upl_cls_cd_"+idx).val()
-		$("#"+"upl_req_dept_cd_"+idx).val()
-		$("#"+"upl_fin_cd_"+idx).val()
-		$("#"+"upl_save_file_nm_"+idx).val()
 		*/
-	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
-		$.ajax({
-			type: "POST",
-	        url: "getAnlySttsList.do",
-	        contentType:'application/json; charset=UTF-8',
-            data:JSON.stringify(arrJsonObj),
-	        dataType:"json",
-	        async: false,
-	        success: function(data) {
-	        	if(data != ''){
-// 	        		var source = "";
-		        	$.each(data, function(idx, item){
-// 		        		console.log(data[idx]);
-		        		console.log(item);
-		        		var cls_cd;
-		        		var req_dept_cd;
-		        		var fin_cd;
-		        		var save_file_nm;
-		        		/*
-		        		$('input[name="chked_cls_cd"]').each(function(index, item){
-		        			
-		        		});
-		        		if(){
-		        			continue;
-		        		}*/
-		        		var source = "<tr>"
-			        		+"<td>"+item.fin_nm+"</td>"
-			        		+"<td>"+item.req_dt+"</td>"
-			        		+"<td>"+item.upl_file_nm+"</td>"
-			        		+"<td>"+item.trns_stts_nm+"</td>"
-			        		+"</tr>";
-		        		$("#tot_anlys_stts > table").append(source);
-		        		
-		        		source = "<input type=\"hidden\" name=\"chked_cls_cd\" value=\""+item.cls_cd+"\">"
-							+"<input type=\"hidden\" name=\"chked_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
-							+"<input type=\"hidden\" name=\"chked_fin_cd\" value=\""+item.fin_cd+"\">"
-							+"<input type=\"hidden\" name=\"chked_save_file_nm\" value=\""+item.save_file_nm+"\">"
-						$("#tot_anlys_stts").append(source);
-		        	});
-	        	}
-	         },
-	         error       :   function(request, status, error){
-	             console.log("AJAX_ERROR");
-	         }
-		});
+// 	});
+	if($("#"+obj.id).is(":checked")){
+			jsonObj = {
+				cls_cd : $("#"+obj.id).siblings('input[name="upl_cls_cd"]').val(),
+				req_dept_cd : $("#"+obj.id).siblings('input[name="upl_req_dept_cd"]').val(),
+				fin_cd : $("#"+obj.id).siblings('input[name="upl_fin_cd"]').val(),
+				save_file_nm : $("#"+obj.id).siblings('input[name="upl_save_file_nm"]').val()
+			}
+			arrJsonObj.push(jsonObj);
+			/*
+			$("#"+"upl_cls_cd_"+idx).val()
+			$("#"+"upl_req_dept_cd_"+idx).val()
+			$("#"+"upl_fin_cd_"+idx).val()
+			$("#"+"upl_save_file_nm_"+idx).val()
+			*/
+	// 	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
+			$.ajax({
+				type: "POST",
+		        url: "getAnlySttsList.do",
+		        contentType:'application/json; charset=UTF-8',
+	            data:JSON.stringify(arrJsonObj),
+		        dataType:"json",
+		        async: false,
+		        success: function(data) {
+		        	if(data != ''){
+			        	$.each(data, function(idx, item){
+			        		var idStr = item.req_dept_cd+item.req_dt+item.fin_cd+item.save_file_nm;
+			        		idStr = idStr.replace(/\./gi, "");
+// 			        		idStr = $.escapeSelector(idStr);
+// 			        		alert("fir : "+idStr);
+			        		var source = "<tr id=\""+idStr+"\">"
+				        		+"<td>"+item.fin_nm+"</td>"
+				        		+"<td>"+item.req_dt+"</td>"
+				        		+"<td>"+item.upl_file_nm+"</td>"
+				        		+"<td>"+item.trns_stts_nm+"</td>"
+				        		+"</tr>";
+			        		$("#tot_anlys_stts > table > tbody").append(source);
+			        		/*
+			        		source = "<input type=\"hidden\" name=\"chked_cls_cd\" value=\""+item.cls_cd+"\">"
+								+"<input type=\"hidden\" name=\"chked_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
+								+"<input type=\"hidden\" name=\"chked_fin_cd\" value=\""+item.fin_cd+"\">"
+								+"<input type=\"hidden\" name=\"chked_save_file_nm\" value=\""+item.save_file_nm+"\">"
+							$("#tot_anlys_stts").append(source);*/
+			        	});
+		        	}
+		         },
+		         error       :   function(request, status, error){
+		             console.log("AJAX_ERROR");
+		         }
+			});
+// 		}else{
+// 	// 		console.log("진행상태 전부 삭제");
+// 		}
+			
 	}else{
-// 		console.log("진행상태 전부 삭제");
+		var req_dept_cd = $("#"+obj.id).siblings('input[name="upl_req_dept_cd"]').val();
+		var req_dt = $("#"+obj.id).siblings('input[name="upl_req_dt"]').val();
+		var fin_cd = $("#"+obj.id).siblings('input[name="upl_fin_cd"]').val();
+		var save_file_nm = $("#"+obj.id).siblings('input[name="upl_save_file_nm"]').val();
+		var idStr = req_dept_cd+req_dt+fin_cd+save_file_nm;
+		idStr = idStr.replace(/\./gi, "");
+// 		alert($.escapeSelector(idStr));
+// 		idStr = $.escapeSelector(idStr);
+		$("#"+idStr).remove();
+// 		alert(idStr);
 	}
-		
-// 	}
+// 	alert($("#tot_anlys_stts > table > tbody > tr > td").length);
 }
+
 </script>
 </head>
 <body>
@@ -279,18 +291,15 @@ function fn_selUplFile(obj, idx){
 				<h5>> 전체 분석 진행상태</h5>
 				<input type="button" value="분석">
 				<table>
-					<tr>
-						<th>회사명</th>
-						<th>요청일</th>
-						<th>파일명</th>
-						<th>STT진행상태</th>
-					</tr>
-<!-- 					<tr> -->
-<!-- 						<td></td> -->
-<!-- 						<td></td> -->
-<!-- 						<td></td> -->
-<!-- 						<td></td> -->
-<!-- 					</tr> -->
+					<thead>
+						<tr>
+							<th>회사명</th>
+							<th>요청일</th>
+							<th>파일명</th>
+							<th>STT진행상태</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
 				</table>
 			</div>
 			<div id="tot_rslt">
