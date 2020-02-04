@@ -162,7 +162,7 @@
 		ORDER BY PRDLN_NM ASC    
 	</select>
 	
-	<!-- 선택한 업로드파일의 종합결과 조회(미사용) -->
+	<!-- 선택한 업로드파일의 종합결과 조회 -->
 	<select id="getTotalInspectoinList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
 		SELECT
 		      CLS_CD
@@ -226,4 +226,80 @@
 		ORDER BY PRDLN_NM ASC
 	</select>
 	
+	<!-- 텍스트변환결과 및 계약별 결과 목록 조회 -->
+	<select id="getTotalInspectoinList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
+		SELECT * FROM (
+		    SELECT
+		          T1.*
+		        , T2.SAVE_FILE_NM
+		        , T2.TRNS_STTS
+		    FROM (
+		        SELECT DISTINCT
+		              A.CLS_CD
+		            , A.REQ_DEPT_CD
+		            , A.REQ_DT
+		            , A.FIN_CD
+		            , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=A.FIN_CD) AS FIN_NM
+		            , A.SCRTS_NO
+		            , A.PRDLN_CD
+		--            , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE USE_YN='Y' AND CLS_CD=A.CLS_CD AND REQ_DEPT_CD=A.REQ_DEPT_CD AND PRDLN_CD=A.PRDLN_CD) AS PRDLN_NM
+		            , SCR
+		            , B.INSPC_SPR
+		            , A.PRD_NM
+		            , A.CTT_DT
+		            , A.CTT_STTS
+		            , A.CTTOR_NM
+		            , '0' AS CHK_SEL
+		        FROM RR_TM001 A, TM_INSPC_RSLT B
+		        WHERE A.CLS_CD = B.CLS_CD(+)
+		            AND A.REQ_DEPT_CD = B.REQ_DEPT_CD(+)
+		            AND A.FIN_CD = B.FIN_CD (+)
+		            AND A.REQ_DT = B.REQ_DT(+)
+		            AND A.PRDLN_CD = B.PRDLN_CD(+)
+		            AND A.SCRTS_NO = B.SCRTS_NO(+)
+		            AND A.CLS_CD = #{cls_cd}
+		            AND A.REQ_DEPT_CD = #{req_dept_cd}
+		            AND A.PRDLN_CD = #{prdln_cd}
+		            AND A.FIN_CD = #{fin_cd}
+		            AND A.REQ_DT = #{req_dt}
+		    ) T1, (
+		        SELECT DISTINCT
+		              B.CLS_CD
+		            , B.REQ_DEPT_CD
+		            , B.FIN_CD
+		            , B.REQ_DT
+		            , B.PRDLN_CD
+		            , B.SCRTS_NO
+		            , MAX(A.SAVE_FILE_NM) AS SAVE_FILE_NM
+		            , MAX(B.TRNS_STTS) KEEP(DENSE_RANK FIRST ORDER BY A.SAVE_FILE_NM DESC) AS TRNS_STTS
+		        FROM TM_FLUPL_INF A, TM_RCDFL_INF B
+		        WHERE A.CLS_CD=B.CLS_CD
+		            AND A.REQ_DEPT_CD=B.REQ_DEPT_CD
+		            AND A.REQ_DT=B.REQ_DT
+		            AND A.FIN_CD=B.FIN_CD
+		            AND A.SAVE_FILE_NM=B.SAVE_FILE_NM
+		            AND A.UPL_SPR = '1'
+		            AND B.USE_YN = 'Y'
+		             AND A.CLS_CD = #{cls_cd}
+		            AND A.REQ_DEPT_CD = #{req_dept_cd}
+		            AND A.REQ_DT = #{req_dt}
+		            AND A.FIN_CD = #{fin_cd}
+		            AND
+		--          
+		                    A.SAVE_FILE_NM = #{}
+		--  
+		        GROUP BY B.CLS_CD, B.REQ_DEPT_CD, B.FIN_CD, B.REQ_DT, B.PRDLN_CD, B.SCRTS_NO
+		    ) T2
+		    WHERE T1.CLS_CD = T2.CLS_CD
+		        AND T1.REQ_DEPT_CD = T2.REQ_DEPT_CD
+		        AND T1.FIN_CD = T2.FIN_CD
+		        AND T1.REQ_DT = T2.REQ_DT
+		        AND T1.PRDLN_CD = T2.PRDLN_CD
+		        AND T1.SCRTS_NO = T2.SCRTS_NO
+		--        
+		        AND T1.SCRTS_NO like '%'||#{scrts_no}||'%'
+		--        
+		) PIVOT(SUM(SCR) AS SCR FOR INSPC_SPR IN ('1' AS AUTO, '2' AS MANUAL))
+		ORDER BY PRDLN_NM ASC, PRDLN_CD ASC
+	</select>
 </mapper>

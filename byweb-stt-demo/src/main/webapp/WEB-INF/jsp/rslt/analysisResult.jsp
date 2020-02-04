@@ -356,7 +356,7 @@ function fn_searchTotRslt(pObj, trId){
 	        		var idStr = item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.prdln_cd;
 	        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
 					console.log("rslt id : "+idStr);
-	        		var source = "<tr id=\""+idStr+"\">"
+	        		var source = "<tr id=\""+idStr+"\" ondblclick=\"fn_searchSttRslt()\">"
 		        		+"<td>"+item.fin_nm+"</td>"
 		        		+"<td>"+item.req_dt+"</td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
@@ -384,6 +384,9 @@ function fn_searchTotRslt(pObj, trId){
 	});
 }
 
+function fn_searchSttRslt(){
+	
+}
 </script>
 </head>
 <body>
