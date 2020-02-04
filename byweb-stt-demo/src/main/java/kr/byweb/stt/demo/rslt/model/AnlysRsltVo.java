@@ -120,4 +120,7 @@ public class AnlysRsltVo {
 	private String col_img_idx;
 	private String expn_img_idx;
 	private String is_leaf;
+	private String prdln_nm;
+	private String auto_avg;
+	private String manual_avg;
 }

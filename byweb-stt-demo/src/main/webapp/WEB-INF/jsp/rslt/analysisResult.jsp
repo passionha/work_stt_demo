@@ -72,12 +72,16 @@
 	}
 </style>
 <script type="text/javascript">
-//업로드파일 조회
+const arrAnlys = new Array();	//체크한 업로드파일의 분석진행상태정보 배열
+const arrTotRslt = new Array();	//체크한 업로드파일의 종합결과정보 배열
+
+//회사별 업로드파일목록 조회
 function fn_selFin(){
 	if(document.getElementById("sel_fin_cd").value == 'SEL'){
 		$("#fin_sel_rslt").empty();
 		return;
 	}else{
+		$("#fin_sel_rslt").empty();
 		var idx = $("#sel_fin_cd option").index( $("#sel_fin_cd option:selected") );
 		document.getElementById("upl_class_cd").value = $('input[name="fin_cls_cd"]').eq(idx).val();
 		$.ajax({
@@ -95,13 +99,12 @@ function fn_selFin(){
 		        	$.each(data, function(idx, item){
 // 		        		console.log(data[idx]);
 // 		        		console.log(item);
-						
        					switch(item.lv){
        					case '1':
        						source="<ul><li>"
        							+"<input type=\"checkbox\" name=\"chk_hid_lv_1\">"
-								+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+idx+"\">"
-								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
+								+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"
+								+"<label for=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"+item.node_nm+"</label>"
 								+"<ul></ul>"
 								+"</li></ul>";
 							$("#fin_sel_rslt").append(source);
@@ -109,28 +112,39 @@ function fn_selFin(){
        					case '2':
        						source="<li>"
        							+"<input type=\"checkbox\" name=\"chk_hid_lv_2\">"
-								+"<input type=\"checkbox\" name=\"chk_upl_req_dt\" id=\"chk_upl_fin_nm_"+idx+"\">"
-								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
+								+"<input type=\"checkbox\" name=\"chk_upl_req_dt\" id=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"
+								+"<label for=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"+item.node_nm+"</label>"
 								+"<ul></ul>";
-								+"</li>"
+								+"</li>";
 							$("#fin_sel_rslt > ul > li > ul").append(source);
        						break;
        					case '3':
+       						var str = "chk_upl_fin_nm_"+item.fin_cd+idx;
+       						console.log("pre id : "+str);
        						source="<li>"
-       							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+idx+"\" onchange=\"fn_chkUplFile(this,"+idx+")\">"
-								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
-								+"<input type=\"hidden\" id=\"upl_cls_cd_"+idx+"\" name=\"upl_cls_cd\" value=\""+item.cls_cd+"\">"
-       							+"<input type=\"hidden\" id=\"upl_req_dept_cd_"+idx+"\" name=\"upl_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
-       							+"<input type=\"hidden\" id=\"upl_req_dt_"+idx+"\" name=\"upl_req_dt\" value=\""+item.req_dt+"\">"
-       							+"<input type=\"hidden\" id=\"upl_fin_cd_"+idx+"\" name=\"upl_fin_cd\" value=\""+item.fin_cd+"\">"
-       							+"<input type=\"hidden\" id=\"upl_save_file_nm_"+idx+"\" name=\"upl_save_file_nm\" value=\""+item.save_file_nm+"\">"
-								+"</li>"
+//        							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\" onchange=\"fn_searchAnlyStts(this,"+idx+")\">"
+       							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"
+       							+"<label for=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"+item.node_nm+"</label>"
+								+"<input type=\"hidden\" id=\"upl_cls_cd_"+item.fin_cd+idx+"\" name=\"upl_cls_cd\" value=\""+item.cls_cd+"\">"
+       							+"<input type=\"hidden\" id=\"upl_req_dept_cd_"+item.fin_cd+idx+"\" name=\"upl_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
+       							+"<input type=\"hidden\" id=\"upl_req_dt_"+item.fin_cd+idx+"\" name=\"upl_req_dt\" value=\""+item.req_dt+"\">"
+       							+"<input type=\"hidden\" id=\"upl_fin_cd_"+item.fin_cd+idx+"\" name=\"upl_fin_cd\" value=\""+item.fin_cd+"\">"
+       							+"<input type=\"hidden\" id=\"upl_save_file_nm_"+item.fin_cd+idx+"\" name=\"upl_save_file_nm\" value=\""+item.save_file_nm+"\">"
+								+"</li>";
 							$("#fin_sel_rslt > ul > li > ul > li:last-child > ul").append(source);
+							//업로드파일목록 재조회 시 이전에 체크한 파일정보와 대조하여 체크 설정
+   							for(var i in arrAnlys){
+ 								if(arrAnlys[i].cls_cd ==  item.cls_cd
+ 								   && arrAnlys[i].req_dept_cd ==  item.req_dept_cd
+ 								   && arrAnlys[i].req_dt ==  item.req_dt
+ 								   && arrAnlys[i].fin_cd ==  item.fin_cd
+ 								   && arrAnlys[i].save_file_nm ==  item.save_file_nm){
+ 									$("#"+"chk_upl_fin_nm_"+item.fin_cd+idx).prop("checked",true);
+ 								}
+ 							}
        						break;
        					}
 		        	});
-					
-					
 	        	}
 	         },
 	         error       :   function(request, status, error){
@@ -139,7 +153,7 @@ function fn_selFin(){
 		});
 	}
 }
-
+/*
 //트리뷰 +,-이미지 클릭
 function fn_foldClick(lv, idx){
 	if($('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked") == true){
@@ -149,44 +163,107 @@ function fn_foldClick(lv, idx){
 	}else{
 		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",true);
 	}
-}
+}*/
 
-function fn_chkUplFile(obj, idx){
+//전체 분석 진행상태 조회
+// function fn_chkUplFile(obj, idx){
+// function fn_searchAnlyStts(obj, idx){
+
+$('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
+	var arrJsonObj = new Array();
+	var cls_cd = $(this).siblings('input[name="upl_cls_cd"]').val();
+	var req_dept_cd = $(this).siblings('input[name="upl_req_dept_cd"]').val();
+	var fin_cd = $(this).siblings('input[name="upl_fin_cd"]').val();
+	var trId = cls_cd + req_dept_cd + fin_cd;
+	trId = trId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+// 	console.log("cls_cd : "+cls_cd);
+// 	console.log("req_dept_cd : "+req_dept_cd);
+// 	console.log("fin_cd : "+fin_cd);
+	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
+		$('input[name="chk_upl_file_nm"]:checked').each(function(index, item){
+			var jsonObj = new Object();
+			jsonObj = {
+				cls_cd : $(this).siblings('input[name="upl_cls_cd"]').val(),
+				req_dept_cd : $(this).siblings('input[name="upl_req_dept_cd"]').val(),
+				req_dt : $(this).siblings('input[name="upl_req_dt"]').val(),
+				fin_cd : $(this).siblings('input[name="upl_fin_cd"]').val(),
+				save_file_nm : $(this).siblings('input[name="upl_save_file_nm"]').val()
+			}
+			arrJsonObj.push(jsonObj);
+		});
+		$.ajax({
+			type: "POST",
+	        url: "getAnlySttsList.do",
+	        contentType:'application/json; charset=UTF-8',
+	        data:JSON.stringify(arrJsonObj),
+	        dataType:"json",
+	        async: false,
+	        success: function(data) {
+	        	if(data != ''){
+// 	        		var trId = cls_cd + req_dept_cd + fin_cd;
+// 	        		trId = trId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+	        		$("#tot_anlys_stts > table > tbody > tr[id^="+trId+"]").remove();
+//	         		$('tr[id^='+trId+']').css( "color", "green" );
+		        	$.each(data, function(idx, item){
+		        		//체크한 파일별 id생성(권역코드+요청부서코드+요청일자+회사코드+저장파일명)
+		        		var idStr = item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm;
+		        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+//			        		idStr = $.escapeSelector(idStr);
+		        		var source = "<tr id=\""+idStr+"\">"
+			        		+"<td>"+item.fin_nm+"</td>"
+			        		+"<td>"+item.req_dt+"</td>"
+			        		+"<td>"+item.upl_file_nm+"</td>"
+			        		+"<td>"+item.trns_stts_nm+"</td>"
+			        		+"</tr>";
+		        		$("#tot_anlys_stts > table > tbody").append(source);
+						//체크한 업로드파일정보 배열에 저장(id : 권역코드+요청부서코드+요청일자+회사코드+저장파일명(특수문자 제거))
+		        		/* var objChkedUplFile = new Object();
+		        		var objChkedUplFile = {
+		        				id : idStr,
+								cls_cd : item.cls_cd,
+								req_dept_cd : item.req_dept_cd,
+								req_dt : item.req_dt,
+								fin_cd : item.fin_cd,
+								save_file_nm : item.save_file_nm
+						} */
+//	 					arrAnlys.push(objChkedUplFile);
+		        	});
+	        		//종합결과 조회
+ 	        		fn_searchTotRslt(arrJsonObj, trId);
+	        	}
+	         },
+	         error       :   function(request, status, error){
+	             console.log("AJAX_ERROR");
+	         }
+		});
+	}else{
+		$("#tot_anlys_stts > table > tbody > tr[id^="+trId+"]").remove();
+		$("#tot_rslt > table > tbody > tr[id^="+trId+"]").remove();
+	}
+	
+	
+});
+
 	/* console.log("li changed id : "+obj.id);
 	console.log("li changed idx : "+idx);
 	console.log($("#"+obj.id).is(":checked"))
 	console.log($("#"+"upl_save_file_nm_"+idx).val()) */
-	var arrJsonObj = new Array();
-	
 // 	$('input[name="chk_upl_file_nm"]:checked').each(function(index, item){
-		var jsonObj = new Object();
 // 		console.log("siblings : "+$('input[name="chk_upl_file_nm"]:checked').siblings('input[name="upl_save_file_nm"]').val());
 // 		console.log("siblings : "+$(this).siblings('input[name="upl_save_file_nm"]').val());
-		/*
-		jsonObj = {
-			cls_cd : $(this).siblings('input[name="upl_cls_cd"]').val(),
-			req_dept_cd : $(this).siblings('input[name="upl_req_dept_cd"]').val(),
-			fin_cd : $(this).siblings('input[name="upl_fin_cd"]').val(),
-			save_file_nm : $(this).siblings('input[name="upl_save_file_nm"]').val()
-		}
-		arrJsonObj.push(jsonObj);
-		*/
 // 	});
+	/*
+	var arrJsonObj = new Array();
+	var jsonObj = new Object();
 	if($("#"+obj.id).is(":checked")){
 			jsonObj = {
 				cls_cd : $("#"+obj.id).siblings('input[name="upl_cls_cd"]').val(),
 				req_dept_cd : $("#"+obj.id).siblings('input[name="upl_req_dept_cd"]').val(),
+				req_dt : $("#"+obj.id).siblings('input[name="upl_req_dt"]').val(),
 				fin_cd : $("#"+obj.id).siblings('input[name="upl_fin_cd"]').val(),
 				save_file_nm : $("#"+obj.id).siblings('input[name="upl_save_file_nm"]').val()
 			}
 			arrJsonObj.push(jsonObj);
-			/*
-			$("#"+"upl_cls_cd_"+idx).val()
-			$("#"+"upl_req_dept_cd_"+idx).val()
-			$("#"+"upl_fin_cd_"+idx).val()
-			$("#"+"upl_save_file_nm_"+idx).val()
-			*/
-	// 	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
 			$.ajax({
 				type: "POST",
 		        url: "getAnlySttsList.do",
@@ -197,10 +274,10 @@ function fn_chkUplFile(obj, idx){
 		        success: function(data) {
 		        	if(data != ''){
 			        	$.each(data, function(idx, item){
-			        		var idStr = item.req_dept_cd+item.req_dt+item.fin_cd+item.save_file_nm;
-			        		idStr = idStr.replace(/\./gi, "");
+			        		//체크한 파일별 id생성(권역코드+요청부서코드+요청일자+회사코드+저장파일명)
+			        		var idStr = item.cls_cd+item.req_dept_cd+item.req_dt+item.fin_cd+item.save_file_nm;
+			        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
 // 			        		idStr = $.escapeSelector(idStr);
-// 			        		alert("fir : "+idStr);
 			        		var source = "<tr id=\""+idStr+"\">"
 				        		+"<td>"+item.fin_nm+"</td>"
 				        		+"<td>"+item.req_dt+"</td>"
@@ -208,12 +285,19 @@ function fn_chkUplFile(obj, idx){
 				        		+"<td>"+item.trns_stts_nm+"</td>"
 				        		+"</tr>";
 			        		$("#tot_anlys_stts > table > tbody").append(source);
-			        		/*
-			        		source = "<input type=\"hidden\" name=\"chked_cls_cd\" value=\""+item.cls_cd+"\">"
-								+"<input type=\"hidden\" name=\"chked_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
-								+"<input type=\"hidden\" name=\"chked_fin_cd\" value=\""+item.fin_cd+"\">"
-								+"<input type=\"hidden\" name=\"chked_save_file_nm\" value=\""+item.save_file_nm+"\">"
-							$("#tot_anlys_stts").append(source);*/
+							//체크한 업로드파일정보 배열에 저장(id : 권역코드+요청부서코드+요청일자+회사코드+저장파일명(특수문자 제거))
+			        		var objChkedUplFile = new Object();
+			        		var objChkedUplFile = {
+			        				id : idStr,
+									cls_cd : item.cls_cd,
+									req_dept_cd : item.req_dept_cd,
+									req_dt : item.req_dt,
+									fin_cd : item.fin_cd,
+									save_file_nm : item.save_file_nm
+							}
+							arrAnlys.push(objChkedUplFile);
+			        		//종합결과 조회
+			        		fn_searchTotRslt(arrJsonObj);
 			        	});
 		        	}
 		         },
@@ -221,23 +305,83 @@ function fn_chkUplFile(obj, idx){
 		             console.log("AJAX_ERROR");
 		         }
 			});
-// 		}else{
-// 	// 		console.log("진행상태 전부 삭제");
-// 		}
-			
 	}else{
+		var cls_cd = $("#"+obj.id).siblings('input[name="upl_cls_cd"]').val();
 		var req_dept_cd = $("#"+obj.id).siblings('input[name="upl_req_dept_cd"]').val();
 		var req_dt = $("#"+obj.id).siblings('input[name="upl_req_dt"]').val();
 		var fin_cd = $("#"+obj.id).siblings('input[name="upl_fin_cd"]').val();
 		var save_file_nm = $("#"+obj.id).siblings('input[name="upl_save_file_nm"]').val();
-		var idStr = req_dept_cd+req_dt+fin_cd+save_file_nm;
-		idStr = idStr.replace(/\./gi, "");
-// 		alert($.escapeSelector(idStr));
-// 		idStr = $.escapeSelector(idStr);
+		var idStr = cls_cd+req_dept_cd+req_dt+fin_cd+save_file_nm;
+		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+		//전체분석진행상태에서 체크해제 파일정보 row 삭제
 		$("#"+idStr).remove();
-// 		alert(idStr);
+		
+		//체크해제한 업로드파일의 분석진행상태정보를 배열에서 삭제
+		for(var i in arrAnlys){
+			if(arrAnlys[i].id == idStr){
+				arrAnlys.splice(i, 1);
+			}
+		}
+		//종합결과조회에서 체크해제 파일정보 row 삭제
+		idStr = cls_cd+req_dept_cd+req_dt+fin_cd;
+		$("tr[id^="+idStr+"]").remove();
+	
+		//체크해제한 업로드파일의 종합결과정보를 배열에서 삭제
+		for(var i in arrTotRslt){
+			if(arrTotRslt[i].id.substr(0, arrTotRslt[i].id.length-5) == idStr){
+				arrTotRslt.splice(i, 1);
+			}
+		}
+		
+		
 	}
-// 	alert($("#tot_anlys_stts > table > tbody > tr > td").length);
+}
+*/
+
+//종합결과 조회
+function fn_searchTotRslt(pObj, trId){
+	$.ajax({
+		type: "POST",
+        url: "getTotalInspectoinList.do",
+        contentType:'application/json; charset=UTF-8',
+        data:JSON.stringify(pObj),
+        dataType:"json",
+        async: false,
+        success: function(data) {
+        	if(data != ''){
+				console.log(data);        		
+        		$("#tot_rslt > table > tbody > tr[id^="+trId+"]").remove();
+	        	$.each(data, function(idx, item){
+	        		//체크한 파일별 id생성(권역코드+요청부서코드+회사코드+요청일자+저장파일명)
+	        		var idStr = item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.prdln_cd;
+	        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+					console.log("rslt id : "+idStr);
+	        		var source = "<tr id=\""+idStr+"\">"
+		        		+"<td>"+item.fin_nm+"</td>"
+		        		+"<td>"+item.req_dt+"</td>"
+		        		+"<td>"+item.prdln_nm+"</td>"
+		        		+"<td>"+item.auto_avg+"</td>"
+		        		+"<td>"+item.manual_avg+"</td>"
+		        		+"</tr>";
+	        		$("#tot_rslt > table > tbody").append(source);
+					//체크한 업로드파일정보 배열에 저장(id : 권역코드+요청부서코드+요청일자+회사코드+저장파일명(특수문자 제거))
+	        		var objChkedUplFile = new Object();
+	        		var objChkedUplFile = {
+	        				id : idStr,
+							cls_cd : item.cls_cd,
+							req_dept_cd : item.req_dept_cd,
+							req_dt : item.req_dt,
+							fin_cd : item.fin_cd,
+							prdln_cd : item.prdln_cd
+					}
+	        		arrTotRslt.push(objChkedUplFile);
+	        	});
+        	}
+         },
+         error       :   function(request, status, error){
+             console.log("AJAX_ERROR");
+         }
+	});
 }
 
 </script>
@@ -283,8 +427,7 @@ function fn_chkUplFile(obj, idx){
 				</ul>
 			</div>
 			</form>
-			<div id="fin_sel_rslt">
-			</div>
+			<div id="fin_sel_rslt"></div>
 		</div>
 		<div id="right_side">
 			<div id="tot_anlys_stts">
@@ -306,6 +449,7 @@ function fn_chkUplFile(obj, idx){
 				<h5>> 종합결과 조회</h5>
 				<input type="button" value="엑셀">
 				<table>
+					<thead>
 					<tr>
 						<th>회사명</th>
 						<th>요청일</th>
@@ -313,13 +457,8 @@ function fn_chkUplFile(obj, idx){
 						<th>자동평균</th>
 						<th>수동평균</th>
 					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
+					</thead>
+					<tbody></tbody>
 				</table>
 			</div>
 			<div id="txt_stt_rslt">

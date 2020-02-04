@@ -126,9 +126,8 @@ public class AnalysisResultController {
 	public List<AnlysRsltVo> getAnlySttsList(@RequestBody AnlysRsltVo[] arrChkFiles, HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		List<AnlysRsltVo> sttsList = new ArrayList<AnlysRsltVo>();
-		System.out.println(arrChkFiles.length);
 		for(AnlysRsltVo vo : arrChkFiles) {
-			System.out.println(vo.getSave_file_nm());
+//			System.out.println(vo.getSave_file_nm());
 		}
 		
 		List<Map<String, String>> paramList = new ArrayList<Map<String,String>>();
@@ -151,5 +150,44 @@ public class AnalysisResultController {
 		}
 		
 		return sttsList;
+	}
+	
+	/**
+	 * 선택한 업로드파일의 종합결과 조회
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/getTotalInspectoinList.do")
+	@ResponseBody
+	public List<AnlysRsltVo> getTotalInspectoinList(@RequestBody AnlysRsltVo[] arrChkFiles, HttpSession session, HttpServletRequest request, Model model) {
+		Map pMap = new HashMap();
+		List<AnlysRsltVo> totRsltList = new ArrayList<AnlysRsltVo>();
+		for(AnlysRsltVo vo : arrChkFiles) {
+//			System.out.println("=====>rq : "+vo.getReq_dt());
+//			System.out.println("=====>cs : "+vo.getCls_cd());
+		}
+		
+		List<Map<String, String>> paramList = new ArrayList<Map<String,String>>();
+		for(AnlysRsltVo chkFile : arrChkFiles) {
+			Map<String, String> map = new HashMap<String, String>();
+				map.put("cls_cd", chkFile.getCls_cd());
+				map.put("req_dept_cd", chkFile.getReq_dept_cd());
+				map.put("req_dt", chkFile.getReq_dt());
+				map.put("fin_cd", chkFile.getFin_cd());
+				map.put("save_file_nm", chkFile.getSave_file_nm());
+				paramList.add(map);
+//				키워드 json정보 호출 추가 필요
+//				변환파일 저장 추가 필요
+		}
+		pMap.put("fileList", paramList);
+		try {
+			totRsltList = analysisResultService.getTotalInspectoinList(pMap);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return totRsltList;
 	}
 }

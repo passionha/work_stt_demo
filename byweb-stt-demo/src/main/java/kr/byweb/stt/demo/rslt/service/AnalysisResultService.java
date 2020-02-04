@@ -9,4 +9,6 @@ public interface AnalysisResultService {
 	public List<AnlysRsltVo> getUplFileList(Map pMap) throws Exception;
 
 	public List<AnlysRsltVo> getAnlySttsList(Map pMap) throws Exception;
+
+	public List<AnlysRsltVo> getTotalInspectoinList(Map pMap) throws Exception;
 }
