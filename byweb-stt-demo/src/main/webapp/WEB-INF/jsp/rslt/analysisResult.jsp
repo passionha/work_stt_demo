@@ -72,11 +72,12 @@
 	}
 </style>
 <script type="text/javascript">
-const arrAnlys = new Array();	//체크한 업로드파일의 분석진행상태정보 배열
-const arrTotRslt = new Array();	//체크한 업로드파일의 종합결과정보 배열
+const arrUplFl = new Array();	//업로드파일 object 배열
+const arrAnlys = new Array();	//분석진행상태 object 배열
+const arrTotRslt = new Array();	//종합결과 object 배열
 
 //회사별 업로드파일목록 조회
-function fn_selFin(){
+function fn_searchUplFl(){
 	if(document.getElementById("sel_fin_cd").value == 'SEL'){
 		$("#fin_sel_rslt").empty();
 		return;
@@ -119,12 +120,12 @@ function fn_selFin(){
 							$("#fin_sel_rslt > ul > li > ul").append(source);
        						break;
        					case '3':
-       						var str = "chk_upl_fin_nm_"+item.fin_cd+idx;
-       						console.log("pre id : "+str);
+       						var uplFlId = "uplFl"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm;
+							uplFlId = uplFlId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
        						source="<li>"
-//        							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\" onchange=\"fn_searchAnlyStts(this,"+idx+")\">"
-       							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"
-       							+"<label for=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"+item.node_nm+"</label>"
+//        							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_upl_fin_nm_"+item.fin_cd+idx+"\">"
+       							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_"+uplFlId+"\">"
+       							+"<label for=\"chk_"+uplFlId+"\">"+item.node_nm+"</label>"
 								+"<input type=\"hidden\" id=\"upl_cls_cd_"+item.fin_cd+idx+"\" name=\"upl_cls_cd\" value=\""+item.cls_cd+"\">"
        							+"<input type=\"hidden\" id=\"upl_req_dept_cd_"+item.fin_cd+idx+"\" name=\"upl_req_dept_cd\" value=\""+item.req_dept_cd+"\">"
        							+"<input type=\"hidden\" id=\"upl_req_dt_"+item.fin_cd+idx+"\" name=\"upl_req_dt\" value=\""+item.req_dt+"\">"
@@ -132,8 +133,37 @@ function fn_selFin(){
        							+"<input type=\"hidden\" id=\"upl_save_file_nm_"+item.fin_cd+idx+"\" name=\"upl_save_file_nm\" value=\""+item.save_file_nm+"\">"
 								+"</li>";
 							$("#fin_sel_rslt > ul > li > ul > li:last-child > ul").append(source);
+							
+							//업로드파일 조회 결과 object 배열로 저장
+							var dupObjCnt = 0;
+							for(var i in arrUplFl){
+								if(arrUplFl[i].id == uplFlId){
+									dupObjCnt++;
+								}
+							}
+							if(dupObjCnt == 0){
+								var objUplFl = {
+									id : uplFlId,
+									cls_cd : item.cls_cd,
+									req_dept_cd : item.req_dept_cd,
+									fin_cd : item.fin_cd,
+									req_dt : item.req_dt,
+									save_file_nm : item.save_file_nm,
+									chk : '0'
+								}
+								arrUplFl.push(objUplFl);
+							}
+							
+							//재조회 시 기 입력 체크여부 유지
+							for(var i in arrUplFl){
+// 								console.log("chk : "+arrUplFl[i].chk);
+								if(arrUplFl[i].chk == '1'){
+									$("#chk_"+arrUplFl[i].id).prop("checked",true);
+								}
+							}
+							
 							//업로드파일목록 재조회 시 이전에 체크한 파일정보와 대조하여 체크 설정
-   							for(var i in arrAnlys){
+   							/* for(var i in arrAnlys){
  								if(arrAnlys[i].cls_cd ==  item.cls_cd
  								   && arrAnlys[i].req_dept_cd ==  item.req_dept_cd
  								   && arrAnlys[i].req_dt ==  item.req_dt
@@ -141,7 +171,7 @@ function fn_selFin(){
  								   && arrAnlys[i].save_file_nm ==  item.save_file_nm){
  									$("#"+"chk_upl_fin_nm_"+item.fin_cd+idx).prop("checked",true);
  								}
- 							}
+ 							} */
        						break;
        					}
 		        	});
@@ -153,36 +183,93 @@ function fn_selFin(){
 		});
 	}
 }
-/*
-//트리뷰 +,-이미지 클릭
-function fn_foldClick(lv, idx){
-	if($('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked") == true){
-		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).children('ul').css( 'display', 'none' );
-		console.log($('input[name="chk_hid_lv_'+lv+'"]').eq(idx).children('ul'));
-		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",false);
-	}else{
-		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",true);
-	}
-}*/
 
 //전체 분석 진행상태 조회
-// function fn_chkUplFile(obj, idx){
-// function fn_searchAnlyStts(obj, idx){
-
 $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	var arrJsonObj = new Array();
 	var cls_cd = $(this).siblings('input[name="upl_cls_cd"]').val();
 	var req_dept_cd = $(this).siblings('input[name="upl_req_dept_cd"]').val();
 	var fin_cd = $(this).siblings('input[name="upl_fin_cd"]').val();
-	var trId = cls_cd + req_dept_cd + fin_cd;
-	trId = trId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
-// 	console.log("cls_cd : "+cls_cd);
-// 	console.log("req_dept_cd : "+req_dept_cd);
-// 	console.log("fin_cd : "+fin_cd);
+	var flCmCd = cls_cd + req_dept_cd + fin_cd;
+	flCmCd = flCmCd.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+// 	alert("this id : "+$(this).prop('id'));
+	//업로드파일 체크여부 저장
+	if($(this).prop("checked") == true){
+// 		console.log("chked");
+		for(var i in arrUplFl){
+			if("chk_"+arrUplFl[i].id == $(this).prop('id')){
+				arrUplFl[i].chk = '1';
+			}
+		}
+	}else{
+		console.log("arrTotRslt.length : "+arrTotRslt.length);
+		for(var i in arrUplFl){
+			if("chk_"+arrUplFl[i].id == $(this).prop('id')){
+				arrUplFl[i].chk = '0';
+				for(var j in arrAnlys){
+					if(arrUplFl[i].cls_cd == arrAnlys[j].cls_cd
+					   && arrUplFl[i].req_dept_cd == arrAnlys[j].req_dept_cd
+					   && arrUplFl[i].fin_cd == arrAnlys[j].fin_cd
+					   && arrUplFl[i].req_dt == arrAnlys[j].req_dt
+					   && arrUplFl[i].save_file_nm == arrAnlys[j].save_file_nm){
+						arrAnlys.splice(j, 1);
+					}
+				}
+				/* var cnt = 0;
+				for(var k=0; k<arrTotRslt.length; k++){
+					if(arrUplFl[i].cls_cd == arrTotRslt[k].cls_cd
+					   && arrUplFl[i].req_dept_cd == arrTotRslt[k].req_dept_cd
+					   && arrUplFl[i].fin_cd == arrTotRslt[k].fin_cd
+					   && arrUplFl[i].req_dt == arrTotRslt[k].req_dt){
+						console.log("2k : "+k);
+						console.log("upl cls_cd : "+arrUplFl[i].cls_cd+" vs tot : "+arrTotRslt[k].cls_cd);
+					   console.log("upl req_dept_cd : "+arrUplFl[i].req_dept_cd+" vs tot : "+arrTotRslt[k].req_dept_cd);
+					   console.log("upl fin_cd : "+arrUplFl[i].fin_cd+" vs tot : "+arrTotRslt[k].fin_cd);
+					   console.log("upl req_dt : "+arrUplFl[i].req_dt+" vs tot : "+arrTotRslt[k].req_dt);
+					   arrTotRslt.splice(k, 1);
+					}
+				} */
+				/*for(var k in arrTotRslt){
+					console.log("1k : "+k);
+// 					console.log("tot : "+arrTotRslt[k].cls_cd);
+// 				   console.log("tot : "+arrTotRslt[k].req_dept_cd);
+// 				   console.log("tot : "+arrTotRslt[k].fin_cd);
+// 				   console.log("tot : "+arrTotRslt[k].req_dt);
+				   console.log(arrUplFl[i].cls_cd == arrTotRslt[k].cls_cd
+						   && arrUplFl[i].req_dept_cd == arrTotRslt[k].req_dept_cd
+						   && arrUplFl[i].fin_cd == arrTotRslt[k].fin_cd
+						   && arrUplFl[i].req_dt == arrTotRslt[k].req_dt);
+					
+					if(arrUplFl[i].cls_cd == arrTotRslt[k].cls_cd
+					   && arrUplFl[i].req_dept_cd == arrTotRslt[k].req_dept_cd
+					   && arrUplFl[i].fin_cd == arrTotRslt[k].fin_cd
+					   && arrUplFl[i].req_dt == arrTotRslt[k].req_dt){
+						console.log("2k : "+k);
+						console.log("upl cls_cd : "+arrUplFl[i].cls_cd+" vs tot : "+arrTotRslt[k].cls_cd);
+					   console.log("upl req_dept_cd : "+arrUplFl[i].req_dept_cd+" vs tot : "+arrTotRslt[k].req_dept_cd);
+					   console.log("upl fin_cd : "+arrUplFl[i].fin_cd+" vs tot : "+arrTotRslt[k].fin_cd);
+					   console.log("upl req_dt : "+arrUplFl[i].req_dt+" vs tot : "+arrTotRslt[k].req_dt);
+					   arrTotRslt.splice(k, 1);
+					}
+				}*/
+				console.log("cnt : "+cnt);
+			}
+		}
+		console.log("arrAnlys length: "+arrAnlys.length);
+		console.log("arrTotRslt length: "+arrTotRslt.length);
+		/*for(var j in arrAnlys){
+			console.log("남은 arrAnlys : "+arrAnlys[j].save_file_nm);
+		}*/
+		if(arrTotRslt.length > 0){
+			for(var k in arrTotRslt){
+				console.log("남은 arrTotRslt : "+arrTotRslt[k].req_dt);
+			}
+		}
+	}
+	
 	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
 		$('input[name="chk_upl_file_nm"]:checked').each(function(index, item){
-			var jsonObj = new Object();
-			jsonObj = {
+			var jsonObj = {
 				cls_cd : $(this).siblings('input[name="upl_cls_cd"]').val(),
 				req_dept_cd : $(this).siblings('input[name="upl_req_dept_cd"]').val(),
 				req_dt : $(this).siblings('input[name="upl_req_dt"]').val(),
@@ -200,36 +287,42 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	        async: false,
 	        success: function(data) {
 	        	if(data != ''){
-// 	        		var trId = cls_cd + req_dept_cd + fin_cd;
-// 	        		trId = trId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
-	        		$("#tot_anlys_stts > table > tbody > tr[id^="+trId+"]").remove();
+	        		$("#tot_anlys_stts > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
 //	         		$('tr[id^='+trId+']').css( "color", "green" );
 		        	$.each(data, function(idx, item){
-		        		//체크한 파일별 id생성(권역코드+요청부서코드+요청일자+회사코드+저장파일명)
-		        		var idStr = item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm;
-		        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+		        		var anlysId = "anlys"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm;
+		        		anlysId = anlysId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
 //			        		idStr = $.escapeSelector(idStr);
-		        		var source = "<tr id=\""+idStr+"\">"
+		        		var source = "<tr id=\""+anlysId+"\">"
 			        		+"<td>"+item.fin_nm+"</td>"
 			        		+"<td>"+item.req_dt+"</td>"
 			        		+"<td>"+item.upl_file_nm+"</td>"
 			        		+"<td>"+item.trns_stts_nm+"</td>"
 			        		+"</tr>";
 		        		$("#tot_anlys_stts > table > tbody").append(source);
-						//체크한 업로드파일정보 배열에 저장(id : 권역코드+요청부서코드+요청일자+회사코드+저장파일명(특수문자 제거))
-		        		/* var objChkedUplFile = new Object();
-		        		var objChkedUplFile = {
-		        				id : idStr,
-								cls_cd : item.cls_cd,
-								req_dept_cd : item.req_dept_cd,
-								req_dt : item.req_dt,
-								fin_cd : item.fin_cd,
-								save_file_nm : item.save_file_nm
-						} */
-//	 					arrAnlys.push(objChkedUplFile);
+		        		
+						//분석진행상태 조회결과 object 배열로 저장
+		        		var dupObjCnt = 0;
+						for(var i in arrAnlys){
+							if(arrAnlys[i].id == anlysId){
+								dupObjCnt++;
+							}
+						}
+						if(dupObjCnt == 0){
+							var objAnlys = {
+			        				id : anlysId,
+									cls_cd : item.cls_cd,
+									req_dept_cd : item.req_dept_cd,
+									fin_cd : item.fin_cd,
+									req_dt : item.req_dt,
+									save_file_nm : item.save_file_nm
+							}
+							console.log("input objAnlys : "+objAnlys);
+		 					arrAnlys.push(objAnlys);
+						}
 		        	});
 	        		//종합결과 조회
- 	        		fn_searchTotRslt(arrJsonObj, trId);
+ 	        		fn_searchTotRslt(arrJsonObj, flCmCd);
 	        	}
 	         },
 	         error       :   function(request, status, error){
@@ -237,109 +330,15 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	         }
 		});
 	}else{
-		$("#tot_anlys_stts > table > tbody > tr[id^="+trId+"]").remove();
-		$("#tot_rslt > table > tbody > tr[id^="+trId+"]").remove();
+		$("#tot_anlys_stts > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
+		$("#tot_rslt > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
 	}
 	
 	
 });
 
-	/* console.log("li changed id : "+obj.id);
-	console.log("li changed idx : "+idx);
-	console.log($("#"+obj.id).is(":checked"))
-	console.log($("#"+"upl_save_file_nm_"+idx).val()) */
-// 	$('input[name="chk_upl_file_nm"]:checked').each(function(index, item){
-// 		console.log("siblings : "+$('input[name="chk_upl_file_nm"]:checked').siblings('input[name="upl_save_file_nm"]').val());
-// 		console.log("siblings : "+$(this).siblings('input[name="upl_save_file_nm"]').val());
-// 	});
-	/*
-	var arrJsonObj = new Array();
-	var jsonObj = new Object();
-	if($("#"+obj.id).is(":checked")){
-			jsonObj = {
-				cls_cd : $("#"+obj.id).siblings('input[name="upl_cls_cd"]').val(),
-				req_dept_cd : $("#"+obj.id).siblings('input[name="upl_req_dept_cd"]').val(),
-				req_dt : $("#"+obj.id).siblings('input[name="upl_req_dt"]').val(),
-				fin_cd : $("#"+obj.id).siblings('input[name="upl_fin_cd"]').val(),
-				save_file_nm : $("#"+obj.id).siblings('input[name="upl_save_file_nm"]').val()
-			}
-			arrJsonObj.push(jsonObj);
-			$.ajax({
-				type: "POST",
-		        url: "getAnlySttsList.do",
-		        contentType:'application/json; charset=UTF-8',
-	            data:JSON.stringify(arrJsonObj),
-		        dataType:"json",
-		        async: false,
-		        success: function(data) {
-		        	if(data != ''){
-			        	$.each(data, function(idx, item){
-			        		//체크한 파일별 id생성(권역코드+요청부서코드+요청일자+회사코드+저장파일명)
-			        		var idStr = item.cls_cd+item.req_dept_cd+item.req_dt+item.fin_cd+item.save_file_nm;
-			        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
-// 			        		idStr = $.escapeSelector(idStr);
-			        		var source = "<tr id=\""+idStr+"\">"
-				        		+"<td>"+item.fin_nm+"</td>"
-				        		+"<td>"+item.req_dt+"</td>"
-				        		+"<td>"+item.upl_file_nm+"</td>"
-				        		+"<td>"+item.trns_stts_nm+"</td>"
-				        		+"</tr>";
-			        		$("#tot_anlys_stts > table > tbody").append(source);
-							//체크한 업로드파일정보 배열에 저장(id : 권역코드+요청부서코드+요청일자+회사코드+저장파일명(특수문자 제거))
-			        		var objChkedUplFile = new Object();
-			        		var objChkedUplFile = {
-			        				id : idStr,
-									cls_cd : item.cls_cd,
-									req_dept_cd : item.req_dept_cd,
-									req_dt : item.req_dt,
-									fin_cd : item.fin_cd,
-									save_file_nm : item.save_file_nm
-							}
-							arrAnlys.push(objChkedUplFile);
-			        		//종합결과 조회
-			        		fn_searchTotRslt(arrJsonObj);
-			        	});
-		        	}
-		         },
-		         error       :   function(request, status, error){
-		             console.log("AJAX_ERROR");
-		         }
-			});
-	}else{
-		var cls_cd = $("#"+obj.id).siblings('input[name="upl_cls_cd"]').val();
-		var req_dept_cd = $("#"+obj.id).siblings('input[name="upl_req_dept_cd"]').val();
-		var req_dt = $("#"+obj.id).siblings('input[name="upl_req_dt"]').val();
-		var fin_cd = $("#"+obj.id).siblings('input[name="upl_fin_cd"]').val();
-		var save_file_nm = $("#"+obj.id).siblings('input[name="upl_save_file_nm"]').val();
-		var idStr = cls_cd+req_dept_cd+req_dt+fin_cd+save_file_nm;
-		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
-		//전체분석진행상태에서 체크해제 파일정보 row 삭제
-		$("#"+idStr).remove();
-		
-		//체크해제한 업로드파일의 분석진행상태정보를 배열에서 삭제
-		for(var i in arrAnlys){
-			if(arrAnlys[i].id == idStr){
-				arrAnlys.splice(i, 1);
-			}
-		}
-		//종합결과조회에서 체크해제 파일정보 row 삭제
-		idStr = cls_cd+req_dept_cd+req_dt+fin_cd;
-		$("tr[id^="+idStr+"]").remove();
-	
-		//체크해제한 업로드파일의 종합결과정보를 배열에서 삭제
-		for(var i in arrTotRslt){
-			if(arrTotRslt[i].id.substr(0, arrTotRslt[i].id.length-5) == idStr){
-				arrTotRslt.splice(i, 1);
-			}
-		}
-		
-		
-	}
-}
-*/
-
 //종합결과 조회
-function fn_searchTotRslt(pObj, trId){
+function fn_searchTotRslt(pObj, flCmCd){
 	$.ajax({
 		type: "POST",
         url: "getTotalInspectoinList.do",
@@ -349,13 +348,13 @@ function fn_searchTotRslt(pObj, trId){
         async: false,
         success: function(data) {
         	if(data != ''){
-				console.log(data);        		
-        		$("#tot_rslt > table > tbody > tr[id^="+trId+"]").remove();
+// 				console.log(data);        		
+        		$("#tot_rslt > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
 	        	$.each(data, function(idx, item){
 	        		//체크한 파일별 id생성(권역코드+요청부서코드+회사코드+요청일자+저장파일명)
-	        		var idStr = item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.prdln_cd;
+	        		var idStr = "totRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.prdln_cd;
 	        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
-					console.log("rslt id : "+idStr);
+// 					console.log("rslt id : "+idStr);
 	        		var source = "<tr id=\""+idStr+"\" ondblclick=\"fn_searchSttRslt()\">"
 		        		+"<td>"+item.fin_nm+"</td>"
 		        		+"<td>"+item.req_dt+"</td>"
@@ -364,17 +363,16 @@ function fn_searchTotRslt(pObj, trId){
 		        		+"<td>"+item.manual_avg+"</td>"
 		        		+"</tr>";
 	        		$("#tot_rslt > table > tbody").append(source);
-					//체크한 업로드파일정보 배열에 저장(id : 권역코드+요청부서코드+요청일자+회사코드+저장파일명(특수문자 제거))
-	        		var objChkedUplFile = new Object();
-	        		var objChkedUplFile = {
+					//종합결과 조회결과 object 배열로 저장
+	        		var objTotRslt = {
 	        				id : idStr,
 							cls_cd : item.cls_cd,
 							req_dept_cd : item.req_dept_cd,
-							req_dt : item.req_dt,
 							fin_cd : item.fin_cd,
+							req_dt : item.req_dt,
 							prdln_cd : item.prdln_cd
 					}
-	        		arrTotRslt.push(objChkedUplFile);
+	        		arrTotRslt.push(objTotRslt);
 	        	});
         	}
          },
@@ -384,9 +382,22 @@ function fn_searchTotRslt(pObj, trId){
 	});
 }
 
+//텍스트 변환결과 및 계약별 결과 조회 
 function fn_searchSttRslt(){
 	
 }
+
+/*
+//트리뷰 +,-이미지 클릭
+function fn_foldClick(lv, idx){
+	if($('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked") == true){
+		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).children('ul').css( 'display', 'none' );
+		console.log($('input[name="chk_hid_lv_'+lv+'"]').eq(idx).children('ul'));
+		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",false);
+	}else{
+		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",true);
+	}
+}*/
 </script>
 </head>
 <body>
@@ -413,7 +424,7 @@ function fn_searchSttRslt(){
 					<li>▶</li>
 					<li>회사명</li>
 					<li>
-						<select id="sel_fin_cd" name="sel_fin_cd" onchange="fn_selFin()">
+						<select id="sel_fin_cd" name="sel_fin_cd" onchange="fn_searchUplFl()">
 							<option value="SEL" <c:if test="${fin_cd eq ''}">selected</c:if>>선택</option>
 							<c:forEach var="finList" items="${finList}" begin="0" step="1">
 							<c:if test="${finList.finance_cd ne 'ALL'}">

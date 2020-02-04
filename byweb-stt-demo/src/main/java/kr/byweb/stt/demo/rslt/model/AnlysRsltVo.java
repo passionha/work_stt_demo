@@ -123,4 +123,11 @@ public class AnlysRsltVo {
 	private String prdln_nm;
 	private String auto_avg;
 	private String manual_avg;
+	private String chk_sel;
+	private String cttor_nm;
+	private String ctt_stts;
+	private String ctt_dt;
+	private String prd_nm;
+	private String auto_scr;
+	private String manual_scr;
 }

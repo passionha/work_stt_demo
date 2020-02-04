@@ -29,5 +29,10 @@ public class AnalysisResultServiceImpl implements AnalysisResultService{
 	public List<AnlysRsltVo> getTotalInspectoinList(Map pMap) throws Exception {
 		return analysisResultMapper.getTotalInspectoinList(pMap);
 	}
+
+	@Override
+	public List<AnlysRsltVo> getSttResultList(Map pMap) throws Exception {
+		return analysisResultMapper.getSttResultList(pMap);
+	}
 	
 }

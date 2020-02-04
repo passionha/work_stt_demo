@@ -37,7 +37,7 @@ public class AnalysisResultController {
 	AnalysisResultService analysisResultService;
 	
 	/**
-	 * 업로드파일 선택할 회사 목록 조회
+	 * 업로드파일 회사목록 조회
 	 * @param model
 	 * @return
 	 */
@@ -76,7 +76,7 @@ public class AnalysisResultController {
 	}
 	
 	/**
-	 * 선택 회사의 업로드파일 목록 조회
+	 * 선택한 회사의 업로드파일 목록 조회
 	 * @param request
 	 * @param model
 	 * @return
@@ -116,7 +116,7 @@ public class AnalysisResultController {
 	}
 	
 	/**
-	 * 선택한 업로드파일의 분석 진행상태 조회
+	 * 전체 분석 진행상태 조회
 	 * @param request
 	 * @param model
 	 * @return
@@ -153,7 +153,7 @@ public class AnalysisResultController {
 	}
 	
 	/**
-	 * 선택한 업로드파일의 종합결과 조회
+	 * 종합결과 조회
 	 * @param request
 	 * @param model
 	 * @return
@@ -189,5 +189,60 @@ public class AnalysisResultController {
 		}
 		
 		return totRsltList;
+	}
+	
+	/**
+	 * 텍스트 변환결과 및 계약별 결과 목록 조회
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/getSttResultList.do")
+	@ResponseBody
+	public List<AnlysRsltVo> getSttResultList(@RequestBody AnlysRsltVo[] arrChkFiles, HttpSession session, HttpServletRequest request, Model model) {
+		Map pMap = new HashMap();
+		List<AnlysRsltVo> sttRsltList = new ArrayList<AnlysRsltVo>();
+		for(AnlysRsltVo vo : arrChkFiles) {
+//			System.out.println("=====>rq : "+vo.getReq_dt());
+//			System.out.println("=====>cs : "+vo.getCls_cd());
+		}
+		
+		/*
+		 AND A.CLS_CD = #{cls_cd}
+         AND A.REQ_DEPT_CD = #{req_dept_cd}
+         AND A.PRDLN_CD = #{prdln_cd}
+         AND A.FIN_CD = #{fin_cd}
+         AND A.REQ_DT = #{req_dt}
+         
+         <foreach collection="flUplList" item="fList" separator="OR" open="(" close=")">
+            A.SAVE_FILE_NM = #{fList.save_file_nm}
+        </foreach>
+        
+        <if test="scrts_no != ''">
+        AND T1.SCRTS_NO like '%'||#{scrts_no}||'%'
+        </if>
+		*/
+		
+		List<Map<String, String>> paramList = new ArrayList<Map<String,String>>();
+		for(AnlysRsltVo chkFile : arrChkFiles) {
+			Map<String, String> map = new HashMap<String, String>();
+				map.put("cls_cd", chkFile.getCls_cd());
+				map.put("req_dept_cd", chkFile.getReq_dept_cd());
+				map.put("req_dt", chkFile.getReq_dt());
+				map.put("fin_cd", chkFile.getFin_cd());
+				map.put("save_file_nm", chkFile.getSave_file_nm());
+				paramList.add(map);
+//				키워드 json정보 호출 추가 필요
+//				변환파일 저장 추가 필요
+		}
+		pMap.put("fileList", paramList);
+		try {
+			sttRsltList = analysisResultService.getSttResultList(pMap);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return sttRsltList;
 	}
 }

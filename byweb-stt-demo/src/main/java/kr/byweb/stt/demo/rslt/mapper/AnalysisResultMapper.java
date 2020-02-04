@@ -15,4 +15,6 @@ public interface AnalysisResultMapper {
 
 	public List<AnlysRsltVo> getTotalInspectoinList(Map pMap) throws Exception;
 
+	public List<AnlysRsltVo> getSttResultList(Map pMap) throws Exception;
+
 }
