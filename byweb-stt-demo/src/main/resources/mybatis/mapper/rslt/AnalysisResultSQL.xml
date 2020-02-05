@@ -128,40 +128,6 @@
 		ORDER BY MAX(REG_DT) ASC
 	</select>
 	
-	<!-- 선택한 업로드파일의 종합결과 조회(미사용) -->
-	<select id="getTotalInspectoinList_one" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
-		SELECT
-		      A.CLS_CD
-		    , A.REQ_DEPT_CD
-		    , A.FIN_CD
-		    , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=A.FIN_CD) AS FIN_NM
-		    , A.PRDLN_CD
-		    , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE USE_YN='Y' AND REQ_DEPT_CD=A.REQ_DEPT_CD AND PRDLN_CD=A.PRDLN_CD) AS PRDLN_NM
-		    , A.REQ_DT
-		    , MAX(C.SAVE_FILE_NM) AS SAVE_FILE_NM
-		    , ROUND(AVG(DECODE(B.INSPC_SPR, '1', B.SCR, 0)), 2) AS AUTO_AVG
-		    , ROUND(AVG(DECODE(B.INSPC_SPR, '2', B.SCR, 0)), 2) AS MANUAL_AVG
-		FROM RR_TM001 A, TM_INSPC_RSLT B, TM_FLUPL_INF C
-		WHERE
-		    A.CLS_CD = B.CLS_CD(+)
-		    AND A.REQ_DEPT_CD = B.REQ_DEPT_CD(+)
-		    AND A.REQ_DT = B.REQ_DT(+)
-		    AND A.FIN_CD = B.FIN_CD(+)
-		    AND A.SCRTS_NO = B.SCRTS_NO(+)
-		    AND B.CLS_CD = C.CLS_CD(+)
-		    AND B.REQ_DEPT_CD = C.REQ_DEPT_CD(+)
-		    AND B.REQ_DT = C.REQ_DT(+)
-		    AND B.FIN_CD = C.FIN_CD(+)
-		    AND C.UPL_SPR(+) = '1'
-		    AND A.CLS_CD = #{cls_cd}
-		    AND A.REQ_DEPT_CD = #{req_dept_cd}
-		    AND A.REQ_DT = #{req_dt}
-		    AND A.FIN_CD = #{fin_cd}
-		    AND C.SAVE_FILE_NM(+) = #{save_file_nm}
-		GROUP BY A.CLS_CD, A.REQ_DEPT_CD, A.FIN_CD, A.REQ_DT, A.PRDLN_CD
-		ORDER BY PRDLN_NM ASC    
-	</select>
-	
 	<!-- 선택한 업로드파일의 종합결과 조회 -->
 	<select id="getTotalInspectoinList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
 		SELECT
@@ -171,7 +137,7 @@
 		    , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=T.FIN_CD) AS FIN_NM
 		    , REQ_DT
 		    , PRDLN_CD
-		    , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE <!-- CLS_CD=T.CLS_CD AND --> REQ_DEPT_CD=T.REQ_DEPT_CD AND PRDLN_CD=T.PRDLN_CD) AS PRDLN_NM
+		    , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE CLS_CD=T.CLS_CD AND REQ_DEPT_CD=T.REQ_DEPT_CD AND PRDLN_CD=T.PRDLN_CD) AS PRDLN_NM
 		    , ROUND(SUM(DECODE(INSPC_SPR, '1', SCR, 0))/MAX(CTTS_CNT), 2) AS AUTO_AVG
 		    , ROUND(SUM(DECODE(INSPC_SPR, '2', SCR, 0))/MAX(CTTS_CNT), 2) AS MANUAL_AVG
 		FROM (
@@ -242,7 +208,7 @@
 		            , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=A.FIN_CD) AS FIN_NM
 		            , A.SCRTS_NO
 		            , A.PRDLN_CD
-		            , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE USE_YN='Y' <!-- AND CLS_CD=A.CLS_CD --> AND REQ_DEPT_CD=A.REQ_DEPT_CD AND PRDLN_CD=A.PRDLN_CD) AS PRDLN_NM
+		            , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE USE_YN='Y' AND CLS_CD=A.CLS_CD AND REQ_DEPT_CD=A.REQ_DEPT_CD AND PRDLN_CD=A.PRDLN_CD) AS PRDLN_NM
 		            , SCR
 		            , B.INSPC_SPR
 		            , A.PRD_NM

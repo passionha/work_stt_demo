@@ -1,5 +1,7 @@
 package kr.byweb.stt.demo.rslt.model;
 
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -130,4 +132,5 @@ public class AnlysRsltVo {
 	private String prd_nm;
 	private String auto_scr;
 	private String manual_scr;
+	private String[] arr_save_file_nm;
 }

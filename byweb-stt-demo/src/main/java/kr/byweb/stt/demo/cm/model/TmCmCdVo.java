@@ -31,6 +31,7 @@ public class TmCmCdVo {
 	private String busi_end_day;
 	
 	//상품군 관리 테이블 : TM_PRDLN_MNG
+	private String cls_cd;
 	private String req_dept_cd;
 	private String prdln_cd;
 	private String prdln_nm;

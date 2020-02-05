@@ -35,13 +35,16 @@
 	#right_side table, th, td{
 		border: 2px solid lightgrey;
 	}
-	#right_side div input[type="button"] {
- 		float: right;
+	
+	#right_side input[type="button"] {
+		float: right;
 	}
-	#right_side div h5, input{
+	
+	#right_side h5, input{
 		display: inline;
 	}
-	#srch_con_rslt ul {
+	
+	#srch_ctt_rslt ul {
 		border: 3px solid #00b0f0;
 	}
 	
@@ -65,16 +68,20 @@
     }
 */
 
-	#tot_anlys_stts {
+	#tot_anlys_stts_cont, #tot_rslt_cont, #txt_stt_rslt_cont, #ctt_rslt_cont {
 		white-space:nowrap;
 		overflow: auto;
 		height: 100px;
+		width: 100%;
+		border: 1px solid blue;
 	}
+	
 </style>
 <script type="text/javascript">
 const arrUplFl = new Array();	//업로드파일 object 배열
 const arrAnlys = new Array();	//분석진행상태 object 배열
 const arrTotRslt = new Array();	//종합결과 object 배열
+const arrCttRslt = new Array();	//계약별결과 object 배열
 
 //회사별 업로드파일목록 조회
 function fn_searchUplFl(){
@@ -156,7 +163,6 @@ function fn_searchUplFl(){
 							
 							//재조회 시 기 입력 체크여부 유지
 							for(var i in arrUplFl){
-// 								console.log("chk : "+arrUplFl[i].chk);
 								if(arrUplFl[i].chk == '1'){
 									$("#chk_"+arrUplFl[i].id).prop("checked",true);
 								}
@@ -196,17 +202,16 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 // 	alert("this id : "+$(this).prop('id'));
 	//업로드파일 체크여부 저장
 	if($(this).prop("checked") == true){
-// 		console.log("chked");
 		for(var i in arrUplFl){
 			if("chk_"+arrUplFl[i].id == $(this).prop('id')){
 				arrUplFl[i].chk = '1';
 			}
 		}
 	}else{
-		console.log("arrTotRslt.length : "+arrTotRslt.length);
 		for(var i in arrUplFl){
 			if("chk_"+arrUplFl[i].id == $(this).prop('id')){
 				arrUplFl[i].chk = '0';
+				//체크해제한 업로드파일에 대한 분석진행상태object 배열에서 삭제
 				for(var j=0; j<arrAnlys.length; j++){
 					if(arrUplFl[i].cls_cd == arrAnlys[j].cls_cd
 					   && arrUplFl[i].req_dept_cd == arrAnlys[j].req_dept_cd
@@ -217,7 +222,7 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 						j--;
 					}
 				}
-				//상품군별 제거?로 삭제조건 key 수정 필요**************************
+				//체크해제한 업로드파일에 대한 종합결과object 배열에서 삭제
 				for(var k=0; k<arrTotRslt.length; k++){
 					if(arrUplFl[i].cls_cd == arrTotRslt[k].cls_cd
 					   && arrUplFl[i].req_dept_cd == arrTotRslt[k].req_dept_cd
@@ -229,13 +234,6 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 				}
 			}
 		}
-// 		console.log("arrAnlys length: "+arrAnlys.length);
-// 		console.log("arrTotRslt length: "+arrTotRslt.length);
-		/*if(arrTotRslt.length > 0){
-			for(var k in arrTotRslt){
-				console.log("남은 arrTotRslt : "+arrTotRslt[k].req_dt);
-			}
-		}*/
 	}
 	
 	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
@@ -258,7 +256,7 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	        async: false,
 	        success: function(data) {
 	        	if(data != ''){
-	        		$("#tot_anlys_stts > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
+	        		$("#tot_anlys_stts > #tot_anlys_stts_cont > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
 		        	$.each(data, function(idx, item){
 		        		var anlysId = "anlys"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm;
 		        		anlysId = anlysId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
@@ -269,7 +267,7 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 			        		+"<td>"+item.upl_file_nm+"</td>"
 			        		+"<td>"+item.trns_stts_nm+"</td>"
 			        		+"</tr>";
-		        		$("#tot_anlys_stts > table > tbody").append(source);
+		        		$("#tot_anlys_stts > #tot_anlys_stts_cont > table > tbody").append(source);
 		        		
 						//분석진행상태 조회결과 object 배열로 저장
 		        		var dupObjCnt = 0;
@@ -287,7 +285,7 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 									req_dt : item.req_dt,
 									save_file_nm : item.save_file_nm
 							}
-							console.log("input objAnlys : "+objAnlys);
+// 							console.log("input objAnlys : "+objAnlys);
 		 					arrAnlys.push(objAnlys);
 						}
 		        	});
@@ -300,8 +298,8 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	         }
 		});
 	}else{
-		$("#tot_anlys_stts > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
-		$("#tot_rslt > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
+		$("#tot_anlys_stts > #tot_anlys_stts_cont > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
+		$("#tot_rslt > #tot_rslt_cont > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
 	}
 	
 	
@@ -319,20 +317,20 @@ function fn_searchTotRslt(pObj, flCmCd){
         success: function(data) {
         	if(data != ''){
 // 				console.log(data);        		
-        		$("#tot_rslt > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
+        		$("#tot_rslt > #tot_rslt_cont > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
 	        	$.each(data, function(idx, item){
 	        		//체크한 파일별 id생성(권역코드+요청부서코드+회사코드+요청일자+저장파일명)
 	        		var idStr = "totRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.prdln_cd;
-	        		idStr = idStr.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+	        		idStr = removeSpcChar(idStr);
 // 					console.log("rslt id : "+idStr);
-	        		var source = "<tr id=\""+idStr+"\" ondblclick=\"fn_searchSttRslt()\">"
+	        		var source = "<tr id=\""+idStr+"\">"
 		        		+"<td>"+item.fin_nm+"</td>"
 		        		+"<td>"+item.req_dt+"</td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
 		        		+"<td>"+item.auto_avg+"</td>"
 		        		+"<td>"+item.manual_avg+"</td>"
 		        		+"</tr>";
-	        		$("#tot_rslt > table > tbody").append(source);
+	        		$("#tot_rslt > #tot_rslt_cont > table > tbody").append(source);
 					//종합결과 조회결과 object 배열로 저장
 	        		var objTotRslt = {
 	        				id : idStr,
@@ -353,9 +351,107 @@ function fn_searchTotRslt(pObj, flCmCd){
 }
 
 //텍스트 변환결과 및 계약별 결과 조회 
-function fn_searchSttRslt(){
+$('body').on('dblclick', '#tot_rslt > #tot_rslt_cont > table > tbody > tr', function(){
+	console.log("this id : "+$(this).prop('id'));
+	var cls_cd;
+	var req_dept_cd;
+	var fin_cd;
+	var req_dt;
+	var prdln_cd;
+	var arrSaveFileNm = new Array();
+	for(var i in arrTotRslt){
+		if(arrTotRslt[i].id == $(this).prop('id')){
+			cls_cd = arrTotRslt[i].cls_cd;
+			req_dept_cd = arrTotRslt[i].req_dept_cd;
+			fin_cd = arrTotRslt[i].fin_cd;
+			req_dt = arrTotRslt[i].req_dt;
+			prdln_cd = arrTotRslt[i].prdln_cd;
+		}
+	}
+	for(var i in arrAnlys){
+		if(   cls_cd 	  == arrAnlys[i].cls_cd
+		   && req_dept_cd == arrAnlys[i].req_dept_cd
+		   && fin_cd 	  == arrAnlys[i].fin_cd
+		   && req_dt 	  == arrAnlys[i].req_dt){
+			arrSaveFileNm.push(arrAnlys[i].save_file_nm);
+		}
+	}
 	
-}
+	var pObj = {
+		cls_cd : 	  	cls_cd,
+		req_dept_cd : 	req_dept_cd,
+		fin_cd : 	  	fin_cd,
+		req_dt : 	  	req_dt,
+		prdln_cd : 	    prdln_cd,
+		arr_save_file_nm : arrSaveFileNm
+	}
+	
+	$.ajax({
+		type: "POST",
+        url: "getSttResultList.do",
+        data: JSON.stringify(pObj),
+        contentType:'application/json; charset=UTF-8',
+        dataType:"json",
+        async: false,
+        success: function(data) {
+        	if(data != ''){
+        		console.log(data);
+        		
+        		$("#txt_stt_rslt > #txt_stt_rslt_cont > table > tbody").empty();
+        		$("#ctt_rslt > #ctt_rslt_cont > table > tbody").empty();
+        		arrCttRslt.splice(0, arrCttRslt.length);
+	        	$.each(data, function(idx, item){
+	        		//체크한 파일별 id생성(권역코드+요청부서코드+회사코드+요청일자+저장파일명)
+	        		var idStr = removeSpcChar("txtRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
+					console.log("rslt id : "+idStr);
+	        		var source = "<tr id=\""+idStr+"\">"
+		        		+"<td><input type=\"checkbox\"></td>"
+		        		+"<td>"+item.fin_nm+"</td>"
+		        		+"<fmt:parseDate value=\""+item.req_dt+"\" var=\"fmt_req_dt\" pattern=\"yyyyMMdd\"/>
+		        		+"<td><fmt:formatDate value=\"${fmt_req_dt}\" pattern=\"yyyy-MM-dd\"/></td>"
+		        		+"<td>"+item.prdln_nm+"</td>"
+		        		+"<td>"+item.scrts_no+"</td>"
+		        		+"<td>"+item.auto_scr+"</td>"
+		        		+"<td>"+item.manual_scr+"</td>"
+		        		+"</tr>";
+	        		$("#txt_stt_rslt > #txt_stt_rslt_cont > table > tbody").append(source);
+	        		
+	        		idStr = removeSpcChar("sttRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
+					var source = "<tr id=\""+idStr+"\">"
+		        		+"<td>"+item.fin_nm+"</td>"
+		        		+"<fmt:parseDate value=\""+item.req_dt+"\" var=\"fmt_req_dt\" pattern=\"yyyyMMdd\"/>
+		        		+"<td><fmt:formatDate value=\"${fmt_req_dt}\" pattern=\"yyyy-MM-dd\"/></td>"
+		        		+"<td>"+item.prdln_nm+"</td>"
+		        		+"<td>"+item.scrts_no+"</td>"
+		        		+"<td>"+item.prd_nm+"</td>"
+		        		+"<td>"+item.ctt_dt+"</td>"
+		        		+"<td>"+item.ctt_stts+"</td>"
+		        		+"<td>"+item.cttor_nm+"</td>"
+		        		+"<td>"+item.auto_scr+"</td>"
+		        		+"<td>"+item.manual_scr+"</td>"
+		        		+"</tr>";
+        			$("#ctt_rslt > #ctt_rslt_cont > table > tbody").append(source);
+					
+					//조회결과를 object 배열에 저장
+	        		var objCttRslt = {
+	        				id : idStr,
+							cls_cd : item.cls_cd,
+							req_dept_cd : item.req_dept_cd,
+							fin_cd : item.fin_cd,
+							req_dt : item.req_dt,
+							scrts_no : item.req_dt,
+							prdln_cd : item.prdln_cd,
+							save_file_nm : item.save_file_nm
+					}
+	        		arrCttRslt.push(objTotRslt);
+	        	});
+        	}
+         },
+         error       :   function(request, status, error){
+             console.log("AJAX_ERROR");
+         }
+	});
+});
 
 /*
 //트리뷰 +,-이미지 클릭
@@ -369,30 +465,40 @@ function fn_foldClick(lv, idx){
 	}
 }*/
 
-// $('#con_rslt > table > tbody > tr').dblclick(function(){
+// $('#ctt_rslt > table > tbody > tr').dblclick(function(){
 // 	console.log("ddddd");
 // });
-$('body').on('dblclick', '#con_rslt > table > tbody > tr', function(){
+
+//분석 상세 결과 화면 전환
+$('body').on('dblclick', '#ctt_rslt > table > tbody > tr', function(){
 	var frm_goDetail = document.getElementById("frm_goDetail");
 	frm_goDetail.submit();
 });
+
+//특수문자 제거
+function removeSpcChar(str){
+	str = str.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
+	return str;
+}
 </script>
 </head>
 <body>
 <div id="wrap">
 	<section>
-		<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
-			<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
-				<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
-			</c:if>
-		</c:forEach>
-		<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-03" />
-		<c:forEach var="navTitles" items="${sessionScope.navTitles}">
-			<c:if test="${navTitles.menu_id eq navMenuId}">
-				<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
-			</c:if>
-		</c:forEach>
-		<h3>${sectionTitle}</h3>
+		<div>
+			<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
+				<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
+					<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
+				</c:if>
+			</c:forEach>
+			<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-03" />
+			<c:forEach var="navTitles" items="${sessionScope.navTitles}">
+				<c:if test="${navTitles.menu_id eq navMenuId}">
+					<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
+				</c:if>
+			</c:forEach>
+			<h3>${sectionTitle}</h3>
+		</div>
 		<div id="upl_file_sel">
 			<form id="frm_getUplList" action="getAnlysRsltList.do" method="post">
 			<input type="hidden" id="upl_class_cd" name="upl_class_cd">
@@ -425,61 +531,61 @@ $('body').on('dblclick', '#con_rslt > table > tbody > tr', function(){
 			<div id="tot_anlys_stts">
 				<h5>> 전체 분석 진행상태</h5>
 				<input type="button" value="분석">
-				<table>
-					<thead>
-						<tr>
-							<th>회사명</th>
-							<th>요청일</th>
-							<th>파일명</th>
-							<th>STT진행상태</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
+				<div id="tot_anlys_stts_cont">
+					<table>
+						<thead>
+							<tr>
+								<th>회사명</th>
+								<th>요청일</th>
+								<th>파일명</th>
+								<th>STT진행상태</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
 			</div>
 			<div id="tot_rslt">
 				<h5>> 종합결과 조회</h5>
 				<input type="button" value="엑셀">
-				<table>
-					<thead>
-					<tr>
-						<th>회사명</th>
-						<th>요청일</th>
-						<th>상품군</th>
-						<th>자동평균</th>
-						<th>수동평균</th>
-					</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
+				<div id="tot_rslt_cont">
+					<table>
+						<thead>
+						<tr>
+							<th>회사명</th>
+							<th>요청일</th>
+							<th>상품군</th>
+							<th>자동평균</th>
+							<th>수동평균</th>
+						</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
 			</div>
 			<div id="txt_stt_rslt">
 				<h5>> 텍스트 변환결과 다운로드</h5>
 				<input type="button" value="파일다운">
-				<table>
-					<tr>
-						<th><input type="checkbox"></th>
-						<th>회사명</th>
-						<th>요청일</th>
-						<th>상품군</th>
-						<th>증권번호</th>
-						<th>자동점수</th>
-						<th>수동점수</th>
-					</tr>
-					<tr>
-						<td><input type="checkbox"></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</table>
+				<div id="txt_stt_rslt_cont">
+					<table>
+						<thead>
+							<tr>
+								<th><input type="checkbox"></th>
+								<th>회사명</th>
+								<th>요청일</th>
+								<th>상품군</th>
+								<th>증권번호</th>
+								<th>자동점수</th>
+								<th>수동점수</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
 			</div>
-			<div id="con_rslt">
+			<div id="ctt_rslt">
 				<h5>> 계약별 결과 조회</h5>
-				<div id="srch_con_rslt">
+				<div id="srch_ctt_rslt">
 					<ul>
 						<li>▶</li>
 						<li>증권번호</li>
@@ -488,36 +594,25 @@ $('body').on('dblclick', '#con_rslt > table > tbody > tr', function(){
 						<li><input type="button" value="엑셀"></li>
 					</ul>
 				</div>
-				<table>
-					<thead>
-						<tr>
-							<th>회사명</th>
-							<th>요청일</th>
-							<th>상품군</th>
-							<th>증권번호</th>
-							<th>상품명</th>
-							<th>계약일</th>
-							<th>계약상태</th>
-							<th>계약자명</th>
-							<th>자동점수</th>
-							<th>수동점수</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>테스트회사</td>
-							<td>20190920</td>
-							<td>종신보험</td>
-							<td>ABC0001</td>
-							<td>테스트상품</td>
-							<td>2020-01-01</td>
-							<td>유지</td>
-							<td>홍길동</td>
-							<td>0</td>
-							<td>0</td>
-						</tr>
-					</tbody>
-				</table>
+				<div id="ctt_rslt_cont">
+					<table>
+						<thead>
+							<tr>
+								<th>회사명</th>
+								<th>요청일</th>
+								<th>상품군</th>
+								<th>증권번호</th>
+								<th>상품명</th>
+								<th>계약일</th>
+								<th>계약상태</th>
+								<th>계약자명</th>
+								<th>자동점수</th>
+								<th>수동점수</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
 				<form id="frm_goDetail" method="post" action="getContractInfo.do"></form>
 			</div>
 		</div>

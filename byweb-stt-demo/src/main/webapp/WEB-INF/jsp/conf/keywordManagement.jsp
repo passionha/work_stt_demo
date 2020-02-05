@@ -439,18 +439,20 @@ function fn_deleteKwdList(){
 <%-- <jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include> --%>
 <div id="wrapper">
 	<section>
-		<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
-			<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
-				<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
-			</c:if>
-		</c:forEach>
-		<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-02" />
-		<c:forEach var="navTitles" items="${sessionScope.navTitles}">
-			<c:if test="${navTitles.menu_id eq navMenuId}">
-				<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
-			</c:if>
-		</c:forEach>
-		<h3>${sectionTitle}</h3>
+		<div>
+			<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
+				<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
+					<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
+				</c:if>
+			</c:forEach>
+			<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-02" />
+			<c:forEach var="navTitles" items="${sessionScope.navTitles}">
+				<c:if test="${navTitles.menu_id eq navMenuId}">
+					<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
+				</c:if>
+			</c:forEach>
+			<h3>${sectionTitle}</h3>
+		</div>
 		<form name="searchFrm" id="searchFrm" action="getAnalysisStandardList.do" method="post">
 			<div id="searchBar">
 				<ul>

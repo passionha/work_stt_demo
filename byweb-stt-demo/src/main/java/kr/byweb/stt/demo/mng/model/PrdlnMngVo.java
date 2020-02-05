@@ -9,6 +9,7 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor
 public class PrdlnMngVo {
+	private @NonNull String cls_cd;
 	private @NonNull String req_dept_cd;
 	private @NonNull String prdln_cd;
 	private String prdln_nm;

@@ -156,18 +156,20 @@ function fn_anlysAll(){
 <body>
 <div id="wrap">
 	<section>
-		<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
-			<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
-				<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
-			</c:if>
-		</c:forEach>
-		<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-01-01" />
-		<c:forEach var="navTitles" items="${sessionScope.navTitles}">
-			<c:if test="${navTitles.menu_id eq navMenuId}">
-				<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
-			</c:if>
-		</c:forEach>
-		<h3>${sectionTitle}</h3>
+		<div>
+			<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
+				<c:if test="${headerTitles.menu_id eq sessionScope.sel_req_cd}">
+					<c:set var="hdTitle" value="${headerTitles.menu_nm}"></c:set>
+				</c:if>
+			</c:forEach>
+			<c:set var="navMenuId" value="${sessionScope.sel_req_cd}-01-01" />
+			<c:forEach var="navTitles" items="${sessionScope.navTitles}">
+				<c:if test="${navTitles.menu_id eq navMenuId}">
+					<c:set var="sectionTitle" value="${hdTitle} > ${navTitles.menu_nm}"></c:set>
+				</c:if>
+			</c:forEach>
+			<h3>${sectionTitle}</h3>
+		</div>
 		<form id="frm" action="getContractDetailList.do" method="post">
 			<input type="hidden" id="det_class_cd" name="det_class_cd">
 			<div id="btn_top">
