@@ -2,6 +2,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -407,8 +408,8 @@ $('body').on('dblclick', '#tot_rslt > #tot_rslt_cont > table > tbody > tr', func
 	        		var source = "<tr id=\""+idStr+"\">"
 		        		+"<td><input type=\"checkbox\"></td>"
 		        		+"<td>"+item.fin_nm+"</td>"
-		        		+"<fmt:parseDate value=\""+item.req_dt+"\" var=\"fmt_req_dt\" pattern=\"yyyyMMdd\"/>
-		        		+"<td><fmt:formatDate value=\"${fmt_req_dt}\" pattern=\"yyyy-MM-dd\"/></td>"
+		        		+"<fmt\:parseDate value=\""+item.req_dt+"\" var=\"fmt_req_dt\" pattern=\"yyyyMMdd\"/>"
+		        		+"<td><fmt\:formatDate value=\"${fmt_req_dt}\" pattern=\"yyyy-MM-dd\"/></td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
 		        		+"<td>"+item.scrts_no+"</td>"
 		        		+"<td>"+item.auto_scr+"</td>"
@@ -419,8 +420,8 @@ $('body').on('dblclick', '#tot_rslt > #tot_rslt_cont > table > tbody > tr', func
 	        		idStr = removeSpcChar("sttRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
 					var source = "<tr id=\""+idStr+"\">"
 		        		+"<td>"+item.fin_nm+"</td>"
-		        		+"<fmt:parseDate value=\""+item.req_dt+"\" var=\"fmt_req_dt\" pattern=\"yyyyMMdd\"/>
-		        		+"<td><fmt:formatDate value=\"${fmt_req_dt}\" pattern=\"yyyy-MM-dd\"/></td>"
+		        		+"<fmt\:parseDate value=\""+item.req_dt+"\" var=\"fmt_req_dt\" pattern=\"yyyyMMdd\"/>"
+		        		+"<td><fmt\:formatDate value=\"${fmt_req_dt}\" pattern=\"yyyy-MM-dd\"/></td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
 		        		+"<td>"+item.scrts_no+"</td>"
 		        		+"<td>"+item.prd_nm+"</td>"
@@ -443,7 +444,7 @@ $('body').on('dblclick', '#tot_rslt > #tot_rslt_cont > table > tbody > tr', func
 							prdln_cd : item.prdln_cd,
 							save_file_nm : item.save_file_nm
 					}
-	        		arrCttRslt.push(objTotRslt);
+	        		arrCttRslt.push(objCttRslt);
 	        	});
         	}
          },
@@ -479,6 +480,74 @@ $('body').on('dblclick', '#ctt_rslt > table > tbody > tr', function(){
 function removeSpcChar(str){
 	str = str.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
 	return str;
+}
+
+//종합결과조회 엑셀 다운로드
+function fn_excel_totRslt(){
+	var frm = document.getElementById("frm_excel_totRslt");
+	for(var i in arrAnlys){
+		/*var jsonObj = {
+			cls_cd : arrAnlys[i].cls_cd,
+			req_dept_cd : arrAnlys[i].req_dept_cd,
+			req_dt : arrAnlys[i].req_dt,
+			fin_cd : arrAnlys[i].fin_cd,
+			save_file_nm : arrAnlys[i].save_file_nm
+		}*/
+		var ipt_cls_cd = document.createElement('input');
+		var ipt_req_dept_cd = document.createElement('input');
+		var ipt_req_dt = document.createElement('input');
+		var ipt_fin_cd = document.createElement('input');
+		var ipt_save_file_nm = document.createElement('input');
+		
+		ipt_cls_cd.setAttribute("type", "hidden");
+		ipt_cls_cd.setAttribute("name", "anlysRsltVos["+i+"].cls_cd");
+		ipt_cls_cd.setAttribute("value", arrAnlys[i].cls_cd);
+		ipt_req_dept_cd.setAttribute("type", "hidden");
+		ipt_req_dept_cd.setAttribute("name", "anlysRsltVos["+i+"].req_dept_cd");
+		ipt_req_dept_cd.setAttribute("value", arrAnlys[i].req_dept_cd);
+		ipt_req_dt.setAttribute("type", "hidden");
+		ipt_req_dt.setAttribute("name", "anlysRsltVos["+i+"].req_dt");
+		ipt_req_dt.setAttribute("value", arrAnlys[i].req_dt);
+		ipt_fin_cd.setAttribute("type", "hidden");
+		ipt_fin_cd.setAttribute("name", "anlysRsltVos["+i+"].fin_cd");
+		ipt_fin_cd.setAttribute("value", arrAnlys[i].fin_cd);
+		ipt_save_file_nm.setAttribute("type", "hidden");
+		ipt_save_file_nm.setAttribute("name", "anlysRsltVos["+i+"].save_file_nm");
+		ipt_save_file_nm.setAttribute("value", arrAnlys[i].save_file_nm);
+		
+		frm.appendChild(ipt_cls_cd);
+		frm.appendChild(ipt_req_dept_cd);
+		frm.appendChild(ipt_req_dt);
+		frm.appendChild(ipt_fin_cd);
+		frm.appendChild(ipt_save_file_nm);
+	}
+	
+	frm.submit();
+	
+	
+	
+// 	var jsonObj = {
+// 		cls_cd : $(this).siblings('input[name="upl_cls_cd"]').val(),
+// 		req_dept_cd : $(this).siblings('input[name="upl_req_dept_cd"]').val(),
+// 		req_dt : $(this).siblings('input[name="upl_req_dt"]').val(),
+// 		fin_cd : $(this).siblings('input[name="upl_fin_cd"]').val(),
+// 		save_file_nm : $(this).siblings('input[name="upl_save_file_nm"]').val()
+// 	}
+// 	arrJsonObj.push(jsonObj);
+	/* 
+	$.ajax({
+		type: "POST",
+        url: "getTotalInspectoinList_exl.do",
+        contentType:'application/json; charset=UTF-8',
+        data:JSON.stringify(arrJsonObj),
+        dataType:"json",
+        async: false,
+//         success: function(data) {
+//         },
+//         error       :   function(request, status, error){
+//              console.log("AJAX_ERROR");
+//         }
+	}); */
 }
 </script>
 </head>
@@ -547,7 +616,7 @@ function removeSpcChar(str){
 			</div>
 			<div id="tot_rslt">
 				<h5>> 종합결과 조회</h5>
-				<input type="button" value="엑셀">
+				<input type="button" value="엑셀" onclick="fn_excel_totRslt()">
 				<div id="tot_rslt_cont">
 					<table>
 						<thead>
@@ -614,6 +683,7 @@ function removeSpcChar(str){
 					</table>
 				</div>
 				<form id="frm_goDetail" method="post" action="getContractInfo.do"></form>
+				<form id="frm_excel_totRslt" method="post" action="getTotalInspectoinList_exl.do"></form>
 			</div>
 		</div>
 	</section>

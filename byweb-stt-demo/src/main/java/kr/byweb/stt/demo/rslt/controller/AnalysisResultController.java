@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.tomcat.util.json.JSONParser;
@@ -164,11 +165,6 @@ public class AnalysisResultController {
 	public List<AnlysRsltVo> getTotalInspectoinList(@RequestBody AnlysRsltVo[] arrChkFiles, HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		List<AnlysRsltVo> totRsltList = new ArrayList<AnlysRsltVo>();
-		for(AnlysRsltVo vo : arrChkFiles) {
-//			System.out.println("=====>rq : "+vo.getReq_dt());
-//			System.out.println("=====>cs : "+vo.getCls_cd());
-		}
-		
 		List<Map<String, String>> paramList = new ArrayList<Map<String,String>>();
 		for(AnlysRsltVo chkFile : arrChkFiles) {
 			Map<String, String> map = new HashMap<String, String>();
@@ -233,5 +229,37 @@ public class AnalysisResultController {
 		}
 		
 		return sttRsltList;
+	}
+	
+	/**
+	 * 종합결과 엑셀 다운로드
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/getTotalInspectoinList_exl.do")
+	public String getTotalInspectoinList_exl(AnlysRsltVo anlysRsltVo, HttpServletResponse response, HttpServletRequest request, Model model) {
+		Map pMap = new HashMap();
+		List<AnlysRsltVo> totRsltList = new ArrayList<AnlysRsltVo>();
+		List<Map<String, String>> paramList = new ArrayList<Map<String,String>>();
+		for(AnlysRsltVo chkFlList : anlysRsltVo.getAnlysRsltVos()) {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("cls_cd", chkFlList.getCls_cd());
+			map.put("req_dept_cd", chkFlList.getReq_dept_cd());
+			map.put("req_dt", chkFlList.getReq_dt());
+			map.put("fin_cd", chkFlList.getFin_cd());
+			map.put("save_file_nm", chkFlList.getSave_file_nm());
+			paramList.add(map);
+		}
+		pMap.put("fileList", paramList);
+		
+		try {
+			totRsltList = analysisResultService.getTotalInspectoinList(pMap);
+			model.addAttribute("totRsltList", totRsltList);
+			model.addAttribute("filename", "종합결과.xls");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "rslt/analysisResult_totRslt_exl";
 	}
 }

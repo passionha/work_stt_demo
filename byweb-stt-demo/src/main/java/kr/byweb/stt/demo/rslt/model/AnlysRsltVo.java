@@ -133,4 +133,6 @@ public class AnlysRsltVo {
 	private String auto_scr;
 	private String manual_scr;
 	private String[] arr_save_file_nm;
+	private List<AnlysRsltVo> anlysRsltVos;
+	
 }
