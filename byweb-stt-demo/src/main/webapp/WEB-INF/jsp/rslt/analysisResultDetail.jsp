@@ -31,6 +31,16 @@
 		float: left;
 	}
 	
+	h5 {
+		display: inline;
+	}
+	
+	p {
+		display: inline;
+		font-size: 11px;
+		color: red;
+	}
+	
 	#div_refRcdFl {
 		float: right;
 	}
@@ -40,14 +50,6 @@
 		overflow: auto;
 		width: 600px;
 		height: 300px;
-	}
-	
-	#div_inspcRslt > h5, #div_refRcdFl > h5 {
-		display: inline;
-	}
-	
-	#div_refRcdFl > table{
-		display: block;
 	}
 </style>
 </head>
@@ -67,7 +69,7 @@
 		</c:forEach>
 		<h3>${sectionTitle}</h3>
 		<div>
-			<h5>계약정보</h5>
+			<h5>> 계약정보</h5>
 			<table>
 				<thead>
 					<tr>
@@ -99,7 +101,7 @@
 		</div>
 		
 		<div id="div_inspcRslt">
-			<h5>검수결과</h5>
+			<h5>> 검수결과</h5>
 			<input type="button" value="저장">
 			<input type="checkbox" id="">
 			<label for="">불완전판매 여부</label>
@@ -139,7 +141,7 @@
 		</div>
 		<div id="left_side">
 			<div id="div_esnKwdUse">
-				<h5>필수키워드 사용</h5>
+				<h5>> 필수키워드 사용</h5>
 				<p>키워드 더블클릭 시 텍스트 검색, 출현시간 더블클릭 시 녹취파일 재생</p>
 				<table>
 					<thead>
@@ -169,7 +171,7 @@
 			</div>
 			
 			<div id="div_banKwdUse">
-				<h5>금지어 사용</h5>
+				<h5>> 금지어 사용</h5>
 				<p>키워드 더블클릭 시 텍스트 검색, 출현시간 더블클릭 시 녹취파일 재생</p>
 				<table>
 					<thead>
@@ -199,7 +201,7 @@
 			</div>
 			
 			<div id="div_omsEsnKwd">
-				<h5>누락된 필수키워드</h5>
+				<h5>> 누락된 필수키워드</h5>
 				<table>
 					<thead>
 						<tr>
@@ -221,7 +223,7 @@
 			</div>
 			
 			<div id="div_refRcdFl">
-				<h5>관련 녹취파일</h5>
+				<h5>> 관련 녹취파일</h5>
 				<input type="button" value="재생">
 				<table>
 					<thead>
@@ -244,7 +246,7 @@
 			</div>
 		</div>
 		<div id="div_sttRslt">
-			<h5>텍스트 변환 결과</h5>
+			<h5>> 텍스트 변환 결과</h5>
 			<div>
 				<input type="text">
 				<input type="button" value="저장">
