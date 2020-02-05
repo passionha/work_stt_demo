@@ -7,16 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.byweb.stt.demo.mng.mapper.ProductLineManagementMapper;
+import kr.byweb.stt.demo.mng.model.PrdlnMngVo;
 
 @Service
 public class ProductLineManagementServiceImpl implements ProductLineManagementService{
 	
 	@Autowired
 	private ProductLineManagementMapper productLineManagementMapper;
-	
-//	@Override
-//	public List<PrdlnMng> getPrdlnList(Map pMap) throws Exception {
-//		return prdlnMngMapper.getPrdlnList(pMap);
-//	}
+
+	@Override
+	public List<PrdlnMngVo> getProductList(Map pMap) throws Exception {
+		return productLineManagementMapper.getProductList(pMap);
+	}
 
 }

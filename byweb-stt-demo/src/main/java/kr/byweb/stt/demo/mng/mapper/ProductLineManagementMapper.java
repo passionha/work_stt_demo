@@ -5,8 +5,11 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import kr.byweb.stt.demo.mng.model.PrdlnMngVo;
+
 @Mapper
 public interface ProductLineManagementMapper {
+
+	public List<PrdlnMngVo> getProductList(Map pMap) throws Exception;
 	
-//	public List<PrdlnMng> getPrdlnList(Map pMap) throws Exception;
 }

@@ -185,6 +185,7 @@ function fn_searchUplFl(){
 }
 
 //전체 분석 진행상태 조회
+// $('input[name="chk_upl_file_nm"]').change(function(){
 $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	var arrJsonObj = new Array();
 	var cls_cd = $(this).siblings('input[name="upl_cls_cd"]').val();
@@ -206,65 +207,35 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 		for(var i in arrUplFl){
 			if("chk_"+arrUplFl[i].id == $(this).prop('id')){
 				arrUplFl[i].chk = '0';
-				for(var j in arrAnlys){
+				for(var j=0; j<arrAnlys.length; j++){
 					if(arrUplFl[i].cls_cd == arrAnlys[j].cls_cd
 					   && arrUplFl[i].req_dept_cd == arrAnlys[j].req_dept_cd
 					   && arrUplFl[i].fin_cd == arrAnlys[j].fin_cd
 					   && arrUplFl[i].req_dt == arrAnlys[j].req_dt
 					   && arrUplFl[i].save_file_nm == arrAnlys[j].save_file_nm){
 						arrAnlys.splice(j, 1);
+						j--;
 					}
 				}
-				/* var cnt = 0;
+				//상품군별 제거?로 삭제조건 key 수정 필요**************************
 				for(var k=0; k<arrTotRslt.length; k++){
 					if(arrUplFl[i].cls_cd == arrTotRslt[k].cls_cd
 					   && arrUplFl[i].req_dept_cd == arrTotRslt[k].req_dept_cd
 					   && arrUplFl[i].fin_cd == arrTotRslt[k].fin_cd
 					   && arrUplFl[i].req_dt == arrTotRslt[k].req_dt){
-						console.log("2k : "+k);
-						console.log("upl cls_cd : "+arrUplFl[i].cls_cd+" vs tot : "+arrTotRslt[k].cls_cd);
-					   console.log("upl req_dept_cd : "+arrUplFl[i].req_dept_cd+" vs tot : "+arrTotRslt[k].req_dept_cd);
-					   console.log("upl fin_cd : "+arrUplFl[i].fin_cd+" vs tot : "+arrTotRslt[k].fin_cd);
-					   console.log("upl req_dt : "+arrUplFl[i].req_dt+" vs tot : "+arrTotRslt[k].req_dt);
-					   arrTotRslt.splice(k, 1);
+			   			arrTotRslt.splice(k, 1);
+					   	k--;
 					}
-				} */
-				/*for(var k in arrTotRslt){
-					console.log("1k : "+k);
-// 					console.log("tot : "+arrTotRslt[k].cls_cd);
-// 				   console.log("tot : "+arrTotRslt[k].req_dept_cd);
-// 				   console.log("tot : "+arrTotRslt[k].fin_cd);
-// 				   console.log("tot : "+arrTotRslt[k].req_dt);
-				   console.log(arrUplFl[i].cls_cd == arrTotRslt[k].cls_cd
-						   && arrUplFl[i].req_dept_cd == arrTotRslt[k].req_dept_cd
-						   && arrUplFl[i].fin_cd == arrTotRslt[k].fin_cd
-						   && arrUplFl[i].req_dt == arrTotRslt[k].req_dt);
-					
-					if(arrUplFl[i].cls_cd == arrTotRslt[k].cls_cd
-					   && arrUplFl[i].req_dept_cd == arrTotRslt[k].req_dept_cd
-					   && arrUplFl[i].fin_cd == arrTotRslt[k].fin_cd
-					   && arrUplFl[i].req_dt == arrTotRslt[k].req_dt){
-						console.log("2k : "+k);
-						console.log("upl cls_cd : "+arrUplFl[i].cls_cd+" vs tot : "+arrTotRslt[k].cls_cd);
-					   console.log("upl req_dept_cd : "+arrUplFl[i].req_dept_cd+" vs tot : "+arrTotRslt[k].req_dept_cd);
-					   console.log("upl fin_cd : "+arrUplFl[i].fin_cd+" vs tot : "+arrTotRslt[k].fin_cd);
-					   console.log("upl req_dt : "+arrUplFl[i].req_dt+" vs tot : "+arrTotRslt[k].req_dt);
-					   arrTotRslt.splice(k, 1);
-					}
-				}*/
-				console.log("cnt : "+cnt);
+				}
 			}
 		}
-		console.log("arrAnlys length: "+arrAnlys.length);
-		console.log("arrTotRslt length: "+arrTotRslt.length);
-		/*for(var j in arrAnlys){
-			console.log("남은 arrAnlys : "+arrAnlys[j].save_file_nm);
-		}*/
-		if(arrTotRslt.length > 0){
+// 		console.log("arrAnlys length: "+arrAnlys.length);
+// 		console.log("arrTotRslt length: "+arrTotRslt.length);
+		/*if(arrTotRslt.length > 0){
 			for(var k in arrTotRslt){
 				console.log("남은 arrTotRslt : "+arrTotRslt[k].req_dt);
 			}
-		}
+		}*/
 	}
 	
 	if($('input[name="chk_upl_file_nm"]:checked').length > 0){
@@ -288,7 +259,6 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	        success: function(data) {
 	        	if(data != ''){
 	        		$("#tot_anlys_stts > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
-//	         		$('tr[id^='+trId+']').css( "color", "green" );
 		        	$.each(data, function(idx, item){
 		        		var anlysId = "anlys"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm;
 		        		anlysId = anlysId.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
@@ -398,6 +368,14 @@ function fn_foldClick(lv, idx){
 		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",true);
 	}
 }*/
+
+// $('#con_rslt > table > tbody > tr').dblclick(function(){
+// 	console.log("ddddd");
+// });
+$('body').on('dblclick', '#con_rslt > table > tbody > tr', function(){
+	var frm_goDetail = document.getElementById("frm_goDetail");
+	frm_goDetail.submit();
+});
 </script>
 </head>
 <body>
@@ -511,31 +489,36 @@ function fn_foldClick(lv, idx){
 					</ul>
 				</div>
 				<table>
-					<tr>
-						<th>회사명</th>
-						<th>요청일</th>
-						<th>상품군</th>
-						<th>증권번호</th>
-						<th>상품명</th>
-						<th>계약일</th>
-						<th>계약상태</th>
-						<th>계약자명</th>
-						<th>자동점수</th>
-						<th>수동점수</th>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
+					<thead>
+						<tr>
+							<th>회사명</th>
+							<th>요청일</th>
+							<th>상품군</th>
+							<th>증권번호</th>
+							<th>상품명</th>
+							<th>계약일</th>
+							<th>계약상태</th>
+							<th>계약자명</th>
+							<th>자동점수</th>
+							<th>수동점수</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>테스트회사</td>
+							<td>20190920</td>
+							<td>종신보험</td>
+							<td>ABC0001</td>
+							<td>테스트상품</td>
+							<td>2020-01-01</td>
+							<td>유지</td>
+							<td>홍길동</td>
+							<td>0</td>
+							<td>0</td>
+						</tr>
+					</tbody>
 				</table>
+				<form id="frm_goDetail" method="post" action="getContractInfo.do"></form>
 			</div>
 		</div>
 	</section>
