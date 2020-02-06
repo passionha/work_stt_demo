@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="application/vnd.ms-excel; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="application/vnd.ms-excel; charset=euc-kr" pageEncoding="euc-kr"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%
@@ -12,19 +12,19 @@
 	<table id="tbl_sbmList" border="1">
 			<thead>
 				<tr>
-					<th>íšŒì‚¬ëª…</th>
-					<th>ìƒí’ˆêµ°</th>
-					<th>ì¦ê¶Œë²ˆí˜¸</th>
-					<th>ìƒí’ˆëª…</th>
-					<th>ê³„ì•½ì¼</th>
-					<th>ê³„ì•½ìƒíƒœ</th>
-					<th>ê³„ì•½ìƒíƒœë°œìƒì¼</th>
-					<th>ê³„ì•½ìžëª…</th>
-					<th>ëŒ€ë¦¬ì ëª…</th>
-					<th>ëŒ€ë¦¬ì ë“±ë¡ë²ˆí˜¸</th>
-					<th>ëª¨ì§‘ì í¬ëª…</th>
-					<th>ëª¨ì§‘ì±„ë„</th>
-					<th>STTì§„í–‰ìƒíƒœ</th>
+					<th>È¸»ç¸í</th>
+					<th>»óÇ°±º</th>
+					<th>Áõ±Ç¹øÈ£</th>
+					<th>»óÇ°¸í</th>
+					<th>°è¾àÀÏ</th>
+					<th>°è¾à»óÅÂ</th>
+					<th>°è¾à»óÅÂ¹ß»ýÀÏ</th>
+					<th>°è¾àÀÚ¸í</th>
+					<th>´ë¸®Á¡¸í</th>
+					<th>´ë¸®Á¡µî·Ï¹øÈ£</th>
+					<th>¸ðÁýÁ¡Æ÷¸í</th>
+					<th>¸ðÁýÃ¤³Î</th>
+					<th>STTÁøÇà»óÅÂ</th>
 				</tr>
 			</thead>
 			<tbody>

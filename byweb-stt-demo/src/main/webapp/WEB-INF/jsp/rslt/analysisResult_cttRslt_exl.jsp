@@ -15,19 +15,30 @@
 			<th>회사명</th>
 			<th>요청일</th>
 			<th>상품군</th>
-			<th>자동평균</th>
-			<th>수동평균</th>
+			<th>증권번호</th>
+			<th>상품명</th>
+			<th>계약일</th>
+			<th>계약상태</th>
+			<th>계약자명</th>
+			<th>자동점수</th>
+			<th>수동점수</th>
 		</tr>
 		</thead>
 		<tbody>
-			<c:forEach var="tList" items="${totRsltList}" begin="0" step="1">
-			<fmt:parseDate value="${tList.req_dt}" var="fmt_req_dt" pattern="yyyyMMdd"/>
+			<c:forEach var="cList" items="${cttRsltList}" begin="0" step="1">
+			<fmt:parseDate value="${cList.req_dt}" var="fmt_req_dt" pattern="yyyyMMdd"/>
+			<fmt:parseDate value="${cList.ctt_dt}" var="fmt_ctt_dt" pattern="yyyyMMdd"/>
 			<tr>
-				<td>${tList.fin_nm}</td>
+				<td>${cList.fin_nm}</td>
 				<td><fmt:formatDate value="${fmt_req_dt}" pattern="yyyy-MM-dd"/></td>
-				<td>${tList.prdln_nm}</td>
-				<td>${tList.auto_avg}</td>
-				<td>${tList.manual_avg}</td>
+				<td>${cList.prdln_nm}</td>
+				<td>${cList.scrts_no}</td>
+				<td>${cList.prd_nm}</td>
+				<td><fmt:formatDate value="${fmt_ctt_dt}" pattern="yyyy-MM-dd"/></td>
+				<td>${cList.ctt_stts}</td>
+				<td>${cList.cttor_nm}</td>
+				<td>${cList.auto_scr}</td>
+				<td><c:choose><c:when test="${cList.manual_scr eq null}">0</c:when><c:otherwise>${cList.manual_scr}</c:otherwise></c:choose></td>
 			</tr>
 			</c:forEach>
 		</tbody>

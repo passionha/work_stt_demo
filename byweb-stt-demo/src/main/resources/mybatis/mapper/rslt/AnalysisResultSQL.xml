@@ -79,7 +79,7 @@
 		ORDER SIBLINGS BY REQ_DT DESC, REG_DT DESC
 	</select>
 	
-	<!-- 선택한 업로드파일의 전체 분석 진행상태 조회 -->
+	<!-- 전체 분석 진행상태 목록 조회 -->
 	<select id="getAnlySttsList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
 		SELECT
 		      CLS_CD
@@ -128,7 +128,7 @@
 		ORDER BY MAX(REG_DT) ASC
 	</select>
 	
-	<!-- 선택한 업로드파일의 종합결과 조회 -->
+	<!-- 종합결과 목록 조회 -->
 	<select id="getTotalInspectoinList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
 		SELECT
 		      CLS_CD

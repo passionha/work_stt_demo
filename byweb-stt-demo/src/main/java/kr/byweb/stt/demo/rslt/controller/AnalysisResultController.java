@@ -128,9 +128,6 @@ public class AnalysisResultController {
 	public List<AnlysRsltVo> getAnlySttsList(@RequestBody AnlysRsltVo[] arrChkFiles, HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		List<AnlysRsltVo> sttsList = new ArrayList<AnlysRsltVo>();
-		for(AnlysRsltVo vo : arrChkFiles) {
-//			System.out.println(vo.getSave_file_nm());
-		}
 		
 		List<Map<String, String>> paramList = new ArrayList<Map<String,String>>();
 		for(AnlysRsltVo chkFile : arrChkFiles) {
@@ -197,7 +194,6 @@ public class AnalysisResultController {
 	@RequestMapping("/getSttResultList.do")
 	@ResponseBody
 	public List<AnlysRsltVo> getSttResultList(@RequestBody AnlysRsltVo totRslt, HttpSession session, HttpServletRequest request, Model model) {
-		System.out.println(totRslt);
 		Map pMap = new HashMap();
 		List<AnlysRsltVo> sttRsltList = new ArrayList<AnlysRsltVo>();
 		pMap.put("cls_cd", totRslt.getCls_cd());
@@ -261,5 +257,43 @@ public class AnalysisResultController {
 			e.printStackTrace();
 		}
 		return "rslt/analysisResult_totRslt_exl";
+	}
+	
+	/**
+	 * 계약별 결과 엑셀 다운로드
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/getSttResultList_exl.do")
+	public String getSttResultList_exl(AnlysRsltVo anlysRsltVo, HttpServletResponse response, HttpServletRequest request, Model model) {
+		Map pMap = new HashMap();
+		List<AnlysRsltVo> cttRsltList = new ArrayList<AnlysRsltVo>();
+		List<Map<String, String>> fileList = new ArrayList<Map<String,String>>();
+		
+		pMap.put("cls_cd", anlysRsltVo.getCls_cd());
+		pMap.put("req_dept_cd", anlysRsltVo.getReq_dept_cd());
+		pMap.put("fin_cd", anlysRsltVo.getFin_cd());
+		pMap.put("req_dt", anlysRsltVo.getReq_dt());
+		pMap.put("prdln_cd", anlysRsltVo.getPrdln_cd());
+		pMap.put("scrts_no", anlysRsltVo.getScrts_no() == null ? "" : anlysRsltVo.getScrts_no());
+		
+		String arrSaveFileNm[] = anlysRsltVo.getArr_save_file_nm();
+		for(int i=0; i<arrSaveFileNm.length; i++) {
+			Map<String, String> fMap = new HashMap<String, String>();
+			fMap.put("save_file_nm", arrSaveFileNm[i]);
+			fileList.add(fMap);
+		}
+		pMap.put("flUplList", fileList);
+		
+		try {
+			cttRsltList = analysisResultService.getSttResultList(pMap);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		model.addAttribute("cttRsltList", cttRsltList);
+		model.addAttribute("filename", "계약별결과.xls");
+		return "rslt/analysisResult_cttRslt_exl";
 	}
 }
