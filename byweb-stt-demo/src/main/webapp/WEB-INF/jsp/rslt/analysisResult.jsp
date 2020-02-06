@@ -479,12 +479,6 @@ function removeSpcChar(str){
 	return str;
 }
 
-//분석 상세 결과 화면 전환
-$('body').on('dblclick', '#ctt_rslt_cont > table > tbody > tr', function(){
-	var frm_goDetail = document.getElementById("frm_goDetail");
-	frm_goDetail.submit();
-});
-
 //종합결과조회 엑셀 다운로드
 function fn_excel_totRslt(){
 	var frm = document.getElementById("frm_excel_totRslt");
@@ -637,6 +631,23 @@ function fn_foldClick(lv, idx){
 		$('input[name="chk_hid_lv_'+lv+'"]').eq(idx).prop("checked",true);
 	}
 }*/
+
+//분석 상세 결과 화면 전환
+$('body').on('dblclick', '#ctt_rslt_cont > table > tbody > tr', function(){
+	console.log("this id : "+$(this).prop('id'));
+	for(var i in f_arrCttRslt){
+		console.log("arr id : "+f_arrCttRslt[i].id);
+		if($(this).prop('id') == f_arrCttRslt[i].id){
+			$('#det_cls_cd').val(f_arrCttRslt[i].cls_cd);
+			$('#det_req_dept_cd').val(f_arrCttRslt[i].req_dept_cd);
+			$('#det_req_dt').val(f_arrCttRslt[i].req_dt);
+			$('#det_fin_cd').val(f_arrCttRslt[i].fin_cd);
+			$('#det_scrts_no').val(f_arrCttRslt[i].scrts_no);
+		}
+	}
+	var frm_goDetail = document.getElementById("frm_goDetail");
+	frm_goDetail.submit();
+});
 </script>
 </head>
 <body>
@@ -770,9 +781,15 @@ function fn_foldClick(lv, idx){
 						<tbody></tbody>
 					</table>
 				</div>
-				<form id="frm_goDetail" method="post" action="getContractInfo.do"></form>
 				<form id="frm_excel_totRslt" method="post" action="getTotalInspectoinList_exl.do"></form>
 				<form id="frm_excel_cttRslt" method="post" action="getSttResultList_exl.do"></form>
+				<form id="frm_goDetail" method="post" action="getContractInfo.do">
+					<input type="hidden" id="det_cls_cd" name="cls_cd">
+					<input type="hidden" id="det_req_dept_cd" name="req_dept_cd">
+					<input type="hidden" id="det_req_dt" name="req_dt">
+					<input type="hidden" id="det_fin_cd" name="fin_cd">
+					<input type="hidden" id="det_scrts_no" name="scrts_no">
+				</form>
 			</div>
 		</div>
 	</section>

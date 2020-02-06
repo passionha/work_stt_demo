@@ -88,15 +88,15 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td>테스트회사</td>
-						<td>종신보험</td>
-						<td>ABC0001</td>
-						<td>테스트상품</td>
-						<td>2020-01-01</td>
-						<td>유지</td>
-						<td>홍길동</td>
-						<td>0</td>
-						<td>0</td>
+						<td>${cttInfo.fin_nm}</td>
+						<td>${cttInfo.prdln_nm}</td>
+						<td>${cttInfo.scrts_no}</td>
+						<td>${cttInfo.prd_nm}</td>
+						<td>${cttInfo.ctt_dt}</td>
+						<td>${cttInfo.ctt_stts}</td>
+						<td>${cttInfo.cttor_nm}</td>
+						<td>${cttInfo.auto_scr}</td>
+						<td>${cttInfo.manual_scr}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -105,8 +105,18 @@
 		<div id="div_inspcRslt">
 			<h5>> 검수결과</h5>
 			<input type="button" value="저장">
-			<input type="checkbox" id="">
-			<label for="">불완전판매 여부</label>
+			<c:set var="addManualInspcSpr" value="true"/>
+			<c:set var="missellYnChk" value="false"/>
+			<c:forEach var="inspcList" items="${inspcList}">
+				<c:if test="${inspcList.inspc_spr eq '2'}">
+					<c:set var="addManualInspcSpr" value="false"/>
+				</c:if>
+				<c:if test="${inspcList.missell_yn eq 'Y'}">
+					<c:set var="chkMissellYn" value="true"/>
+				</c:if>
+			</c:forEach>
+			<input type="checkbox" id="chk_missellYn" name="chk_missellYn" <c:if test="${chkMissellYn}">checked</c:if>>
+			<label for="chk_missellYn">불완전판매 여부</label>
 			<table>
 				<thead>
 					<tr>
@@ -119,25 +129,46 @@
 						<td>검수구분</td>
 					</tr>
 				</thead>
-				<tbody>
-					<tr>
-						<td>0</td>
-						<td>0</td>
-						<td>0</td>
-						<td>0</td>
-						<td>0</td>
-						<td>0</td>
-						<td>자동</td>
-					</tr>
-					<tr>
-						<td><input type="text"></td>
-						<td><input type="text"></td>
-						<td><input type="text"></td>
-						<td><input type="text"></td>
-						<td><input type="text"></td>
-						<td><input type="text"></td>
-						<td>수동</td>
-					</tr>
+				<tbody>	
+					<c:forEach var="inspcList" items="${inspcList}">
+						<c:if test="${inspcList.inspc_spr eq '1'}">
+							<tr>
+								<td>${inspcList.scr}</td>
+								<td>${inspcList.esn_kwd_num}</td>
+								<td>${inspcList.omsn_kwd_num}</td>
+								<td>${inspcList.esn_kwd_scr}</td>
+								<td>${inspcList.bnwd_cnt}</td>
+								<td>${inspcList.bnwd_scr}</td>
+								<td>${inspcList.inspc_spr_nm}</td>
+							</tr>
+						</c:if>
+						<c:choose>
+							<c:when test="${addManualInspcSpr}">
+								<tr>
+									<td><input type="text" name="scr"></td>
+									<td><input type="text" name="esn_kwd_num"></td>
+									<td><input type="text" name="omsn_kwd_num"></td>
+									<td><input type="text" name="esn_kwd_scr"></td>
+									<td><input type="text" name="bnwd_cnt"></td>
+									<td><input type="text" name="bnwd_scr"></td>
+									<td>수동</td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								<c:if test="${inspcList.inspc_spr eq '2'}">
+									<tr>
+										<td><input type="text" name="scr" value="${inspcList.scr}"></td>
+										<td><input type="text" name="esn_kwd_num" value="${inspcList.esn_kwd_num}"></td>
+										<td><input type="text" name="omsn_kwd_num" value="${inspcList.omsn_kwd_num}"></td>
+										<td><input type="text" name="esn_kwd_scr" value="${inspcList.esn_kwd_scr}"></td>
+										<td><input type="text" name="bnwd_cnt" value="${inspcList.bnwd_cnt}"></td>
+										<td><input type="text" name="bnwd_scr" value="${inspcList.bnwd_scr}"></td>
+										<td>${inspcList.inspc_spr_nm}</td>
+									</tr>
+								</c:if>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
 				</tbody>
 			</table>
 		</div>

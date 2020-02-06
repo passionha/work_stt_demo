@@ -3,7 +3,103 @@
 <mapper namespace="kr.byweb.stt.demo.rslt.mapper.AnalysisResultDetailMapper">
 	<!-- 계약정보 조회 -->
 	<select id="getContractInfo" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
-		SELECT SYSDATE
-		FROM DUAL
+		SELECT
+			  A.CLS_CD
+			, A.REQ_DEPT_CD
+			, A.REQ_DT
+			, A.FIN_CD
+			, (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=A.FIN_CD) AS FIN_NM
+			, A.SCRTS_NO
+			, A.PRDLN_CD
+			, (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE USE_YN='Y' AND CLS_CD=A.CLS_CD AND REQ_DEPT_CD=A.REQ_DEPT_CD AND PRDLN_CD=A.PRDLN_CD) AS PRDLN_NM
+			, NVL(MAX(DECODE(INSPC_SPR, 1, SCR)), 0) AS AUTO_SCR
+			, NVL(MAX(DECODE(INSPC_SPR, 2, SCR)), 0) AS MANUAL_SCR
+			, MAX(A.CTT_DT) AS CTT_DT
+			, MAX(A.CTT_STTS) AS CTT_STTS
+			, MAX(A.CTTOR_NM) AS CTTOR_NM
+			, MAX(A.PRD_NM) AS PRD_NM
+		FROM RR_TM001 A, TM_INSPC_RSLT B
+		WHERE
+			  A.CLS_CD = B.CLS_CD(+)
+		  AND A.REQ_DEPT_CD = B.REQ_DEPT_CD(+)
+		  AND A.REQ_DT = B.REQ_DT(+)
+		  AND A.FIN_CD = B.FIN_CD(+)
+		  AND A.SCRTS_NO = B.SCRTS_NO(+)
+		  AND A.PRDLN_CD = B.PRDLN_CD(+)
+		  AND A.CLS_CD = #{cls_cd}
+		  AND A.REQ_DEPT_CD = #{req_dept_cd}
+		  AND A.REQ_DT = #{req_dt}
+		  AND A.FIN_CD = #{fin_cd}
+		  AND A.SCRTS_NO = #{scrts_no}
+		GROUP BY A.CLS_CD, A.REQ_DEPT_CD, A.REQ_DT, A.FIN_CD, A.SCRTS_NO, A.PRDLN_CD
+	</select>
+	
+	<!-- 검수결과 조회 -->
+	<select id="getInspectionResultList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
+		SELECT
+			  A.CLS_CD
+		    , A.REQ_DEPT_CD
+		    , A.REQ_DT
+		    , A.FIN_CD
+		    , A.SCRTS_NO
+		    , A.PRDLN_CD
+		    , (SELECT CD_NM FROM TM_CD_INF WHERE USE_YN='Y' AND GRP_CD='InspSpr' AND CD=B.INSPC_SPR) AS INSPC_SPR_NM
+		    , INSPC_SPR
+		    , SCR
+		    , ESN_KWD_NUM
+		    , ESN_KWD_SCR
+		    , BNWD_SCR
+		    , BNWD_CNT
+		    , OMSN_KWD_NUM
+		    , MAX(MISSELL_YN) OVER(PARTITION BY A.SCRTS_NO) AS MISSELL_YN
+		FROM RR_TM001 A, TM_INSPC_RSLT B
+		WHERE
+			  A.CLS_CD = B.CLS_CD(+)
+		  AND A.REQ_DEPT_CD = B.REQ_DEPT_CD(+)
+		  AND A.REQ_DT = B.REQ_DT(+)
+		  AND A.FIN_CD = B.FIN_CD(+)
+		  AND A.SCRTS_NO = B.SCRTS_NO(+)
+		  AND A.PRDLN_CD = B.PRDLN_CD(+)
+		  AND A.CLS_CD = #{cls_cd}
+		  AND A.REQ_DEPT_CD = #{req_dept_cd}
+		  AND A.REQ_DT = #{req_dt}
+		  AND A.FIN_CD = #{fin_cd}
+		  AND A.SCRTS_NO = #{scrts_no}
+		ORDER BY INSPC_SPR
+	</select>
+	
+	<!-- 키워드목록? 조회 -->
+	<select id="getKwdList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
+		SELECT
+		      A.CLS_CD
+		    , A.REQ_DEPT_CD
+		    , A.FIN_CD
+		    , A.SCRTS_NO
+		    , A.REQ_DT
+		    , A.SAVE_FILE_NM
+		    , A.PRDLN_CD
+		    , A.RCD_FILE_NM
+		    , A.KWD_NM
+		    , A.APRNC_TM
+		    , LPAD(TRUNC((A.APRNC_TM/1000)/3600), 2, 0)                 || ':' ||
+		      LPAD(TRUNC(MOD((A.APRNC_TM/1000), 3600)/60), 2, 0) || ':' ||
+		      LPAD(TRUNC(MOD((A.APRNC_TM/1000), 60)), 2, 0) AS APRNC_DT
+		    , DENSE_RANK() OVER(ORDER BY B.RCDFL_SNO) -1 AS IDX
+		FROM TM_KWD_RSLT A, RR_TM002 B
+		WHERE A.CLS_CD=B.CLS_CD
+		  AND A.REQ_DEPT_CD=B.REQ_DEPT_CD
+		  AND A.FIN_CD=B.FIN_CD
+		  AND A.REQ_DT=B.REQ_DT
+		  AND A.SCRTS_NO=B.SCRTS_NO
+		  AND A.RCD_FILE_NM=B.RCD_FILE_NM
+		  AND A.CLS_CD = #{cls_cd}
+		  AND A.REQ_DEPT_CD = #{req_dept_cd}
+		  AND A.REQ_DT = #{req_dt}
+		  AND A.FIN_CD = #{fin_cd}
+		  AND A.SCRTS_NO = #{scrts_no}
+		  AND A.PRDLN_CD=#{prdln_cd}
+		  AND A.KWD_SPR=#{kwd_spr}
+		  AND A.INSPC_SPR = '1'
+		ORDER BY A.RCD_FILE_NM ASC, B.RCDFL_SNO ASC, A.APRNC_TM ASC
 	</select>
 </mapper>
