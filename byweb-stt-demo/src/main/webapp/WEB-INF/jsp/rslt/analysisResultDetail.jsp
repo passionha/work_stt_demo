@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style type="text/css">
 	#left_side {
 		float: left;
@@ -52,6 +53,44 @@
 		height: 300px;
 	}
 </style>
+<script type="text/javascript">
+//수동 검수결과 및 불완전판매 여부 저장
+function fn_save_inspcRslt(){
+	if(confirm("수동검수 결과 및 불완전판매 여부를 저장하시겠습니까?")){
+		var missellYn = $('#chk_missellYn').prop('checked') == true ? "Y" : "N";
+		var pObj = {
+			cls_cd : 	   $('#inspc_cls_cd').val(),
+			req_dept_cd :  $('#inspc_req_dept_cd').val(),
+			req_dt : 	   $('#inspc_req_dt').val(),
+			fin_cd : 	   $('#inspc_fin_cd').val(),
+			prdln_cd : 	   $('#inspc_prdln_cd').val(),
+			scrts_no : 	   $('#inspc_scrts_no').val(),
+			missell_yn :   missellYn,
+			scr : 		   $('#manual_scr').val(),
+			esn_kwd_num :  $('#manual_esn_kwd_num').val(),
+			omsn_kwd_num : $('#manual_omsn_kwd_num').val(),
+			esn_kwd_scr :  $('#manual_esn_kwd_scr').val(),
+			bnwd_cnt : 	   $('#manual_bnwd_cnt').val(),
+			bnwd_scr :     $('#manual_bnwd_scr').val()
+		}
+		$.ajax({
+			type: "POST",
+	        url: "insertInspectionResult.do",
+	        data: JSON.stringify(pObj),
+	        contentType:'application/json; charset=UTF-8',
+	        dataType:"json",
+	        async: false,
+	        success: function(data) {
+	        	alert("저장되었습니다.");
+        		$("#td_manual_scr").html(data);
+	         },
+	         error       :   function(request, status, error){
+	             console.log("AJAX_ERROR");
+	         }
+		});
+	}
+}
+</script>
 </head>
 <body>
 <div id="wrap">
@@ -96,15 +135,21 @@
 						<td>${cttInfo.ctt_stts}</td>
 						<td>${cttInfo.cttor_nm}</td>
 						<td>${cttInfo.auto_scr}</td>
-						<td>${cttInfo.manual_scr}</td>
+						<td id="td_manual_scr">${cttInfo.manual_scr}</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 		
 		<div id="div_inspcRslt">
+			<input type="hidden" id="inspc_cls_cd" value="${cttInfo.cls_cd}">
+			<input type="hidden" id="inspc_req_dept_cd" value="${cttInfo.req_dept_cd}">
+			<input type="hidden" id="inspc_req_dt" value="${cttInfo.req_dt}">
+			<input type="hidden" id="inspc_fin_cd" value="${cttInfo.fin_cd}">
+			<input type="hidden" id="inspc_prdln_cd" value="${cttInfo.prdln_cd}">
+			<input type="hidden" id="inspc_scrts_no" value="${cttInfo.scrts_no}">
 			<h5>> 검수결과</h5>
-			<input type="button" value="저장">
+			<input type="button" value="저장" onclick="fn_save_inspcRslt()">
 			<c:set var="addManualInspcSpr" value="true"/>
 			<c:set var="missellYnChk" value="false"/>
 			<c:forEach var="inspcList" items="${inspcList}">
@@ -115,7 +160,7 @@
 					<c:set var="chkMissellYn" value="true"/>
 				</c:if>
 			</c:forEach>
-			<input type="checkbox" id="chk_missellYn" name="chk_missellYn" <c:if test="${chkMissellYn}">checked</c:if>>
+			<input type="checkbox" id="chk_missellYn" name="missell_yn" <c:if test="${chkMissellYn}">checked</c:if>>
 			<label for="chk_missellYn">불완전판매 여부</label>
 			<table>
 				<thead>
@@ -145,24 +190,24 @@
 						<c:choose>
 							<c:when test="${addManualInspcSpr}">
 								<tr>
-									<td><input type="text" name="scr"></td>
-									<td><input type="text" name="esn_kwd_num"></td>
-									<td><input type="text" name="omsn_kwd_num"></td>
-									<td><input type="text" name="esn_kwd_scr"></td>
-									<td><input type="text" name="bnwd_cnt"></td>
-									<td><input type="text" name="bnwd_scr"></td>
+									<td><input type="text" id="manual_scr"></td>
+									<td><input type="text" id="manual_esn_kwd_num"></td>
+									<td><input type="text" id="manual_omsn_kwd_num"></td>
+									<td><input type="text" id="manual_esn_kwd_scr"></td>
+									<td><input type="text" id="manual_bnwd_cnt"></td>
+									<td><input type="text" id="manual_bnwd_scr"></td>
 									<td>수동</td>
 								</tr>
 							</c:when>
 							<c:otherwise>
 								<c:if test="${inspcList.inspc_spr eq '2'}">
 									<tr>
-										<td><input type="text" name="scr" value="${inspcList.scr}"></td>
-										<td><input type="text" name="esn_kwd_num" value="${inspcList.esn_kwd_num}"></td>
-										<td><input type="text" name="omsn_kwd_num" value="${inspcList.omsn_kwd_num}"></td>
-										<td><input type="text" name="esn_kwd_scr" value="${inspcList.esn_kwd_scr}"></td>
-										<td><input type="text" name="bnwd_cnt" value="${inspcList.bnwd_cnt}"></td>
-										<td><input type="text" name="bnwd_scr" value="${inspcList.bnwd_scr}"></td>
+										<td><input type="text" id="manual_scr" value="${inspcList.scr}"></td>
+										<td><input type="text" id="manual_esn_kwd_num" value="${inspcList.esn_kwd_num}"></td>
+										<td><input type="text" id="manual_omsn_kwd_num" value="${inspcList.omsn_kwd_num}"></td>
+										<td><input type="text" id="manual_esn_kwd_scr" value="${inspcList.esn_kwd_scr}"></td>
+										<td><input type="text" id="manual_bnwd_cnt" value="${inspcList.bnwd_cnt}"></td>
+										<td><input type="text" id="manual_bnwd_scr" value="${inspcList.bnwd_scr}"></td>
 										<td>${inspcList.inspc_spr_nm}</td>
 									</tr>
 								</c:if>
@@ -181,24 +226,20 @@
 						<tr>
 							<td>파일명</td>
 							<td>키워드</td>
-							<td colspan="3">출현시간</td>
+							<td colspan="${esnKwdTmCnt}">출현시간</td>
 						</tr>
 					</thead>
 					<tbody>
+						<c:forEach var="eList" items="${esnKwdList}" step="1">
 						<tr>
-							<td>testRcd_1.wav</td>
-							<td>보험</td>
-							<td>00:00:01</td>
-							<td>00:00:02</td>
-							<td>00:00:03</td>
+							<td>${eList.RCD_FILE_NM}</td>
+							<td>${eList.KWD_NM}</td>
+							<c:forEach var="i" begin="1" end="${esnKwdTmCnt}">
+							<c:set var="eti_dt">T${i}_DT</c:set>
+							<td>${eList[eti_dt]}</td>
+							</c:forEach>
 						</tr>
-						<tr>
-							<td>testRcd_1.wav</td>
-							<td>만기</td>
-							<td>00:00:01</td>
-							<td>00:00:02</td>
-							<td>00:00:03</td>
-						</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
@@ -211,24 +252,20 @@
 						<tr>
 							<td>파일명</td>
 							<td>키워드</td>
-							<td colspan="3">출현시간</td>
+							<td colspan="${banKwdTmCnt}">출현시간</td>
 						</tr>
 					</thead>
 					<tbody>
+						<c:forEach var="bList" items="${banKwdList}" step="1">
 						<tr>
-							<td>testRcd_1.wav</td>
-							<td>대출</td>
-							<td>00:00:01</td>
-							<td>00:00:02</td>
-							<td>00:00:03</td>
+							<td>${bList.RCD_FILE_NM}</td>
+							<td>${bList.KWD_NM}</td>
+							<c:forEach var="i" begin="1" end="${banKwdTmCnt}">
+							<c:set var="bti_dt">T${i}_DT</c:set>
+							<td>${bList[bti_dt]}</td>
+							</c:forEach>
 						</tr>
-						<tr>
-							<td>testRcd_1.wav</td>
-							<td>감면</td>
-							<td>00:00:01</td>
-							<td>00:00:02</td>
-							<td>00:00:03</td>
-						</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
@@ -242,15 +279,11 @@
 						</tr>
 					</thead>
 					<tbody>
+						<c:forEach var="oList" items="${omsnKwdList}" step="1">
 						<tr>
-							<td>상환</td>
+							<td>${oList.kwd_nm}</td>
 						</tr>
-						<tr>
-							<td>상해</td>
-						</tr>
-						<tr>
-							<td>요양</td>
-						</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
@@ -265,15 +298,11 @@
 						</tr>
 					</thead>
 					<tbody>
+						<c:forEach var="rList" items="${rcdFlList}" step="1">
 						<tr>
-							<td>testRcd_1.wav</td>
+							<td>${rList.file_nm}</td>
 						</tr>
-						<tr>
-							<td>testRcd_2.wav</td>
-						</tr>
-						<tr>
-							<td>testRcd_3.wav</td>
-						</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
@@ -287,7 +316,6 @@
 			</div>
 			<textarea id="txt_sttRslt">여보세요.</textarea>
 		</div>
-		
 	</section>
 </div>
 </body>

@@ -134,5 +134,9 @@ public class AnlysRsltVo {
 	private String manual_scr;
 	private String[] arr_save_file_nm;
 	private List<AnlysRsltVo> anlysRsltVos;
+	private String inspc_spr_nm;
+	private String rnk;
+	private String idx;
+	private String aprnc_dt;
 	
 }

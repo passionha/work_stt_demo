@@ -643,6 +643,7 @@ $('body').on('dblclick', '#ctt_rslt_cont > table > tbody > tr', function(){
 			$('#det_req_dt').val(f_arrCttRslt[i].req_dt);
 			$('#det_fin_cd').val(f_arrCttRslt[i].fin_cd);
 			$('#det_scrts_no').val(f_arrCttRslt[i].scrts_no);
+			$('#det_prdln_cd').val(f_arrCttRslt[i].prdln_cd);
 		}
 	}
 	var frm_goDetail = document.getElementById("frm_goDetail");
@@ -788,6 +789,7 @@ $('body').on('dblclick', '#ctt_rslt_cont > table > tbody > tr', function(){
 					<input type="hidden" id="det_req_dept_cd" name="req_dept_cd">
 					<input type="hidden" id="det_req_dt" name="req_dt">
 					<input type="hidden" id="det_fin_cd" name="fin_cd">
+					<input type="hidden" id="det_prdln_cd" name="prdln_cd">
 					<input type="hidden" id="det_scrts_no" name="scrts_no">
 				</form>
 			</div>

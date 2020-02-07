@@ -211,11 +211,6 @@ public class AnalysisResultController {
 				fileList.add(fMap);
 		}
 		pMap.put("flUplList", fileList);
-		/*
-        <if test="scrts_no != ''">
-        AND T1.SCRTS_NO like '%'||#{scrts_no}||'%'
-        </if>
-		*/
 		
 		try {
 			sttRsltList = analysisResultService.getSttResultList(pMap);
