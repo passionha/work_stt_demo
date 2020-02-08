@@ -83,39 +83,52 @@ const f_arrUplFl = new Array();		//업로드파일 object 배열
 const f_arrAnlys = new Array();		//분석진행상태 object 배열
 const f_arrTotRslt = new Array();	//종합결과 object 배열
 const f_arrCttRslt = new Array();	//계약별결과 object 배열
-var f_srch_Scrts_no = "";			//계약별 결과 조회 시 증권번호 조회조건 저장 변수
+var f_srch_Scrts_no = "";			//계약별 결과 조회 시 입력한 증권번호 조회조건 저장
 
-//업로드파일 회사명 체크/체크해제에 따른 하위노드 체크/체크해제
+//업로드파일 체크여부에 따른 하위노드 체크여부 변경 및 전체 분석 진행상태 조회
 $('body').on('change', '#fin_sel_rslt input[type="checkbox"]', function(){
-	var elmt_nm = $(this).prop('name')
+	var elmt_nm = $(this).prop('name');
 	if($(this).prop('checked') == true){
 		switch(elmt_nm){
 			case 'chk_upl_fin_nm':
-				$('#fin_sel_rslt input[type="checkbox"]').prop("checked",true);
+				$('#fin_sel_rslt input[name="chk_upl_req_dt"]').prop("checked", true);
+				$('#fin_sel_rslt input[name="chk_upl_file_nm"]').prop("checked", true).each(function(index, item){
+					fn_anlysTest(item);
+				});
 				break;
 			case 'chk_upl_req_dt':
-				$(this).siblings('ul').children('li').children('input[type="checkbox"]').prop("checked",true);
+				$(this).siblings('ul').children('li').children('input[type="checkbox"]').prop("checked",true).each(function(index, item){
+					fn_anlysTest(item);
+				});
 				//모든 요청부서노드 체크 시 회사명노드 체크 추가 필요**************************
 				break;
 			case 'chk_upl_file_nm':
-				//해당 요청부서노드 내 모든 파일명노드 체크 시 해당 요청부서노드 체크 추가 필요**************************
-// 				console.log($(this).parents('li').siblings('li').children('input[type="checkbox"]').prop('checked'));
-// 				if($(this).siblings('input[type="checkbox"]').prop('checked') == true){
-					
-// 				}
+				fn_anlysTest($(this));
+				var allChkYn = false;
+				$(this).closest('ul').children('li').each(function(index, item){
+				    $(item).children('input[type="checkbox"]').each(function(index, item){
+				        allChkYn = $(item).is(":checked") ? true : false;
+				    });
+				});
+				if(allChkYn){$(this).closest('ul').siblings('input[type="checkbox"]').prop("checked",true);}
 				break;
 		}
 	}else{
 		switch(elmt_nm){
 			case 'chk_upl_fin_nm':
-				$('#fin_sel_rslt input[type="checkbox"]').prop("checked",false);	
+				$('#fin_sel_rslt input[name="chk_upl_req_dt"]').prop("checked", false);
+				$('#fin_sel_rslt input[name="chk_upl_file_nm"]').prop("checked", false).each(function(index, item){
+					fn_anlysTest(item);
+				});
 				break;
 			case 'chk_upl_req_dt':
-				$(this).siblings('ul').children('li').children('input[type="checkbox"]').prop("checked",false);
-				$(this).parents('ul').siblings('input[type="checkbox"]').prop("checked",false);
+				$(this).siblings('ul').children('li').children('input[type="checkbox"]').prop("checked",false).each(function(index, item){
+					fn_anlysTest(item);
+				});
 				break;
 			case 'chk_upl_file_nm':
 				$(this).parents('ul').siblings('input[type="checkbox"]').prop("checked",false);
+				fn_anlysTest($(this));
 				break;
 		}
 	}
@@ -156,14 +169,14 @@ function fn_search_uplFl(){
        					case '2':
        						source="<li>"
        							+"<input type=\"checkbox\" name=\"chk_hid_lv_2\">"
-								+"<input type=\"checkbox\" name=\"chk_upl_req_dt\" id=\"chk_upl_fin_nm_"+idx+"\">"
-								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+addDashDate(item.node_nm)+"</label>"
+								+"<input type=\"checkbox\" name=\"chk_upl_req_dt\" id=\"chk_upl_req_dt_"+idx+"\">"
+								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+fn_addDashDate(item.node_nm)+"</label>"
 								+"<ul></ul>";
 								+"</li>";
 							$("#fin_sel_rslt > ul > li > ul").append(source);
        						break;
        					case '3':
-       						var uplFlId = removeSpcChar("uplFl"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm);
+       						var uplFlId = fn_removeSpcChar("uplFl"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm);
        						source="<li>"
        							+"<input type=\"checkbox\" name=\"chk_upl_file_nm\" id=\"chk_"+uplFlId+"\">"
        							+"<label for=\"chk_"+uplFlId+"\">"+item.node_nm+"</label>"
@@ -214,22 +227,22 @@ function fn_search_uplFl(){
 }
 
 //전체 분석 진행상태 조회
-$('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
+function fn_anlysTest(obj){
 	var arrJsonObj = new Array();
-	var cls_cd = $(this).siblings('input[name="upl_cls_cd"]').val();
-	var req_dept_cd = $(this).siblings('input[name="upl_req_dept_cd"]').val();
-	var fin_cd = $(this).siblings('input[name="upl_fin_cd"]').val();
-	var flCmCd = removeSpcChar(cls_cd+req_dept_cd+fin_cd);
+	var cls_cd = $(obj).siblings('input[name="upl_cls_cd"]').val();
+	var req_dept_cd = $(obj).siblings('input[name="upl_req_dept_cd"]').val();
+	var fin_cd = $(obj).siblings('input[name="upl_fin_cd"]').val();
+	var flCmCd = fn_removeSpcChar(cls_cd+req_dept_cd+fin_cd);
 	//업로드파일 체크여부 저장
-	if($(this).prop("checked") == true){
+	if($(obj).prop("checked") == true){
 		for(var i in f_arrUplFl){
-			if("chk_"+f_arrUplFl[i].id == $(this).prop('id')){
+			if("chk_"+f_arrUplFl[i].id == $(obj).prop('id')){
 				f_arrUplFl[i].chk = '1';
 			}
 		}
 	}else{
 		for(var i in f_arrUplFl){
-			if("chk_"+f_arrUplFl[i].id == $(this).prop('id')){
+			if("chk_"+f_arrUplFl[i].id == $(obj).prop('id')){
 				f_arrUplFl[i].chk = '0';
 				//체크해제한 업로드파일에 대한 분석진행상태object 배열에서 삭제
 				for(var j=0; j<f_arrAnlys.length; j++){
@@ -278,10 +291,10 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 	        	if(data != ''){
 	        		$("#tot_anlys_stts_cont > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
 		        	$.each(data, function(idx, item){
-		        		var anlysId = removeSpcChar("anlys"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm);
+		        		var anlysId = fn_removeSpcChar("anlys"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.save_file_nm);
 		        		var source = "<tr id=\""+anlysId+"\">"
 			        		+"<td>"+item.fin_nm+"</td>"
-			        		+"<td>"+addDashDate(item.req_dt)+"</td>"
+			        		+"<td>"+fn_addDashDate(item.req_dt)+"</td>"
 			        		+"<td>"+item.upl_file_nm+"</td>"
 			        		+"<td>"+item.trns_stts_nm+"</td>"
 			        		+"</tr>";
@@ -318,9 +331,7 @@ $('body').on('change', 'input[name="chk_upl_file_nm"]', function(){
 		$("#tot_anlys_stts_cont > table > tbody > tr[id^=anlys"+flCmCd+"]").remove();
 		$("#tot_rslt_cont > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
 	}
-	
-	
-});
+}
 
 //종합결과 조회
 function fn_search_totRslt(pObj, flCmCd){
@@ -336,10 +347,10 @@ function fn_search_totRslt(pObj, flCmCd){
         		$("#tot_rslt_cont > table > tbody > tr[id^=totRslt"+flCmCd+"]").remove();
 	        	$.each(data, function(idx, item){
 	        		//체크한 파일별 id생성(권역코드+요청부서코드+회사코드+요청일자+상품군코드)
-	        		var idStr = removeSpcChar("totRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.prdln_cd);
+	        		var idStr = fn_removeSpcChar("totRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.prdln_cd);
 	        		var source = "<tr id=\""+idStr+"\">"
 		        		+"<td>"+item.fin_nm+"</td>"
-		        		+"<td>"+addDashDate(item.req_dt)+"</td>"
+		        		+"<td>"+fn_addDashDate(item.req_dt)+"</td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
 		        		+"<td>"+item.auto_avg+"</td>"
 		        		+"<td>"+item.manual_avg+"</td>"
@@ -366,7 +377,6 @@ function fn_search_totRslt(pObj, flCmCd){
 
 //텍스트 변환결과 및 계약별 결과 조회 
 $('body').on('dblclick', '#tot_rslt_cont > table > tbody > tr', function(){
-	console.log("this id : "+$(this).prop('id'));
 	var cls_cd;
 	var req_dept_cd;
 	var fin_cd;
@@ -409,20 +419,18 @@ $('body').on('dblclick', '#tot_rslt_cont > table > tbody > tr', function(){
         async: false,
         success: function(data) {
         	if(data != ''){
-        		console.log(data);
-        		
         		$("#txt_stt_rslt_cont > table > tbody").empty();
         		$("#ctt_rslt_cont > table > tbody").empty();
         		f_arrCttRslt.splice(0, f_arrCttRslt.length);
 	        	$.each(data, function(idx, item){
 	        		//체크한 파일별로 tr id(=object id)생성("txtRslt"+권역코드+요청부서코드+회사코드+요청일자+증권번호)
-	        		var idStr = removeSpcChar("txtRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
+	        		var idStr = fn_removeSpcChar("txtRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
 					var auto_scr = item.auto_scr == null ? 0 : item.auto_scr;
 					var manual_scr = item.manual_scr == null ? 0 : item.manual_scr;
 	        		var source = "<tr id=\""+idStr+"\">"
 		        		+"<td><input type=\"checkbox\"></td>"
 		        		+"<td>"+item.fin_nm+"</td>"
-		        		+"<td>"+addDashDate(item.req_dt)+"</td>"
+		        		+"<td>"+fn_addDashDate(item.req_dt)+"</td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
 		        		+"<td>"+item.scrts_no+"</td>"
 		        		+"<td>"+auto_scr+"</td>"
@@ -431,14 +439,14 @@ $('body').on('dblclick', '#tot_rslt_cont > table > tbody > tr', function(){
 	        		$("#txt_stt_rslt_cont > table > tbody").append(source);
 	        		
 	        		//체크한 파일별로 tr id(=object id)생성("cttRslt"+권역코드+요청부서코드+회사코드+요청일자+증권번호)
-	        		idStr = removeSpcChar("cttRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
+	        		idStr = fn_removeSpcChar("cttRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
 					var source = "<tr id=\""+idStr+"\">"
 		        		+"<td>"+item.fin_nm+"</td>"
-		        		+"<td>"+addDashDate(item.req_dt)+"</td>"
+		        		+"<td>"+fn_addDashDate(item.req_dt)+"</td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
 		        		+"<td>"+item.scrts_no+"</td>"
 		        		+"<td>"+item.prd_nm+"</td>"
-		        		+"<td>"+addDashDate(item.ctt_dt)+"</td>"
+		        		+"<td>"+fn_addDashDate(item.ctt_dt)+"</td>"
 		        		+"<td>"+item.ctt_stts+"</td>"
 		        		+"<td>"+item.cttor_nm+"</td>"
 		        		+"<td>"+auto_scr+"</td>"
@@ -468,13 +476,13 @@ $('body').on('dblclick', '#tot_rslt_cont > table > tbody > tr', function(){
 });
 
 //문자열에 yyyy-mm-dd형태로 "-"추가
-function addDashDate(str){
+function fn_addDashDate(str){
 	str = str.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
 	return str;
 }
 
 //문자열 내 특수문자 제거
-function removeSpcChar(str){
+function fn_removeSpcChar(str){
 	str = str.replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi, "");
 	return str;
 }
@@ -554,7 +562,6 @@ function fn_excel_cttRslt(){
 	frm.appendChild(ipt_scrts_no);
 	
 	for(var i in f_arrCttRslt){
-		console.log(f_arrCttRslt[i].prdln_cd);
 		var ipt_save_file_nm = document.createElement('input');
 		ipt_save_file_nm.setAttribute("type", "hidden");
 		ipt_save_file_nm.setAttribute("name", "arr_save_file_nm["+i+"]");
@@ -597,14 +604,14 @@ function fn_search_cttRslt(){
 	        	$.each(data, function(idx, item){
 					var auto_scr = item.auto_scr == null ? 0 : item.auto_scr;
 					var manual_scr = item.manual_scr == null ? 0 : item.manual_scr;
-	        		var idStr = removeSpcChar("sttRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
+	        		var idStr = fn_removeSpcChar("sttRslt"+item.cls_cd+item.req_dept_cd+item.fin_cd+item.req_dt+item.scrts_no);
 					var source = "<tr id=\""+idStr+"\">"
 		        		+"<td>"+item.fin_nm+"</td>"
-		        		+"<td>"+addDashDate(item.req_dt)+"</td>"
+		        		+"<td>"+fn_addDashDate(item.req_dt)+"</td>"
 		        		+"<td>"+item.prdln_nm+"</td>"
 		        		+"<td>"+item.scrts_no+"</td>"
 		        		+"<td>"+item.prd_nm+"</td>"
-		        		+"<td>"+addDashDate(item.ctt_dt)+"</td>"
+		        		+"<td>"+fn_addDashDate(item.ctt_dt)+"</td>"
 		        		+"<td>"+item.ctt_stts+"</td>"
 		        		+"<td>"+item.cttor_nm+"</td>"
 		        		+"<td>"+auto_scr+"</td>"
@@ -634,9 +641,7 @@ function fn_foldClick(lv, idx){
 
 //분석 상세 결과 화면 전환
 $('body').on('dblclick', '#ctt_rslt_cont > table > tbody > tr', function(){
-	console.log("this id : "+$(this).prop('id'));
 	for(var i in f_arrCttRslt){
-		console.log("arr id : "+f_arrCttRslt[i].id);
 		if($(this).prop('id') == f_arrCttRslt[i].id){
 			$('#det_cls_cd').val(f_arrCttRslt[i].cls_cd);
 			$('#det_req_dept_cd').val(f_arrCttRslt[i].req_dept_cd);
