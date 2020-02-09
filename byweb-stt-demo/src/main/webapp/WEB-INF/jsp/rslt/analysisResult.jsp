@@ -93,24 +93,38 @@ $('body').on('change', '#fin_sel_rslt input[type="checkbox"]', function(){
 			case 'chk_upl_fin_nm':
 				$('#fin_sel_rslt input[name="chk_upl_req_dt"]').prop("checked", true);
 				$('#fin_sel_rslt input[name="chk_upl_file_nm"]').prop("checked", true).each(function(index, item){
-					fn_anlysTest(item);
+					fn_search_anlys(item);
 				});
 				break;
 			case 'chk_upl_req_dt':
 				$(this).siblings('ul').children('li').children('input[type="checkbox"]').prop("checked",true).each(function(index, item){
-					fn_anlysTest(item);
+					fn_search_anlys(item);
 				});
-				//모든 요청부서노드 체크 시 회사명노드 체크 추가 필요**************************
-				break;
-			case 'chk_upl_file_nm':
-				fn_anlysTest($(this));
-				var allChkYn = false;
+				var chk_num = $(this).closest('ul').children('li').children('input[type="checkbox"]').length;
 				$(this).closest('ul').children('li').each(function(index, item){
-				    $(item).children('input[type="checkbox"]').each(function(index, item){
-				        allChkYn = $(item).is(":checked") ? true : false;
+					$(item).children('input[type="checkbox"]').each(function(index, item){
+				        if($(item).is(":checked")){ chk_num--; }
 				    });
 				});
-				if(allChkYn){$(this).closest('ul').siblings('input[type="checkbox"]').prop("checked",true);}
+				if(chk_num == 0){ $(this).closest('ul').siblings('input[type="checkbox"]').prop("checked",true); }
+				break;
+			case 'chk_upl_file_nm':
+				fn_search_anlys($(this));
+				var chk_num = $(this).closest('ul').children('li').children('input[type="checkbox"]').length;
+				$(this).closest('ul').children('li').each(function(index, item){
+				    $(item).children('input[type="checkbox"]').each(function(index, item){
+				        if($(item).is(":checked")){ chk_num--; }	        
+				    });
+				});
+				if(chk_num == 0){ $(this).closest('ul').siblings('input[type="checkbox"]').prop("checked",true); }
+				
+				var chk_req_num = $(this).closest('ul').parents('li').children('input[type="checkbox"]').length;
+				$(this).closest('ul').closest('li').closest('ul').children('li').each(function(index, item){
+				    $(item).children('input[type="checkbox"]').each(function(index, item){
+				    	if($(item).is(":checked")){ chk_req_num--; }
+				    });
+				});
+				if(chk_req_num == 0){ $('#fin_sel_rslt input[name="chk_upl_fin_nm"]').prop("checked", true); }
 				break;
 		}
 	}else{
@@ -118,17 +132,22 @@ $('body').on('change', '#fin_sel_rslt input[type="checkbox"]', function(){
 			case 'chk_upl_fin_nm':
 				$('#fin_sel_rslt input[name="chk_upl_req_dt"]').prop("checked", false);
 				$('#fin_sel_rslt input[name="chk_upl_file_nm"]').prop("checked", false).each(function(index, item){
-					fn_anlysTest(item);
+					fn_search_anlys(item);
 				});
 				break;
 			case 'chk_upl_req_dt':
 				$(this).siblings('ul').children('li').children('input[type="checkbox"]').prop("checked",false).each(function(index, item){
-					fn_anlysTest(item);
+					fn_search_anlys(item);
+				});
+				$(this).closest('ul').children('li').each(function(index, item){
+					$(item).children('input[type="checkbox"]').each(function(index, item){
+				        if(!$(item).is(":checked")){ $(this).closest('ul').siblings('input[type="checkbox"]').prop("checked",false); return;}
+				    });
 				});
 				break;
 			case 'chk_upl_file_nm':
 				$(this).parents('ul').siblings('input[type="checkbox"]').prop("checked",false);
-				fn_anlysTest($(this));
+				fn_search_anlys($(this));
 				break;
 		}
 	}
@@ -159,18 +178,18 @@ function fn_search_uplFl(){
        					switch(item.lv){
        					case '1':
        						source="<ul><li>"
-       							+"<input type=\"checkbox\" name=\"chk_hid_lv_1\">"
 								+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+idx+"\">"
 								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
-								+"<ul></ul>"
+// 								+"<ul></ul>"
+								+"<ul id=\"cls_ul"+idx+"\"></ul>";
 								+"</li></ul>";
 							$("#fin_sel_rslt").append(source);
        						break;
        					case '2':
-       						source="<li>"
-       							+"<input type=\"checkbox\" name=\"chk_hid_lv_2\">"
+//        						source="<li>"
+       						source="<li id=\"cls_li"+idx+"\">"
 								+"<input type=\"checkbox\" name=\"chk_upl_req_dt\" id=\"chk_upl_req_dt_"+idx+"\">"
-								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+fn_addDashDate(item.node_nm)+"</label>"
+								+"<label for=\"chk_upl_req_dt_"+idx+"\">"+fn_addDashDate(item.node_nm)+"</label>"
 								+"<ul></ul>";
 								+"</li>";
 							$("#fin_sel_rslt > ul > li > ul").append(source);
@@ -227,7 +246,7 @@ function fn_search_uplFl(){
 }
 
 //전체 분석 진행상태 조회
-function fn_anlysTest(obj){
+function fn_search_anlys(obj){
 	var arrJsonObj = new Array();
 	var cls_cd = $(obj).siblings('input[name="upl_cls_cd"]').val();
 	var req_dept_cd = $(obj).siblings('input[name="upl_req_dept_cd"]').val();
