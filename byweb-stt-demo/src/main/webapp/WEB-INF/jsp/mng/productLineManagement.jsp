@@ -27,7 +27,8 @@
 	}
 </style>
 <script type="text/javascript">
-const arrChangedIdx = new Array();		//수정된 상품군 인덱스 배열
+const f_arrChangedIdx = new Array();	//수정된 상품군 인덱스 배열
+
 //상품군 목록 조회
 function fn_search(){
 	var frm = document.getElementById("frm_prdln");
@@ -37,7 +38,7 @@ function fn_search(){
 
 //상품군 목록 저장
 function fn_save(){
-	var arrNoDupIdx = Array.from(new Set(arrChangedIdx));
+	var arrNoDupIdx = Array.from(new Set(f_arrChangedIdx));
 	alert(arrNoDupIdx);
 	for(var i=0; i<$('input[name$="\.prdln_cd"]').length; i++){
 		$('input[name$="\.prdln_cd"]').each(function(index, item){
@@ -59,7 +60,7 @@ function fn_save(){
 
 //수정된 상품군 인덱스 저장
 function fn_chkChangedIdx(idx){
-	arrChangedIdx.push(idx);
+	f_arrChangedIdx.push(idx);
 }
 
 //엑셀 다운로드
@@ -71,13 +72,44 @@ function fn_excel(){
 
 //행 추가
 function fn_addRow(){
-	var trStr="<ul><li>"
-		+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+idx+"\">"
-		+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
-//			+"<ul></ul>"
-		+"<ul id=\"cls_ul"+idx+"\"></ul>";
-		+"</li></ul>";
-	$("#tbl_prdln > tbody").append(source);
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = date.getMonth()+1;	//getMonth()는 0~11 반환해서 +1
+	var day = date.getDate();
+	if((day+"").length < 2){
+		day = "0"+day;
+	}
+	if((month+"").length < 2){
+		month = "0"+month;
+	}
+	var today = year+"-"+month+"-"+day;
+	
+	var prevInputVal = $("#tbl_prdln > tbody > tr:last > td:eq(4) > input").val();
+	var prevPrdlnCd = $("#tbl_prdln > tbody > tr:last > td").eq(4).text();
+	var val = prevPrdlnCd == "" ? Number(prevInputVal)+1 : Number(prevPrdlnCd)+1;
+	var len = prevPrdlnCd == "" ? prevInputVal.length : prevPrdlnCd.length;
+	var recmdPrdlnCd = prevPrdlnCd != "" || prevInputVal != "" ? fn_lpad(val, len, '0') : "";
+	
+	var newRowIdx = $('input[name$="\.prdln_cd"]').length+1;
+	var prevClsNm = $("#tbl_prdln > tbody > tr:last > td").eq(1).text();
+	var prevReqNm = $("#tbl_prdln > tbody > tr:last > td").eq(2).text();
+	
+	var trSrc = "<tr>"
+		+"<td><input type=\"checkbox\" name=\"chk_del\" onchange=\"fn_chkDel(this)\"></td>"
+		+"<td>"+prevClsNm+"</td>"
+		+"<td>"+prevReqNm+"</td>"
+		+"<td><input type=\"text\" name=\"prdlnList["+newRowIdx+"].prdln_nm\"></td>"
+		+"<td><input type=\"text\" name=\"prdlnList["+newRowIdx+"].prdln_cd\" value=\""+recmdPrdlnCd+"\"></td>"
+		+"<td>"
+		+"<select name=\"prdlnList["+newRowIdx+"].use_yn\">"
+		+"<option value=\"Y\">Y</option>"
+		+"<option value=\"N\">N</option>"
+		+"</select>"
+		+"</td>"
+		+"<td>"+today+"</td>"
+		+"<td></td>"
+		+"</tr>";
+	$("#tbl_prdln > tbody").append(trSrc);
 }
 
 //행 삭제
@@ -88,6 +120,12 @@ function fn_delRow(){
 //삭제 체크 row... 
 function fn_chkDel(obj){
 	
+}
+
+//LPAD함수 구현(값, 총 길이, 삽입문자)
+function fn_lpad(val, len, chr) {
+	val = val + '';
+	return val.length >= len ? val : new Array(len - val.length + 1).join(chr) + val;
 }
 </script>
 </head>
@@ -164,25 +202,6 @@ function fn_chkDel(obj){
 							<td>${pList.reg_dt}</td>
 							<td>${pList.emp_nm}(${pList.emp_no})</td>
 						</tr>
-						<!--  -->
-						<%-- 
-						<tr>
-							<td><input type="checkbox" name="chk_del" onchange="fn_chkDel(this)"></td>
-							<td></td>
-							<td></td>
-							<td><input type="text" value="${pList.prdln_nm}" name="prdlnList[${status.index}].prdln_nm" onchange="fn_chkChangedIdx(${status.index})"></td>
-							<td><input type="text" name="prdlnList[].prdln_cd"></td>
-							<td>
-								<select name="prdlnList[].use_yn">
-									<option value="Y">Y</option>
-									<option value="N">N</option>
-								</select>
-							</td>
-							<td>${pList.reg_dt}</td>
-							<td>${pList.emp_nm}(${pList.emp_no})</td>
-						</tr>
-						 --%>
-						<!--  -->
 						</c:forEach>
 					</tbody>
 				</table>

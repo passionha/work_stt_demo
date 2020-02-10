@@ -180,14 +180,12 @@ function fn_search_uplFl(){
        						source="<ul><li>"
 								+"<input type=\"checkbox\" name=\"chk_upl_fin_nm\" id=\"chk_upl_fin_nm_"+idx+"\">"
 								+"<label for=\"chk_upl_fin_nm_"+idx+"\">"+item.node_nm+"</label>"
-// 								+"<ul></ul>"
-								+"<ul id=\"cls_ul"+idx+"\"></ul>";
+								+"<ul></ul>"
 								+"</li></ul>";
 							$("#fin_sel_rslt").append(source);
        						break;
        					case '2':
-//        						source="<li>"
-       						source="<li id=\"cls_li"+idx+"\">"
+       						source="<li>"
 								+"<input type=\"checkbox\" name=\"chk_upl_req_dt\" id=\"chk_upl_req_dt_"+idx+"\">"
 								+"<label for=\"chk_upl_req_dt_"+idx+"\">"+fn_addDashDate(item.node_nm)+"</label>"
 								+"<ul></ul>";
