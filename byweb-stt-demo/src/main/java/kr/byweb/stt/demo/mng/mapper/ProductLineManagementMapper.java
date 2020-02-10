@@ -11,5 +11,7 @@ import kr.byweb.stt.demo.mng.model.PrdlnMngVo;
 public interface ProductLineManagementMapper {
 
 	public List<PrdlnMngVo> getProductList(Map pMap) throws Exception;
+
+	public void saveProductList(Map pMap) throws Exception;
 	
 }

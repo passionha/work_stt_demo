@@ -137,4 +137,22 @@
 		)
 	</select>
 	
+	<select id="getErrorCdList" resultType="kr.byweb.stt.demo.cm.model.TmCmCdVo">
+		SELECT
+		      'ALL' AS CD
+		    , '전체' AS CD_NM
+		    , 0 AS SNO
+		FROM DUAL 
+		UNION ALL
+		SELECT
+		    CD
+		    , CD_NM
+		    , SNO
+		FROM TM_CD_INF
+		WHERE
+		      GRP_CD = 'SttError'
+		  AND USE_YN = 'Y'
+		  AND CD != 'E-0'
+		ORDER BY  SNO
+	</select>
  </mapper>

@@ -47,9 +47,8 @@ function fn_validDate(obj){
 	if(!date_pattern.test(objVal)){
 		alert("올바른 일자를 입력해주세요.");
 		obj.focus();
-	}else if(!obj.value.trim()){
-		alert("요청일자를 입력해주세요.");
-		obj.focus();
+	}else{
+		return false;
 	}
 	return true;
 }
@@ -57,6 +56,31 @@ function fn_validDate(obj){
 //숫자만 추출
 function fn_onlyNum(value) {
     return value.replace(/[^0-9]/g,"");
+}
+
+//입력 시 yyyy-mm-dd형태로 "-"추가
+function fn_addDashDate(str){
+	str = str.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+	return str;
+}
+
+//녹취파일 오류내역 목록 조회
+function fn_search(){
+	if(document.getElementById("req_dt").value != ""){
+		if(fn_validDate(document.getElementById("req_dt"))){
+			return;
+		}
+	}
+	var frm = document.getElementById("frm_search_errResult");
+	frm.action = 'getRecordingFileResultList.do';
+	frm.submit();
+}
+
+//녹취파일 오류내역 엑셀 다운로드
+function fn_excel(){
+	var frm = document.getElementById("frm_search_errResult");
+	frm.action = 'getRecordingFileResult_exl.do';
+	frm.submit();
 }
 </script>
 </head>
@@ -80,39 +104,43 @@ function fn_onlyNum(value) {
 		
 		<div id="btn_top">
 			<input type="button" value="엑셀" onclick="fn_excel()">
-			<input type="button" value="저장" onclick="fn_save()">
 			<input type="button" value="조회" onclick="fn_search()">
 		</div>
 		<br>
+		<form id="frm_search_errResult" method="post">
+		<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
+		<input type="hidden" id="org_req_dt" name="org_req_dt" value="${req_dt}">
+		<input type="hidden" id="org_err_cd" name="org_err_cd" value="${err_cd}">
 		<div id="searchBar">
 			<ul>
 				<li>▶</li>
 				<li>회사명</li>
 				<li>
 					<select id="sel_fin_cd" name="sel_fin_cd">
-						<%-- <c:forEach var="finList" items="${finList}" begin="0" step="1">
-							<option value="${finList.finance_cd}" <c:if test="${fin_cd eq finList.finance_cd}">selected</c:if>>${finList.finance_name}</option>
-						</c:forEach> --%>
+						<c:forEach var="fList" items="${finList}" begin="0" step="1">
+							<option value="${fList.finance_cd}" <c:if test="${fin_cd eq fList.finance_cd}">selected</c:if>>${fList.finance_name}</option>
+						</c:forEach>
 					</select>
 				</li>
 				<li>▶</li>
 				<li>요청일자</li>
 				<li>
-					<fmt:parseDate value="${sdate}" var="fmt_req_dt" pattern="yyyyMMdd"/>
-					<input type="text" id="" name="" <%-- <c:if test="${sdate ne ''}">value="<fmt:formatDate value="${fmt_req_dt}" pattern="yyyy-MM-dd"/>"</c:if> --%> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
+					<fmt:parseDate value="${req_dt}" var="fmt_req_dt" pattern="yyyyMMdd"/>
+					<input type="text" id="req_dt" name="req_dt" <c:if test="${req_dt ne ''}">value="<fmt:formatDate value="${fmt_req_dt}" pattern="yyyy-MM-dd"/>"</c:if> maxlength="10" onkeyup="fn_addDash(event, this)" onkeypress="fn_addDash(event, this)">
 					<img src="/user/images/calendar.gif">
 				</li>
 				<li>▶</li>
 				<li>오류내역</li>
 				<li>
-					<select id="" name="">
-						<%-- <c:forEach var="finList" items="${finList}" begin="0" step="1">
-							<option value="${finList.finance_cd}" <c:if test="${fin_cd eq finList.finance_cd}">selected</c:if>>${finList.finance_name}</option>
-						</c:forEach> --%>
+					<select name="err_cd">
+						<c:forEach var="eList" items="${errList}" begin="0" step="1">
+							<option value="${eList.cd}" <c:if test="${err_cd eq eList.cd}">selected</c:if>>${eList.cd_nm}</option>
+						</c:forEach>
 					</select>
 				</li>
 			</ul>
 		</div>
+		</form>
 		<div>
 			<table>
 				<thead>
@@ -128,16 +156,19 @@ function fn_onlyNum(value) {
 					</tr>
 				</thead>
 				<tbody>
+					<c:forEach var="rList" items="${rcdRsltList}" begin="0" step="1">
 					<tr>
-						<td>A보험회사</td>
-						<td>기타 일반 종신보험</td>
-						<td>ABC0001</td>
-						<td>2020-01-01</td>
-						<td>테스트_녹취파일.zip</td>
-						<td>testRcd_3.wav</td>
-						<td>2020-01-01</td>
-						<td>녹취파일 8K WAVE 파일로 변환 에러</td>
+						<td>${rList.fin_nm}</td>
+						<td>${rList.prdln_nm}</td>
+						<td>${rList.scrts_no}</td>
+						<fmt:parseDate value="${rList.req_dt}" var="fmt_rList_req_dt" pattern="yyyyMMdd"/>
+						<td><fmt:formatDate value="${fmt_rList_req_dt}" pattern="yyyy-MM-dd"/></td>
+						<td>${rList.upl_file_nm}</td>
+						<td>${rList.file_nm}</td>
+						<td>${rList.reg_dt}</td>
+						<td>${rList.err_nm}</td>
 					</tr>
+					</c:forEach>
 				</tbody>
 			</table>
 		</div>

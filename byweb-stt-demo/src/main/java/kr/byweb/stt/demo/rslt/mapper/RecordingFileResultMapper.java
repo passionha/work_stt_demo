@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.rslt.model.AnlysRsltVo;
 
 @Mapper

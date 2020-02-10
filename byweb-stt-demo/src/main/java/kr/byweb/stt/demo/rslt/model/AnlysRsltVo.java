@@ -138,5 +138,6 @@ public class AnlysRsltVo {
 	private String rnk;
 	private String idx;
 	private String aprnc_dt;
+	private String err_nm;
 	
 }

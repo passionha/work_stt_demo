@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
+<%-- <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %> --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -494,7 +494,7 @@ $('body').on('dblclick', '#tot_rslt_cont > table > tbody > tr', function(){
 	});
 });
 
-//문자열에 yyyy-mm-dd형태로 "-"추가
+//입력 시 yyyy-mm-dd형태로 "-"추가
 function fn_addDashDate(str){
 	str = str.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
 	return str;

@@ -2,9 +2,71 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.byweb.stt.demo.mng.mapper.ProductLineManagementMapper">
 	
+	<!-- 상품군 목록 조회 -->
 	<select id="getProductList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.mng.model.PrdlnMngVo">
-		SELECT sysdate
-	    FROM DUAL
+		SELECT
+		    REQ_DEPT_CD
+		    , (SELECT CD_NM FROM TM_CD_INF WHERE USE_YN = 'Y' AND GRP_CD = 'ReqDept' AND CD = T.REQ_DEPT_CD) AS REQ_DEPT_NM
+		    , PRDLN_CD
+		    , PRDLN_NM
+		    , EMP_NO
+		    , (SELECT NM FROM PI_EMP WHERE EMP_NO = T.EMP_NO) AS EMP_NM
+		    , TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT
+		    , USE_YN
+		    , '' AS CHK_DEL
+		    , CLS_CD
+		    , (SELECT CD_NM FROM TM_CD_INF WHERE USE_YN = 'Y' AND GRP_CD = 'Cls' AND CD = T.CLS_CD) AS CLS_CD_NM
+		FROM TM_PRDLN_MNG T
+		WHERE 1=1
+		    AND REQ_DEPT_CD = #{req_dept_cd}
+			<if test="s_PRDLN != ''">
+			<![CDATA[
+		    AND (PRDLN_CD LIKE '%'||#{s_PRDLN}||'%' OR PRDLN_NM LIKE '%'||REGEXP_REPLACE(#{s_PRDLN}, '([_|$$|%|##])', '##\1')||'%' ESCAPE N'#')
+		    ]]>
+		    </if>
+		ORDER BY PRDLN_CD, REG_DT
 	</select>
+   
+   <!-- 상품군 목록 저장 -->
+   <insert id="saveProductList" parameterType="java.util.Map">
+		MERGE INTO TM_PRDLN_MNG T
+		USING DUAL
+		ON (
+		    	T.REQ_DEPT_CD = #{req_dept_cd}
+		    AND T.PRDLN_CD = #{prdln_cd}
+		    AND T.CLS_CD = #{cls_cd}
+		)
+		WHEN MATCHED THEN
+		    UPDATE SET
+		          PRDLN_NM = #{prdln_nm}
+		        , USE_YN = #{use_yn}
+		        , EMP_NO = #{emp_no}
+		        , REG_DT = SYSDATE
+		WHEN NOT MATCHED THEN
+		    INSERT(
+		        CLS_CD
+		        , REQ_DEPT_CD
+		        , PRDLN_CD
+		        , PRDLN_NM
+		        , USE_YN
+		        , EMP_NO
+		        , REG_DT
+		    )
+		    VALUES(
+		          #{cls_cd}
+		        , #{req_dept_cd}
+		        , #{prdln_cd}
+		        , #{prdln_nm}
+		        , #{use_yn}
+		        , #{emp_no}
+		        , SYSDATE
+		    )
+   </insert>
+   
+   <!-- 상품군 목록 삭제 -->
+   <delete id="" parameterType="java.util.Map">
+   
+   </delete>
+   
    
  </mapper>

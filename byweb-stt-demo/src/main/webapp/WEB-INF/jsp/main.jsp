@@ -39,8 +39,8 @@
 		<jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include>
 	</div>
 	<div id="section">
-		<c:set var="contPage" value="/WEB-INF/jsp/${requestScope.contentPage}.jsp" />
-		<jsp:include page="${requestScope.contentPage eq null ? 'common/mainSection.jsp' : contPage}"></jsp:include>
+			<c:set var="contPage" value="/WEB-INF/jsp/${requestScope.contentPage}.jsp" />
+			<jsp:include page="${requestScope.contentPage eq null || sessionScope.req_dept_cd eq null ? 'common/mainSection.jsp' : contPage}"></jsp:include>
 	</div>
 	<div id="footer">
 		<jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include>

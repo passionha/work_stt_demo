@@ -20,4 +20,9 @@ public class ProductLineManagementServiceImpl implements ProductLineManagementSe
 		return productLineManagementMapper.getProductList(pMap);
 	}
 
+	@Override
+	public void saveProductList(Map pMap) throws Exception {
+		productLineManagementMapper.saveProductList(pMap);
+	}
+
 }

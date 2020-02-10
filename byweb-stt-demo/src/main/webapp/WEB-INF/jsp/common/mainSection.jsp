@@ -16,6 +16,7 @@
 			</c:forEach>
 			<h3>${hdTitle}</h3>
 			<p>Main Page.</p>
+			<c:if test="${sessionScope.req_dept_cd eq null}"><p>요청부서를 선택하세요.</p></c:if>
 		</article>
 	</section>
 </body>

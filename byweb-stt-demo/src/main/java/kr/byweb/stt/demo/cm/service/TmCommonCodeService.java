@@ -15,6 +15,8 @@ public interface TmCommonCodeService {
 	public List<TmCmCdVo> getTitleList() throws Exception;
 
 	public List<TmCmCdVo> getNavTitleList(String req_cd) throws Exception;
+
+	public List<TmCmCdVo> getErrorCdList() throws Exception;
 	
 	
 }

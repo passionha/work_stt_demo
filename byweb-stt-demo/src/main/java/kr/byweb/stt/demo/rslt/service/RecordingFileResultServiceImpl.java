@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.rslt.mapper.RecordingFileResultMapper;
 import kr.byweb.stt.demo.rslt.model.AnlysRsltVo;
 

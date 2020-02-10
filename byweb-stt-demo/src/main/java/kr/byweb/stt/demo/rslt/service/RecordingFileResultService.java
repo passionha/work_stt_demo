@@ -3,6 +3,7 @@ package kr.byweb.stt.demo.rslt.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.rslt.model.AnlysRsltVo;
 
 public interface RecordingFileResultService {

@@ -3,7 +3,41 @@
 <mapper namespace="kr.byweb.stt.demo.rslt.mapper.RecordingFileResultMapper">
 	<!-- 오류내역 목록 조회 -->
 	<select id="getRecordingFileResultList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
-		SELECT SYSDATE
-		FROM DUAL
+		SELECT
+		      A.CLS_CD
+		    , A.REQ_DEPT_CD
+		    , A.FIN_CD
+		    , (SELECT FINANCE_NAME FROM RR_FINANCE WHERE FINANCE_CD=A.FIN_CD) AS FIN_NM
+		    , A.REQ_DT
+		    , A.SCRTS_NO
+		    , A.FILE_NM
+		    , A.PRDLN_CD
+		    , (SELECT PRDLN_NM FROM TM_PRDLN_MNG WHERE CLS_CD=A.CLS_CD AND REQ_DEPT_CD = A.REQ_DEPT_CD AND PRDLN_CD=A.PRDLN_CD) AS PRDLN_NM
+		    , B.UPL_FILE_NM
+		    , TO_CHAR(B.REG_DT, 'YYYY-MM-DD') AS REG_DT
+		    , (SELECT CD_NM FROM TM_CD_INF WHERE USE_YN = 'Y' AND GRP_CD = 'SttError' AND CD = DBMS_LOB.SUBSTR(A.FILE_TXT, 1000, 1)) AS ERR_NM
+		FROM TM_RCDFL_INF A, TM_FLUPL_INF B
+		WHERE
+		  	  A.CLS_CD = B.CLS_CD
+		  AND A.REQ_DEPT_CD = B.REQ_DEPT_CD
+		  AND A.FIN_CD = B.FIN_CD
+		  AND A.REQ_DT = B.REQ_DT
+		  AND A.SAVE_FILE_NM = B.SAVE_FILE_NM
+		  AND A.UPL_SPR = B.UPL_SPR
+		  AND A.UPL_SPR = '1'
+		  AND A.TRNS_STTS = '2'
+		  AND DBMS_LOB.SUBSTR(A.FILE_TXT, 1000, 1) != 'E-0'
+		  AND A.REQ_DEPT_CD = #{req_dept_cd}
+		  <if test="fin_cd != 'ALL'">
+		  AND A.FIN_CD = #{fin_cd}
+		  </if>
+		  <if test="req_dt != ''">
+		  AND A.REQ_DT = #{req_dt}
+		  </if>
+		  <if test="err_cd != 'ALL'">
+		  AND DBMS_LOB.SUBSTR(A.FILE_TXT, 1000, 1) = #{err_cd}
+		  </if>
+		ORDER BY FIN_CD, PRDLN_CD, SCRTS_NO
 	</select>
+	
 </mapper>
