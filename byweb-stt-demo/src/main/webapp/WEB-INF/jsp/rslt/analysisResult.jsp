@@ -671,6 +671,21 @@ $('body').on('dblclick', '#ctt_rslt_cont > table > tbody > tr', function(){
 	var frm_goDetail = document.getElementById("frm_goDetail");
 	frm_goDetail.submit();
 });
+
+//분석 버튼 클릭
+function fn_execAnalys(){
+	//전체분석진행상태 그리드 내 '변환완료'/'완료' 파일있는지 체크**************
+	//alert("분석가능한 파일이 존재하지 않습니다."); return;
+	//cofirm("STT진행상태가 [변환완료/완료]인 자료만 분석이 진행됩니다.\n분석을 시작하시겠습니까?")
+	//alert("분석이 완료되었습니다.");
+	/*
+	분석 -> setKeywordInfo() ds_uplFlListSel
+	fn_getFileList() -> getUploadFileList() ds_uplFlList 결과확인12
+	fn_getAnlySttsList() - >getAnlySttsList() ds_uplFlList
+	
+	*/
+	
+}
 </script>
 </head>
 <body>
@@ -721,7 +736,7 @@ $('body').on('dblclick', '#ctt_rslt_cont > table > tbody > tr', function(){
 		<div id="right_side">
 			<div id="tot_anlys_stts">
 				<h5>> 전체 분석 진행상태</h5>
-				<input type="button" value="분석">
+				<input type="button" value="분석" onclick="fn_execAnalys()">
 				<div id="tot_anlys_stts_cont">
 					<table>
 						<thead>

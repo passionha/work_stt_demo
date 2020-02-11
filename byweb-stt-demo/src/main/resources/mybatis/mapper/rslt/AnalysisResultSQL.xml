@@ -268,4 +268,35 @@
 		) PIVOT(SUM(SCR) AS SCR FOR INSPC_SPR IN ('1' AS AUTO, '2' AS MANUAL))
 		ORDER BY PRDLN_NM ASC, PRDLN_CD ASC
 	</select>
+	
+	<!-- 키워드 json정보 조회 -->
+	<select id="getRcdflList" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rslt.model.AnlysRsltVo">
+		 SELECT
+		      B.CLS_CD
+		    , B.REQ_DEPT_CD
+		    , B.FIN_CD
+		    , B.SCRTS_NO
+		    , B.REQ_DT
+		    , B.UPL_SPR
+		    , B.FILE_NM
+		    , B.SAVE_FILE_NM
+		    , B.PRDLN_CD
+		    , B.FILE_TXT
+		    , B.FILE_SMI
+		    , B.TRNS_STTS
+		FROM TM_FLUPL_INF A, TM_RCDFL_INF B
+		WHERE A.CLS_CD=B.CLS_CD
+		  AND A.REQ_DEPT_CD=B.REQ_DEPT_CD
+		  AND A.FIN_CD=B.FIN_CD
+		  AND A.REQ_DT=B.REQ_DT
+		  AND A.UPL_SPR=B.UPL_SPR
+		  AND A.SAVE_FILE_NM=B.SAVE_FILE_NM
+		  AND B.TRNS_STTS IN ('0', '1')
+		  AND B.CLS_CD=#{cls_cd}
+		  AND B.REQ_DEPT_CD=#{req_dept_cd}
+		  AND B.FIN_CD=#{fin_cd}
+		  AND B.REQ_DT=#{req_dt}
+		  AND B.UPL_SPR='1'
+		  AND B.SAVE_FILE_NM=#{save_file_nm}
+	</select>
 </mapper>
