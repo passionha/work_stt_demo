@@ -88,7 +88,7 @@ var f_srch_Scrts_no = "";			//계약별 결과 조회 시 입력한 증권번호
 //업로드파일 체크여부에 따른 하위노드 체크여부 변경 및 전체 분석 진행상태 조회
 $('body').on('change', '#fin_sel_rslt input[type="checkbox"]', function(){
 	var elmt_nm = $(this).prop('name');
-	if($(this).prop('checked') == true){
+	if($(this).is(":checked")){
 		switch(elmt_nm){
 			case 'chk_upl_fin_nm':
 				$('#fin_sel_rslt input[name="chk_upl_req_dt"]').prop("checked", true);
@@ -251,7 +251,7 @@ function fn_search_anlys(obj){
 	var fin_cd = $(obj).siblings('input[name="upl_fin_cd"]').val();
 	var flCmCd = fn_removeSpcChar(cls_cd+req_dept_cd+fin_cd);
 	//업로드파일 체크여부 저장
-	if($(obj).prop("checked") == true){
+	if($(obj).is("checked")){
 		for(var i in f_arrUplFl){
 			if("chk_"+f_arrUplFl[i].id == $(obj).prop('id')){
 				f_arrUplFl[i].chk = '1';

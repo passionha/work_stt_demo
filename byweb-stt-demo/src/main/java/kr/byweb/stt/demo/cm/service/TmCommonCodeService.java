@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
+import kr.byweb.stt.demo.mng.model.PrdlnMngVo;
 
 public interface TmCommonCodeService {
 	public List<TmCmCdVo> getPrdlnList(Map pMap) throws Exception;
@@ -17,6 +18,8 @@ public interface TmCommonCodeService {
 	public List<TmCmCdVo> getNavTitleList(String req_cd) throws Exception;
 
 	public List<TmCmCdVo> getErrorCdList() throws Exception;
+
+	public List<TmCmCdVo> getClsCdList() throws Exception;
 	
 	
 }

@@ -38,24 +38,86 @@ function fn_search(){
 
 //상품군 목록 저장
 function fn_save(){
-	var arrNoDupIdx = Array.from(new Set(f_arrChangedIdx));
-	alert(arrNoDupIdx);
-	for(var i=0; i<$('input[name$="\.prdln_cd"]').length; i++){
-		$('input[name$="\.prdln_cd"]').each(function(index, item){
-			if(arrNoDupIdx.indexOf(index) == -1){
-				$(this).prop('disabled', true);
-				console.log(index);
-				$('select[name$="\.use_yn"]').eq(index).prop('disabled', true);
-				$('input[name$="\.cls_cd"]').eq(index).prop('disabled', true);
-				$('input[name$="\.req_dept_cd"]').eq(index).prop('disabled', true);
-				$('input[name$="\.prdln_nm"]').eq(index).prop('disabled', true);
-				return;
+	//상품군명, 상품군코드 미입력 여부 검사
+	var emptyNmIdx = "";
+	var emptyCdIdx = "";
+	for(var i=0; i<$('input[name$="\.prdln_nm"]').length; i++){
+		if(!jQuery.trim($('input[name$="\.prdln_nm"]').eq(i).val())){
+			emptyNmIdx = i;
+		}
+		if(!jQuery.trim($('input[name$="\.prdln_cd"]').eq(i).val())){
+			emptyCdIdx = i;
+		}
+	}
+	if(emptyNmIdx){
+		alert("상품군을 입력해주세요.");
+		$('input[name$="\.prdln_nm"]').eq(emptyNmIdx).focus();
+		return;
+	}else if(emptyCdIdx){
+		alert("상품군코드를 입력해주세요.");
+		$('input[name$="\.prdln_cd"]').eq(emptyCdIdx).focus();
+		return;
+	}
+	
+	//상품군명 중복검사
+	var dupPrdlnNm = "";
+	var dupNmIdx = "";
+	for(var i=0; i<$('input[name$="\.prdln_nm"]').length; i++){
+		var prdln_nm = $('input[name$="\.prdln_nm"]').eq(i).val();
+		if(!prdln_nm){ continue; }
+		$('input[name$="\.prdln_nm"]').each(function(index, item){
+			if(i != index && prdln_nm == $(this).val()){
+				dupPrdlnNm = prdln_nm;
+				dupNmIdx = i;
 			}
 		});
 	}
-	var frm = document.getElementById("frm_prdln");
-	frm.action = "saveProductList.do";
-	frm.submit();
+	//상품군코드 중복검사
+	var dupPrdlnCd = "";
+	var dupCdIdx = "";
+	for(var i=0; i<$('input[name$="\.prdln_cd"]').length; i++){
+		var prdln_cd = $('input[name$="\.prdln_cd"]').eq(i).val();
+		if(!prdln_cd){ continue; }
+		$('input[name$="\.prdln_cd"]').each(function(index, item){
+			if(i != index && prdln_cd == $(this).val()){
+				dupPrdlnCd = prdln_cd;
+				dupCdIdx = i;
+			}
+		});
+	}
+	
+	if(dupPrdlnNm){
+		alert("["+dupPrdlnNm+"]은(는) 중복된 상품군입니다.");
+		$('input[name$="\.prdln_nm"]').eq(dupNmIdx).focus();
+		return;
+	}else if(dupPrdlnCd){
+		alert("["+dupPrdlnCd+"]은(는) 중복된 상품군코드입니다.");
+		$('input[name$="\.prdln_cd"]').eq(dupCdIdx).focus();
+		return;
+	}
+	
+	//상품군, 코드 중복검사 필요*****************************
+	if(confirm("수정사항을 저장하시겠습니까?")){
+		var arrNoDupChangedIdx = Array.from(new Set(f_arrChangedIdx));
+		for(var i=0; i<$('input[name$="\.prdln_cd"]').length; i++){
+			$('input[name$="\.prdln_cd"]').each(function(index, item){
+				if($(this).prop('type')=="hidden"){
+					if(arrNoDupChangedIdx.indexOf(index) == -1){
+						$(this).prop('disabled', true);
+						$('select[name$="\.use_yn"]').eq(index).prop('disabled', true);
+						$('input[name$="\.cls_cd"]').eq(index).prop('disabled', true);
+						$('input[name$="\.req_dept_cd"]').eq(index).prop('disabled', true);
+						$('input[name$="\.prdln_nm"]').eq(index).prop('disabled', true);
+						return;
+					}
+				}
+			});
+		}
+		var frm = document.getElementById("frm_prdln");
+		frm.action = "saveProductList.do";
+		frm.submit();
+		alert("저장되었습니다.");
+	}
 }
 
 //수정된 상품군 인덱스 저장
@@ -76,12 +138,8 @@ function fn_addRow(){
 	var year = date.getFullYear();
 	var month = date.getMonth()+1;	//getMonth()는 0~11 반환해서 +1
 	var day = date.getDate();
-	if((day+"").length < 2){
-		day = "0"+day;
-	}
-	if((month+"").length < 2){
-		month = "0"+month;
-	}
+	if((day+"").length < 2){ day = "0"+day; }
+	if((month+"").length < 2){ month = "0"+month; }
 	var today = year+"-"+month+"-"+day;
 	
 	var prevInputVal = $("#tbl_prdln > tbody > tr:last > td:eq(4) > input").val();
@@ -91,13 +149,23 @@ function fn_addRow(){
 	var recmdPrdlnCd = prevPrdlnCd != "" || prevInputVal != "" ? fn_lpad(val, len, '0') : "";
 	
 	var newRowIdx = $('input[name$="\.prdln_cd"]').length+1;
-	var prevClsNm = $("#tbl_prdln > tbody > tr:last > td").eq(1).text();
-	var prevReqNm = $("#tbl_prdln > tbody > tr:last > td").eq(2).text();
+	var prevReqNm = $("#tbl_prdln > tbody > tr:last > td").eq(1).text();
+	var prevClsNm = $("#tbl_prdln > tbody > tr:last > td").eq(2).text();
+	var prevReqCd = $("#tbl_prdln > tbody > tr:last").siblings('input[name$=".req_dept_cd"]').last().val();
+	var prevClsCd = $("#tbl_prdln > tbody > tr:last").siblings('input[name$=".cls_cd"]').last().val();
 	
-	var trSrc = "<tr>"
-		+"<td><input type=\"checkbox\" name=\"chk_del\" onchange=\"fn_chkDel(this)\"></td>"
-		+"<td>"+prevClsNm+"</td>"
+	//권역 콤보박스 옵션용 권역정보 추출
+	if(prevReqCd == '3'){
+		prevClsNm = "<select name=\"prdlnList["+newRowIdx+"].cls_cd\">";
+		for(var i=0; i<$('input[name^="cd_"]').length; i++){
+			prevClsNm += "<option value=\""+$('input[name^="cd_"]').eq(i).val()+"\">"+$('input[name^="nm_"]').eq(i).val()+"</option>";
+		}
+		prevClsNm += "</select>";
+	}
+	var trSrc ="<tr>"
+		+"<td><input type=\"checkbox\" name=\"chk_del\"></td>"
 		+"<td>"+prevReqNm+"</td>"
+		+"<td>"+prevClsNm+"</td>"
 		+"<td><input type=\"text\" name=\"prdlnList["+newRowIdx+"].prdln_nm\"></td>"
 		+"<td><input type=\"text\" name=\"prdlnList["+newRowIdx+"].prdln_cd\" value=\""+recmdPrdlnCd+"\"></td>"
 		+"<td>"
@@ -109,17 +177,18 @@ function fn_addRow(){
 		+"<td>"+today+"</td>"
 		+"<td></td>"
 		+"</tr>";
+		if(prevReqCd != '3'){
+			trSrc += "<input type=\"hidden\" name=\"prdlnList["+newRowIdx+"].cls_cd\" value=\""+prevClsCd+"\">";
+		}
+		trSrc += "<input type=\"hidden\" name=\"prdlnList["+newRowIdx+"].req_dept_cd\" value=\""+prevReqCd+"\">";
 	$("#tbl_prdln > tbody").append(trSrc);
 }
 
 //행 삭제
 function fn_delRow(){
-	
-}
-
-//삭제 체크 row... 
-function fn_chkDel(obj){
-	
+	if(confirm("체크된 행을 삭제하시겠습니까?")){
+		$('input[name="chk_del"]:checked').closest('td').closest('tr').remove();
+	}
 }
 
 //LPAD함수 구현(값, 총 길이, 삽입문자)
@@ -154,7 +223,11 @@ function fn_lpad(val, len, chr) {
 		</div>
 		<br>
 		<form id="frm_prdln" method="post">
-		<input type="hidden" id="org_s_PRDLN" name="org_s_PRDLN" value="${s_PRDLN}">
+		<c:forEach var="cList" items="${clsCdList}" varStatus="status">
+		<input type="hidden" name="cd_${status.index}" value="${cList.cd}">
+		<input type="hidden" name="nm_${status.index}" value="${cList.cd_nm}">
+		</c:forEach>
+		<input type="hidden" id="org_s_PRDLN" name="org_s_PRDLN" value="${org_s_PRDLN}">
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>
@@ -166,8 +239,8 @@ function fn_lpad(val, len, chr) {
 			</div>
 			<div>
 				<div id="btn_top">
-					<input type="button" value="행추가" onclick="fn_addRow()">
 					<input type="button" value="행삭제" onclick="fn_delRow()">
+					<input type="button" value="행추가" onclick="fn_addRow()">
 				</div>
 				<table id="tbl_prdln">
 					<thead>

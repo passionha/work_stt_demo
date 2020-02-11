@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 import kr.byweb.stt.demo.mng.model.PrdlnMngVo;
 import kr.byweb.stt.demo.mng.service.ProductLineManagementService;
@@ -43,26 +44,35 @@ public class ProductLineManagementController {
 		model.addAttribute("contentPage", "mng/productLineManagement");
 		Map pMap = new HashMap();
 		List<PrdlnMngVo> prdlnList = new ArrayList<PrdlnMngVo>();
+		List<TmCmCdVo> clsCdList = new ArrayList<TmCmCdVo>();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
 		String s_PRDLN = "";
+		String org_s_PRDLN = "";
+		String ins_s_PRDLN = "";
 		
 		//저장 후 redirect 시 입력했던 파라미터 추출
 		Map<String, ?> inputFlashMap =  RequestContextUtils.getInputFlashMap(request);
 		if(inputFlashMap != null) {
-			s_PRDLN = (String) inputFlashMap.get("s_PRDLN");
+			ins_s_PRDLN = (String) inputFlashMap.get("ins_s_PRDLN");
+			org_s_PRDLN = (String) inputFlashMap.get("org_s_PRDLN");
 		}else {
 			s_PRDLN = request.getParameter("s_PRDLN") == null ? "" : request.getParameter("s_PRDLN");
 		}
+		s_PRDLN = org_s_PRDLN.equals("") ? s_PRDLN : org_s_PRDLN;
+		System.out.println(s_PRDLN);
 		
 		pMap.put("req_dept_cd", req_dept_cd);
 		pMap.put("s_PRDLN", s_PRDLN);
 		try {
 			prdlnList = productLineManagementService.getProductList(pMap);
+			clsCdList = tmCommonCodeService.getClsCdList();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		model.addAttribute("s_PRDLN", s_PRDLN);
+		model.addAttribute("s_PRDLN", ins_s_PRDLN.equals("") ? s_PRDLN : ins_s_PRDLN);
+		model.addAttribute("org_s_PRDLN", s_PRDLN);
 		model.addAttribute("prdlnList", prdlnList);
+		model.addAttribute("clsCdList", clsCdList);
 		return "main";
 	}
 	
@@ -74,8 +84,8 @@ public class ProductLineManagementController {
 	@RequestMapping("/saveProductList.do")
 	public String saveProductList(PrdlnMngVo pList, HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		String s_PRDLN = request.getParameter("s_PRDLN") == null ? "" : request.getParameter("s_PRDLN");
+		String org_s_PRDLN = request.getParameter("org_s_PRDLN") == null ? "" : request.getParameter("org_s_PRDLN");
 		Map pMap = new HashMap();
-		
 		Iterator<PrdlnMngVo> iter = pList.getPrdlnList().iterator();
 		while(iter.hasNext()) {
 			PrdlnMngVo nextIter = iter.next();
@@ -95,7 +105,8 @@ public class ProductLineManagementController {
 			}
 		}
 		//redirect경로로 전달할 파라미터 저장
-		redirectAttributes.addFlashAttribute("s_PRDLN", s_PRDLN);
+		redirectAttributes.addFlashAttribute("ins_s_PRDLN", s_PRDLN);
+		redirectAttributes.addFlashAttribute("org_s_PRDLN", org_s_PRDLN);
 		return "redirect:/getProductList.do";
 	}
 	

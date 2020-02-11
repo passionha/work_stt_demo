@@ -137,6 +137,7 @@
 		)
 	</select>
 	
+	<!-- 녹취파일 오류종류 목록 조회 -->
 	<select id="getErrorCdList" resultType="kr.byweb.stt.demo.cm.model.TmCmCdVo">
 		SELECT
 		      'ALL' AS CD
@@ -154,5 +155,15 @@
 		  AND USE_YN = 'Y'
 		  AND CD != 'E-0'
 		ORDER BY  SNO
+	</select>
+	
+	<!-- 권역 목록 조회 -->
+	<select id="getClsCdList" resultType="kr.byweb.stt.demo.cm.model.TmCmCdVo">
+		SELECT
+		      CD
+	    	, CD_NM
+		FROM TM_CD_INF
+		WHERE
+		    GRP_CD = 'Cls'
 	</select>
  </mapper>

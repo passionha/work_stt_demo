@@ -20,4 +20,6 @@ public interface TmCommonCodeMapper {
 	public List<TmCmCdVo> getNavTitleList(String req_cd) throws Exception;
 
 	public List<TmCmCdVo> getErrorCdList() throws Exception;
+
+	public List<TmCmCdVo> getClsCdList() throws Exception;
 }

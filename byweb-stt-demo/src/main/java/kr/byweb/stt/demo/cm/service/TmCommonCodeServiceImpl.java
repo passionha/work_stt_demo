@@ -44,6 +44,11 @@ public class TmCommonCodeServiceImpl implements TmCommonCodeService{
 	public List<TmCmCdVo> getErrorCdList() throws Exception {
 		return tmCommonCodeMapper.getErrorCdList();
 	}
+
+	@Override
+	public List<TmCmCdVo> getClsCdList() throws Exception {
+		return tmCommonCodeMapper.getClsCdList();
+	}
 	
 	
 }
