@@ -66,7 +66,7 @@ public class AnalysisResultController {
 		Map finPMap = new HashMap();
 		List<TmCmCdVo> finList = new ArrayList<TmCmCdVo>();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
-		
+		 
 		//조회조건 회사목록 조회 시 사용될 CLASS_CD를 요청부서에 따라 부여
 		String class_cd = "";
 		switch(req_dept_cd) {
