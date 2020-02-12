@@ -17,4 +17,16 @@ public interface AnalysisResultMapper {
 
 	public List<AnlysRsltVo> getSttResultList(Map pMap) throws Exception;
 
+	public List<Map> getRcdflList(Map<String, String> map) throws Exception;
+
+	public void updateTmRclflInf(List<Map> setResultFile) throws Exception;
+
+	public void deleteTmUseKwd(List<Map> kwdInfo) throws Exception;
+
+	public void deleteKwdLineInf(List<Map> kwdInfo) throws Exception;
+
+	public List<Map> getKeywordList(Map mapInfo) throws Exception;
+
+	public void insertTmUseKwd(List<Map> getKeywordInfo) throws Exception;
+
 }

@@ -34,5 +34,35 @@ public class AnalysisResultServiceImpl implements AnalysisResultService{
 	public List<AnlysRsltVo> getSttResultList(Map pMap) throws Exception {
 		return analysisResultMapper.getSttResultList(pMap);
 	}
+
+	@Override
+	public List<Map> getRcdflList(Map<String, String> map) throws Exception {
+		return analysisResultMapper.getRcdflList(map);
+	}
+
+	@Override
+	public void updateTmRclflInf(List<Map> setResultFile) throws Exception {
+		analysisResultMapper.updateTmRclflInf(setResultFile);
+	}
+
+	@Override
+	public void deleteTmUseKwd(List<Map> kwdInfo) throws Exception {
+		analysisResultMapper.deleteTmUseKwd(kwdInfo);
+	}
+
+	@Override
+	public void deleteKwdLineInf(List<Map> kwdInfo) throws Exception {
+		analysisResultMapper.deleteKwdLineInf(kwdInfo);
+	}
+
+	@Override
+	public List<Map> getKeywordList(Map mapInfo) throws Exception {
+		return analysisResultMapper.getKeywordList(mapInfo);
+	}
+
+	@Override
+	public void insertTmUseKwd(List<Map> getKeywordInfo) throws Exception {
+		analysisResultMapper.insertTmUseKwd(getKeywordInfo);
+	}
 	
 }
