@@ -327,27 +327,30 @@ public class AnalysisResultController {
 	 */
 	@RequestMapping("/setKeywordInfo.do")
 	@ResponseBody
-	public List<AnlysRsltVo> setKeywordInfo(@RequestBody AnlysRsltVo[] arrAnlysStts, HttpSession session, HttpServletRequest request, Model model) {
+//	public List<AnlysRsltVo> setKeywordInfo(@RequestBody AnlysRsltVo[] arrAnlysStts, HttpSession session, HttpServletRequest request, Model model) {
+	public String setKeywordInfo(@RequestBody List<Map> AnlysList, HttpSession session, HttpServletRequest request, Model model) {
 //		Map pMap = new HashMap();
+		System.out.println(AnlysList);
 		
-		for(AnlysRsltVo anlysStts : arrAnlysStts) {
-			Map<String, String> map = new HashMap<String, String>();
-				map.put("cls_cd", anlysStts.getCls_cd());
-				map.put("req_dept_cd", anlysStts.getReq_dept_cd());
-				map.put("fin_cd", anlysStts.getFin_cd());
-				map.put("req_dt", anlysStts.getReq_dt());
-				map.put("save_file_nm", anlysStts.getSave_file_nm());
+		for(Map param : AnlysList) {
+//			Map<String, String> map = new HashMap<String, String>();
+//				map.put("cls_cd", anlysStts.getCls_cd());
+//				map.put("req_dept_cd", anlysStts.getReq_dept_cd());
+//				map.put("fin_cd", anlysStts.getFin_cd());
+//				map.put("req_dt", anlysStts.getReq_dt());
+//				map.put("save_file_nm", anlysStts.getSave_file_nm());
 				
 				try {
 					//키워드 json정보 호출
-					List<Map> kwdInfo = analysisResultService.getRcdflList(map);
+					List<Map> kwdInfo = analysisResultService.getRcdflList(param);
+					System.out.println(kwdInfo);
 					
 					//이전 사용키워드 삭제
 					analysisResultService.deleteTmUseKwd(kwdInfo);
 					
 					//이전 키워드 라인정보 삭제
 					analysisResultService.deleteKwdLineInf(kwdInfo);
-					
+					/*
 					//변환파일 저장
 					List<Map> setResultFile = setResultFile(kwdInfo);
 					analysisResultService.updateTmRclflInf(setResultFile);
@@ -363,17 +366,16 @@ public class AnalysisResultController {
 					//키워드 라인정보 등록
 					if(kwdInfoMap.get("TM_KWD_LNINF") != null) {
 						List<Map> getKeywordLineInfo = (List<Map>) kwdInfoMap.get("TM_KWD_LNINF");
-//						analysisResultService.insertTmKwdLineInf(getKeywordLineInfo);
+						analysisResultService.insertTmKwdLineInf(getKeywordLineInfo);
 					}
 					
+					//키워드 분석
+					analysisResultService.getTmInspcRslt(param);*/
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 		}
-		
-		
-		List<AnlysRsltVo> anlysSttsList = new ArrayList<AnlysRsltVo>();
-		return anlysSttsList;
+		return "success";
 	}
 	
 	/**

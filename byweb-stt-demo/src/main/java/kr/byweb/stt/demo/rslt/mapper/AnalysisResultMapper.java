@@ -29,4 +29,8 @@ public interface AnalysisResultMapper {
 
 	public void insertTmUseKwd(List<Map> getKeywordInfo) throws Exception;
 
+	public void insertTmKwdLineInf(List<Map> getKeywordLineInfo) throws Exception;
+
+	public void getTmInspcRslt(Map param) throws Exception;
+
 }

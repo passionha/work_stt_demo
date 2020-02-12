@@ -64,5 +64,15 @@ public class AnalysisResultServiceImpl implements AnalysisResultService{
 	public void insertTmUseKwd(List<Map> getKeywordInfo) throws Exception {
 		analysisResultMapper.insertTmUseKwd(getKeywordInfo);
 	}
+
+	@Override
+	public void insertTmKwdLineInf(List<Map> getKeywordLineInfo) throws Exception {
+		analysisResultMapper.insertTmKwdLineInf(getKeywordLineInfo);
+	}
+
+	@Override
+	public void getTmInspcRslt(Map param) throws Exception {
+		analysisResultMapper.getTmInspcRslt(param);
+	}
 	
 }

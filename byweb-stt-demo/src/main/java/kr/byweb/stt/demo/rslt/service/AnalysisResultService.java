@@ -25,4 +25,8 @@ public interface AnalysisResultService {
 	public List<Map> getKeywordList(Map mapInfo) throws Exception;
 
 	public void insertTmUseKwd(List<Map> getKeywordInfo) throws Exception;
+
+	public void insertTmKwdLineInf(List<Map> getKeywordLineInfo) throws Exception;
+
+	public void getTmInspcRslt(Map param) throws Exception;
 }

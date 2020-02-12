@@ -739,7 +739,7 @@ function fn_execAnalys(){
 		}
 		arrPObj.push(pObj);
 	}
-	
+	console.log(arrPObj);
 	$.ajax({
 		type: "POST",
         url: "setKeywordInfo.do",
@@ -748,7 +748,7 @@ function fn_execAnalys(){
         dataType:"json",
         async: false,
         success: function(data) {
-        	alert("분석이 완료되었습니다.");
+        	if(data == "success") alert("분석이 완료되었습니다.");
         },
         error       :   function(request, status, error){
             console.log("AJAX_ERROR");
