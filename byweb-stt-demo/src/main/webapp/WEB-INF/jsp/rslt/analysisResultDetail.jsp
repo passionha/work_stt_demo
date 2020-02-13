@@ -98,13 +98,19 @@ function fn_save_inspcRslt(){
 }
 
 //텍스트 변환 결과 내 키워드 검색
-function fn_searchKwd(){
+function fn_searchKwd(kwdNm){
+	
 	var txt = $('#org_TEXT').val();
-	arrKwd = $('#searchKwd').val().split(' ');
-	for(var i in arrKwd){
-		if(arrKwd[i]){
-			var regex = new RegExp(arrKwd[i],'gi');
-			txt = txt.replace(regex, "<span class='search_kwd'>"+arrKwd[i]+"</span>");
+	var arrKwd = $('#searchKwd').val().split(' ');
+	if(kwdNm){
+		var regex = new RegExp(kwdNm,'gi');
+		txt = txt.replace(regex, "<span class='search_kwd'>"+kwdNm+"</span>");
+	}else{
+		for(var i in arrKwd){
+			if(arrKwd[i]){
+				var regex = new RegExp(arrKwd[i],'gi');
+				txt = txt.replace(regex, "<span class='search_kwd'>"+arrKwd[i]+"</span>");
+			}
 		}
 	}
 	$('#pText').html(txt);
@@ -252,7 +258,7 @@ function fn_searchKwd(){
 						<c:forEach var="eList" items="${esnKwdList}" step="1">
 						<tr>
 							<td>${eList.RCD_FILE_NM}</td>
-							<td>${eList.KWD_NM}</td>
+							<td ondblclick="fn_searchKwd(${eList.KWD_NM})">${eList.KWD_NM}</td>
 							<c:forEach var="i" begin="1" end="${esnKwdTmCnt}">
 							<c:set var="eti_dt">T${i}_DT</c:set>
 							<td>${eList[eti_dt]}</td>
@@ -278,7 +284,7 @@ function fn_searchKwd(){
 						<c:forEach var="bList" items="${banKwdList}" step="1">
 						<tr>
 							<td>${bList.RCD_FILE_NM}</td>
-							<td>${bList.KWD_NM}</td>
+							<td ondblclick="fn_searchKwd(${eList.KWD_NM})">${bList.KWD_NM}</td>
 							<c:forEach var="i" begin="1" end="${banKwdTmCnt}">
 							<c:set var="bti_dt">T${i}_DT</c:set>
 							<td>${bList[bti_dt]}</td>
@@ -333,9 +339,10 @@ function fn_searchKwd(){
 				<input type="button" value="저장">
 				<input type="button" value="검색" onclick="fn_searchKwd()">
 			</div>
-<%-- 			<textarea id="txt_sttRslt" wrap="hard">${TEXT}</textarea> --%>
-			<p id="pText">${TEXT}</p>
-			<input type="hidden" id="org_TEXT" value="${TEXT}">
+			<div>
+				<p id="pText">${TEXT}</p>
+				<input type="hidden" id="org_TEXT" value="${TEXT}">
+			</div>
 		</div>
 	</section>
 </div>
