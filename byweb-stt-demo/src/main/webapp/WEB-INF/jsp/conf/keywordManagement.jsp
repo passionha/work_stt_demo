@@ -450,8 +450,6 @@ function fn_deleteKwdList(){
 </script>
 </head>
 <body>
-<%-- <jsp:include page="/WEB-INF/jsp/common/header.jsp"></jsp:include> --%>
-<%-- <jsp:include page="/WEB-INF/jsp/common/nav.jsp"></jsp:include> --%>
 <div id="wrapper">
 	<section>
 		<div>
@@ -573,7 +571,6 @@ function fn_deleteKwdList(){
 			</form>
 		</div>
 	</section>
-<%-- <jsp:include page="/WEB-INF/jsp/common/footer.jsp"></jsp:include> --%>
 </div>
 </body>
 </html>
