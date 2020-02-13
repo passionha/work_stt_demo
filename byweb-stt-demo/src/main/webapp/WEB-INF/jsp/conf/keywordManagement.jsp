@@ -102,15 +102,15 @@ var f_arrModIdx = new Array();	//키워드목록 중 수정된 인덱스 배열
 //키워드목록 초기 설정
 $(document).ready(function(){
 	//배점에 따른 사용여부element 초기 비활성화
-   	$('input[name="mod_scr"]').each(function (i, element) {
-   		if($(element).val() == null || $(element).val() == '0'){
-			$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",true);
+   	$('input[name="mod_scr"]').each(function (index, item) {
+   		if($(item).val() == null || $(item).val() == '0'){
+			$("select[name=mod_use_yn]:eq("+index+")").prop("disabled",true);
    		}
     });
   	//키워드명 내 슬래시포함여부에 따른 범위element 초기 비활성화
-   	$('input[name="mod_kwd_nm"]').each(function (i, element) {
-   		if($(element).val().indexOf("/") == -1){
-			$("input[name=mod_rng]:eq("+i+")").prop("disabled",true);
+   	$('input[name="mod_kwd_nm"]').each(function (index, item) {
+   		if($(item).val().indexOf("/") == -1){
+			$("input[name=mod_rng]:eq("+index+")").prop("disabled",true);
    		}
     });
 });
@@ -118,7 +118,7 @@ $(document).ready(function(){
 //키워드목록 조회
 function fn_search() {
 	if(document.getElementById("sel_kwdKnd").value != 'SEL' && document.getElementById("sel_prdln").value == 'SEL'){
-		alert("상품군을 선택하세요.");
+		alert("상품군을 먼저 선택하세요.");
 		$("#tbl_kwdList tbody tr").remove();
 		$("#ta_writeKwd").val("");
 		document.getElementById("sel_kwdKnd").value = 'SEL';
@@ -150,8 +150,8 @@ function fn_insertKwdList(){
 				document.getElementById("ins_prdln_cd").value = document.getElementById("sel_prdln").value;
 				document.getElementById("ins_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
 				var frm = document.getElementById("insertKwdListFrm");
-				frm.submit();
-				alert("등록되었습니다.");
+// 				frm.submit();
+// 				alert("등록되었습니다.");
 			}
 		 }else{
 			 document.getElementById("ta_writeKwd").focus();
@@ -251,12 +251,19 @@ function fn_setModIdx(idx){
 
 //입력키워드 유효성 검사
 function fn_kwdValid(val){
+	//공백만 입력 검사
+	if(!val.trim()){
+		alert("키워드를 입력해주세요.");
+		return false;
+	}
+	
 	var resultVal = "";
+	
 	//연속된 공백을 단일 공백으로 치환
 	var dblBlank = /\s\s+/gm;
 	resultVal = val.replace(dblBlank," ");
 	
-	//전체 개행문자 제거
+	//개행문자 제거
 	var lineBrk = /\r|\n/gm;
 	resultVal = resultVal.replace(lineBrk,"");
 	
@@ -285,6 +292,14 @@ function fn_kwdValid(val){
 		alert("키워드는 한글만 입력할 수 있습니다.");
 		return false;
 	}
+
+	//키워드란에 콤마, 슬래시, 공백만 입력 검사
+	var comAndSla = /[\,\/]/gm;
+	var tempVal = resultVal.replace(comAndSla,"");
+	if(!tempVal){
+		alert("올바른 키워드를 입력해주세요.");
+		return false;
+	}
 	
 	//각 키워드 길이검사(100byte 미만)
 	var arrDupKwdNm = new Array();	//중복키워드 배열
@@ -304,7 +319,7 @@ function fn_kwdValid(val){
 	for(var i=0; i<arrKwdNm.length; i++){
 		var reversalKwd = "";
 		for(var j=i+1; j<arrKwdNm.length; j++){
-			//키워드에 슬래시포함 시 슬래시전후단어 전환 후 중복검사
+			//슬래시포함 키워드의 슬래시전후단어 전환 후 중복검사
 			if(arrKwdNm[i].indexOf("/") != -1){
 				var befWrd = arrKwdNm[i].substring(0, arrKwdNm[i].indexOf("/"));
 				var aftWrd = arrKwdNm[i].substring(arrKwdNm[i].indexOf("/")+1, arrKwdNm[i].length);
