@@ -36,7 +36,7 @@
 		display: inline;
 	}
 	
-	p {
+	#left_side p {
 		display: inline;
 		font-size: 11px;
 		color: red;
@@ -46,11 +46,17 @@
 		float: right;
 	}
 	
-	#txt_sttRslt {
-		white-space:nowrap;
-/* 		overflow: scroll; */
+	.search_kwd {
+		background-color : yellow;
+	}
+	
+	#pText {
+		border: 2px solid lightgrey;
+		background-color : white;
+ 		white-space: pre-line;
+ 		overflow: auto;
 		width: 600px;
-		height: 300px;
+		height: 220px;
 	}
 </style>
 <script type="text/javascript">
@@ -89,6 +95,19 @@ function fn_save_inspcRslt(){
 	         }
 		});
 	}
+}
+
+//텍스트 변환 결과 내 키워드 검색
+function fn_searchKwd(){
+	var txt = $('#org_TEXT').val();
+	arrKwd = $('#searchKwd').val().split(' ');
+	for(var i in arrKwd){
+		if(arrKwd[i]){
+			var regex = new RegExp(arrKwd[i],'gi');
+			txt = txt.replace(regex, "<span class='search_kwd'>"+arrKwd[i]+"</span>");
+		}
+	}
+	$('#pText').html(txt);
 }
 </script>
 </head>
@@ -310,11 +329,13 @@ function fn_save_inspcRslt(){
 		<div id="div_sttRslt">
 			<h5>> 텍스트 변환 결과</h5>
 			<div>
-				<input type="text">
+				<input type="text" id="searchKwd">
 				<input type="button" value="저장">
-				<input type="button" value="검색">
+				<input type="button" value="검색" onclick="fn_searchKwd()">
 			</div>
-			<textarea id="txt_sttRslt" wrap="hard">${TEXT}</textarea>
+<%-- 			<textarea id="txt_sttRslt" wrap="hard">${TEXT}</textarea> --%>
+			<p id="pText">${TEXT}</p>
+			<input type="hidden" id="org_TEXT" value="${TEXT}">
 		</div>
 	</section>
 </div>
