@@ -115,23 +115,33 @@ $(document).ready(function(){
     });
 });
 
+//조회조건 상품군, 키워드종류 조회여부 확인
+function fn_searchSelYn(){
+	if($('#sel_kwdKnd').val() == 'SEL' || $('#sel_prdln').val() == 'SEL'){
+		alert("상품군과 키워드종류를 먼저 선택해주세요.");
+		return false;
+	}else{
+		return true;
+	}
+}
+
 //키워드목록 조회
 function fn_search() {
-	if(document.getElementById("sel_kwdKnd").value != 'SEL' && document.getElementById("sel_prdln").value == 'SEL'){
+	if($('#sel_kwdKnd').val() != 'SEL' && $('#sel_prdln').val() == 'SEL'){
 		alert("상품군을 먼저 선택하세요.");
 		$("#tbl_kwdList tbody tr").remove();
 		$("#ta_writeKwd").val("");
-		document.getElementById("sel_kwdKnd").value = 'SEL';
-		document.getElementById("sel_prdln").focus();
+		$('#sel_kwdKnd').val('SEL')
+		$('#sel_prdln').focus();
 		return;
-	}else if(document.getElementById("sel_kwdKnd").value != 'SEL'){
-		document.getElementById('searchFrm').submit();
+	}else if($('#sel_kwdKnd').val() != 'SEL'){
+		$('#frm_search').submit();
 	}
 }
 
 //상품군, 키워드종류 조회조건 선택여부 검사 후 키워드목록 조회
-function fn_prdlnSelYn(obj) {
-	if(obj.value=='SEL'){
+function fn_kwdSprSelYn() {
+	if($('#sel_kwdKnd').val() == 'SEL'){
 		$("#tbl_kwdList tbody tr").remove();
 		$("#ta_writeKwd").val("");
 		return;
@@ -142,19 +152,19 @@ function fn_prdlnSelYn(obj) {
 
 //키워드 등록
 function fn_insertKwdList(){
+	if(!fn_searchSelYn()) return;
 	if(confirm("입력하신 키워드를 등록하시겠습니까?")){
 		//입력키워드 유효성 검사
-		 if(fn_kwdValid(document.getElementById("ta_writeKwd").value)){
+		 if(fn_kwdValid($('#ta_writeKwd').val())){
 			//입력키워드 상품군 내 중복검사
-			if(fn_kwdDupDtn(document.getElementById("ins_kwd_nms").value)){
-				document.getElementById("ins_prdln_cd").value = document.getElementById("sel_prdln").value;
-				document.getElementById("ins_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
-				var frm = document.getElementById("insertKwdListFrm");
-// 				frm.submit();
+			if(fn_kwdDupDtn($('#ins_kwd_nms').val())){
+				$('#ins_prdln_cd').val($('#sel_prdln').val());
+				$('#ins_kwd_spr').val($('#sel_kwdKnd').val());
+				$('#frm_insertKwdList').submit();
 // 				alert("등록되었습니다.");
 			}
 		 }else{
-			 document.getElementById("ta_writeKwd").focus();
+			 $('#ta_writeKwd').focus();
 			 return;
 		 }
 	}
@@ -162,7 +172,7 @@ function fn_insertKwdList(){
 
 //입력키워드 상품군 내 중복검사
 function fn_kwdDupDtn(kwdStr){
-	var sel_prdln = document.getElementById("sel_prdln").value;
+	var sel_prdln = $('#sel_prdln').val();
 	var kwd_nms = kwdStr;
 	$.ajax({
 		type: "POST",
@@ -193,12 +203,12 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr, scr){
 	frm_synPop.method = 'post';
 	frm_synPop.action = 'getSynonymKeywordList.do';
 	frm_synPop.target = 'synPop';
-	document.getElementById("pop_prdln_cd").value = document.getElementById("sel_prdln").value;
-	document.getElementById("pop_kwd_spr").value = document.getElementById("sel_kwdKnd").value;
-	document.getElementById("pop_scrng_spr").value = scrng_spr;
-	document.getElementById("pop_kwd_nm").value = kwd_nm;
-	document.getElementById("pop_syn_nm").value = syn_nm;
-	document.getElementById("pop_scr").value = scr;
+	$('#pop_prdln_cd').val($('#sel_prdln').val());
+	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
+	$('#pop_scrng_spr').val(scrng_spr);
+	$('#pop_kwd_nm').val(kwd_nm);
+	$('#pop_syn_nm').val(syn_nm);
+	$('#pop_scr').val(scr);
 	frm_synPop.submit();
 }
 
@@ -372,13 +382,13 @@ function fn_kwdValid(val){
 	arrKwdNm = Array.from(arrKwdSet)
 	
 	//키워드 문자열 치환 결과 저장
-	document.getElementById('ins_kwd_nms').value = arrKwdNm.join(",");
-	
+	$('#ins_kwd_nms').val(arrKwdNm.join(","));
 	return true;
 }
 
 //키워드목록 수정사항 저장
 function fn_saveKwdList(){
+	if(!fn_searchSelYn()) return;
 	if(confirm("수정사항을 저장하시겠습니까?")){
 		var kwdStr = "";		//유효성검사 대상 전체 입력키워드
 		var dtnKwdStr = "";		//중복검사 대상 입력키워드
@@ -414,9 +424,9 @@ function fn_saveKwdList(){
 						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",false);
 					}
 				}
-				document.getElementById('mod_prdln_cd').value = document.getElementById('sel_prdln').value;
-				document.getElementById('mod_kwd_spr').value = document.getElementById('sel_kwdKnd').value;
-				document.getElementById('mod_kwd_nms').value = document.getElementById('ta_writeKwd').value;
+				$('#mod_prdln_cd').val($('#sel_prdln').val());
+				$('#mod_kwd_spr').val($('#sel_kwdKnd').val());
+				$('#mod_kwd_nms').val($('#ta_writeKwd').val());
 				
 				var frm_kwdList = document.getElementById('frm_kwdList');
 				frm_kwdList.action = "updateAnalysisStandard.do"
@@ -431,15 +441,18 @@ function fn_saveKwdList(){
 
 //키워드목록 삭제
 function fn_deleteKwdList(){
+	if(!fn_searchSelYn()) return;
+	//삭제체크박스 체크여부 확인 후 alert 추가 필요*************************
 	if(confirm("선택하신 키워드를 삭제하시겠습니까?")){
-		$('input[name="chk_kwd"]:not(:checked)').each(function (i, elements) {
-			index = $(elements).index("input:checkbox[name=chk_kwd]");
+		$('input[name="chk_kwd"]:not(:checked)').each(function (i, item) {
+			index = $(item).index("input:checkbox[name=chk_kwd]");
 			$("input[name=org_scrng_spr]:eq("+index+")").prop("disabled",true);
 			$("input[name=org_kwd_nm]:eq("+index+")").prop("disabled",true);
 	    });
-		document.getElementById('mod_prdln_cd').value = document.getElementById('sel_prdln').value;
-		document.getElementById('mod_kwd_spr').value = document.getElementById('sel_kwdKnd').value;
-		document.getElementById('mod_kwd_nms').value = document.getElementById('ta_writeKwd').value;
+		
+		$('#mod_prdln_cd').val($('#sel_prdln').val());
+		$('#mod_kwd_spr').val($('#sel_kwdKnd').val());
+		$('#mod_kwd_nms').val($('#ta_writeKwd').val());
 		
 		var frm_delList = document.getElementById('frm_kwdList');
 		frm_delList.action = "deleteAnalysisStandard.do"
@@ -466,7 +479,7 @@ function fn_deleteKwdList(){
 			</c:forEach>
 			<h3>${sectionTitle}</h3>
 		</div>
-		<form name="searchFrm" id="searchFrm" action="getAnalysisStandardList.do" method="post">
+		<form name="frm_search" id="frm_search" action="getAnalysisStandardList.do" method="post">
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>
@@ -483,7 +496,7 @@ function fn_deleteKwdList(){
 					<li>▶</li>
 					<li>키워드종류</li>
 					<li>
-						<select id="sel_kwdKnd" name="kwd_spr" onchange="fn_prdlnSelYn(this);">
+						<select id="sel_kwdKnd" name="kwd_spr" onchange="fn_kwdSprSelYn();">
 							<c:forEach var="tmCmCd" items="${tmCmCdVos}" begin="0" step="1">
 								<option value="${tmCmCd.cd}" <c:if test="${kwd_spr eq tmCmCd.cd}">selected</c:if>>${tmCmCd.cd_nm}</option>
 							</c:forEach>
@@ -500,7 +513,7 @@ function fn_deleteKwdList(){
 			<div id="btn_kwdSet">
 				<input type="button" value="키워드 등록" onclick="fn_insertKwdList();">
 			</div>
-			<form id="insertKwdListFrm" action="insertAnalysisStandard.do" method="post">
+			<form id="frm_insertKwdList" action="insertAnalysisStandard.do" method="post">
 				<textarea id="ta_writeKwd" name="kwd_nms" rows="4" placeholder="여러 키워드 등록 시 구분자를 ','단위로 등록하세요. 한 키워드는 50자 이상을 넘을 수 없습니다.">${kwd_nms}</textarea>
 				<input type="hidden" id="ins_prdln_cd" name="ins_prdln_cd">
 				<input type="hidden" id="ins_kwd_spr" name="ins_kwd_spr">
@@ -544,7 +557,7 @@ function fn_deleteKwdList(){
 							<td><input type="text" name="mod_rng" value="${kwdList.rng}" onkeyup="fn_inNumber(this)" onchange="fn_setModIdx('${status.index}')"></td>
 							<td>
 								<!-- 사용여부 수정 시 배점 미입력/0이면 수정 불가&툴팁텍스트 뜨게 -->
-								<select name="mod_use_yn" onchange="fn_setModIdx('${status.index}')">
+								<select name="mod_use_yn" onchange="fn_setModIdx('${status.index}')" onmouseover="">
 									<option value="Y" <c:if test="${kwdList.use_yn eq 'Y'}">selected</c:if>>Y</option>
 									<option value="N" <c:if test="${kwdList.use_yn eq 'N'}">selected</c:if>>N</option>
 								</select>
