@@ -28,4 +28,6 @@ public interface AnalysisResultDetailMapper {
 
 	public void insertInspectionResult(Map pMap) throws Exception;
 
+	public ArrayList<Map> getRcdFileList(Map fMap) throws Exception;
+
 }

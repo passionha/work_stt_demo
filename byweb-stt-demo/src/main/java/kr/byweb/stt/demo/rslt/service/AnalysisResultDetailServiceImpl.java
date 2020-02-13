@@ -56,5 +56,10 @@ public class AnalysisResultDetailServiceImpl implements AnalysisResultDetailServ
 	public void insertInspectionResult(Map pMap) throws Exception {
 		analysisResultDetailMapper.insertInspectionResult(pMap);
 	}
+
+	@Override
+	public ArrayList<Map> getRcdFileList(Map fMap) throws Exception {
+		return analysisResultDetailMapper.getRcdFileList(fMap);
+	}
 	
 }

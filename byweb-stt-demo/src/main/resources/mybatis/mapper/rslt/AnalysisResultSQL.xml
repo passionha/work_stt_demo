@@ -17,12 +17,11 @@
 	</resultMap>
 	
 	<parameterMap id="TmInspcRsltMap" type="java.util.Map">
-		<parameter property="CLS_CD" 	   mode="IN"/>
-		<parameter property="REQ_DEPT_CD"  mode="IN"/>
-		<parameter property="FIN_CD" 	   mode="IN"/>
-		<parameter property="REQ_DT" 	   mode="IN"/>
-		<parameter property="SAVE_FILE_NM" mode="IN"/>
-		<parameter property="CLS_CD" 	   mode="IN"/>
+		<parameter property="cls_cd" 	   mode="IN"/>
+		<parameter property="req_dept_cd"  mode="IN"/>
+		<parameter property="fin_cd" 	   mode="IN"/>
+		<parameter property="req_dt" 	   mode="IN"/>
+		<parameter property="save_file_nm" mode="IN"/>
 	</parameterMap>
 	
 	<select id="getTmInspcRslt" statementType="CALLABLE" parameterMap="TmInspcRsltMap" resultType="hashmap">
@@ -330,21 +329,25 @@
 	</select>
 	
 	<!-- 변환파일정보 저장 -->
-	<update id="updateTmRclflInf" parameterType="java.util.Map">
+	<update id="updateTmRclflInf" parameterType="java.util.List">
 		UPDATE TM_RCDFL_INF
 		SET
 		      FILE_TXT=NULL
 		    , FILE_SMI=NULL
 		    , FILE_KWD=NULL
-		WHERE CLS_CD=#{CLS_CD}
-		  AND REQ_DEPT_CD=#{REQ_DEPT_CD}
-		  AND FIN_CD=#{FIN_CD}
-		  AND SCRTS_NO=#{SCRTS_NO}
-		  AND REQ_DT=#{REQ_DT}
-		  AND PRDLN_CD=#{PRDLN_CD}
-		  AND UPL_SPR=#{UPL_SPR}
-		  AND SAVE_FILE_NM=#{SAVE_FILE_NM}
-		  AND FILE_NM=#{FILE_NM}
+		<where>
+		<foreach collection="list" item="rsltList" separator="OR">
+		(	  CLS_CD=#{rsltList.CLS_CD}
+		  AND REQ_DEPT_CD=#{rsltList.REQ_DEPT_CD}
+		  AND FIN_CD=#{rsltList.FIN_CD}
+		  AND SCRTS_NO=#{rsltList.SCRTS_NO}
+		  AND REQ_DT=#{rsltList.REQ_DT}
+		  AND PRDLN_CD=#{rsltList.PRDLN_CD}
+		  AND UPL_SPR=#{rsltList.UPL_SPR}
+		  AND SAVE_FILE_NM=#{rsltList.SAVE_FILE_NM}
+		  AND FILE_NM=#{rsltList.FILE_NM} )
+		</foreach>
+		</where>
 	</update>
 	
 	<!-- 이전 사용키워드 삭제 -->
@@ -393,7 +396,7 @@
 		        , PRDLN_CD
 		        , KWD_SPR
 		        , KWD_NM
-		    FROM TM_ANALYSIS_SP
+		    FROM TM_ANLYS_STD
 		    WHERE SCRNG_SPR='N'
 		      AND USE_YN='Y'
 		    UNION ALL
@@ -404,7 +407,7 @@
 		        , B.KWD
 		    FROM TM_ANLYS_STD A, (
 		        SELECT DISTINCT
-		            REGEXP_SUBSTR(KWD_NM, '[^/]+' 1, LEVEL) AS KWD
+		            REGEXP_SUBSTR(KWD_NM, '[^/]+', 1, LEVEL) AS KWD
 		        FROM TM_ANLYS_STD
 		        WHERE SCRNG_SPR='Y'
 		          AND USE_YN='Y'
@@ -420,7 +423,7 @@
 	</select>
 	
 	<insert id="insertTmUseKwd" parameterType="java.util.List">
-		<foreach collection="java.util.List" item="kInfo" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+		<foreach collection="list" item="kInfo" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
 		INTO TM_USE_KWD (
 		      CLS_CD, REQ_DEPT_CD, FIN_CD, SCRTS_NO
 		    , REQ_DT, UPL_SPR, SAVE_FILE_NM, PRDLN_CD
@@ -436,7 +439,7 @@
 	</insert>
 	
 	<insert id="insertTmKwdLineInf" parameterType="java.util.List">
-		<foreach collection="java.util.List" item="kLnInfo" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+		<foreach collection="list" item="kLnInfo" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
 		INTO TM_KWD_LNINF (
 		      CLS_CD, REQ_DEPT_CD, FIN_CD, SCRTS_NO
 		    , REQ_DT, UPL_SPR, SAVE_FILE_NM, PRDLN_CD

@@ -271,4 +271,18 @@
 		</if>
 	</insert>
 	
+	<select id="getRcdFileList" parameterType="java.util.Map" resultType="java.util.HashMap">
+		SELECT DISTINCT
+		      MAX(SAVE_FILE_NM) OVER(PARTITION BY FILE_NM) AS SAVE_FILE_NM
+		    , FILE_NM
+		FROM TM_RCDFL_INF
+		WHERE CLS_CD = #{cls_cd}
+		  AND REQ_DEPT_CD = #{req_dept_cd}
+		  AND FIN_CD =#{fin_cd}
+		  AND SCRTS_NO = #{scrts_no}
+		  AND REQ_DT = #{req_dt}
+		  AND PRDLN_CD = #{prdln_cd}
+		  AND UPL_SPR = '1'
+		  AND TRNS_STTS IN ('0', '1')
+	</select>
 </mapper>

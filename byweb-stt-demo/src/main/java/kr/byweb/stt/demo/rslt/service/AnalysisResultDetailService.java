@@ -23,4 +23,6 @@ public interface AnalysisResultDetailService {
 	public List<AnlysRsltVo> getRecordingFileList(Map rcdFlPMap) throws Exception;
 
 	public void insertInspectionResult(Map pMap) throws Exception;
+
+	public ArrayList<Map> getRcdFileList(Map fMap) throws Exception;
 }

@@ -327,53 +327,40 @@ public class AnalysisResultController {
 	 */
 	@RequestMapping("/setKeywordInfo.do")
 	@ResponseBody
-//	public List<AnlysRsltVo> setKeywordInfo(@RequestBody AnlysRsltVo[] arrAnlysStts, HttpSession session, HttpServletRequest request, Model model) {
 	public String setKeywordInfo(@RequestBody List<Map> AnlysList, HttpSession session, HttpServletRequest request, Model model) {
-//		Map pMap = new HashMap();
-		System.out.println(AnlysList);
 		
 		for(Map param : AnlysList) {
-//			Map<String, String> map = new HashMap<String, String>();
-//				map.put("cls_cd", anlysStts.getCls_cd());
-//				map.put("req_dept_cd", anlysStts.getReq_dept_cd());
-//				map.put("fin_cd", anlysStts.getFin_cd());
-//				map.put("req_dt", anlysStts.getReq_dt());
-//				map.put("save_file_nm", anlysStts.getSave_file_nm());
+			try {
+				//키워드 json정보 호출
+				List<Map> kwdInfo = analysisResultService.getRcdflList(param);
 				
-				try {
-					//키워드 json정보 호출
-					List<Map> kwdInfo = analysisResultService.getRcdflList(param);
-					System.out.println(kwdInfo);
-					
-					//이전 사용키워드 삭제
-					analysisResultService.deleteTmUseKwd(kwdInfo);
-					
-					//이전 키워드 라인정보 삭제
-					analysisResultService.deleteKwdLineInf(kwdInfo);
-					/*
-					//변환파일 저장
-					List<Map> setResultFile = setResultFile(kwdInfo);
-					analysisResultService.updateTmRclflInf(setResultFile);
-					
-					Map kwdInfoMap = kwdInfoMake(kwdInfo);
-					
-					//키워드 등록
-					if(kwdInfoMap.get("TM_USE_KWD") != null) {
-						List<Map> getKeywordInfo = (List<Map>) kwdInfoMap.get("TM_USE_KWD");
-						analysisResultService.insertTmUseKwd(getKeywordInfo);
-					}
-					
-					//키워드 라인정보 등록
-					if(kwdInfoMap.get("TM_KWD_LNINF") != null) {
-						List<Map> getKeywordLineInfo = (List<Map>) kwdInfoMap.get("TM_KWD_LNINF");
-						analysisResultService.insertTmKwdLineInf(getKeywordLineInfo);
-					}
-					
-					//키워드 분석
-					analysisResultService.getTmInspcRslt(param);*/
-				} catch (Exception e) {
-					e.printStackTrace();
+				//이전 사용키워드 삭제
+				analysisResultService.deleteTmUseKwd(kwdInfo);
+				
+				//이전 키워드 라인정보 삭제
+				analysisResultService.deleteKwdLineInf(kwdInfo);
+				
+				//변환파일 저장
+				List<Map> setResultFile = setResultFile(kwdInfo);
+				analysisResultService.updateTmRclflInf(setResultFile);
+				Map kwdInfoMap = kwdInfoMake(kwdInfo);
+				
+				//키워드 등록
+				List<Map> getKeywordInfo = (List<Map>) kwdInfoMap.get("TM_USE_KWD");
+				if(!getKeywordInfo.isEmpty()) {
+					analysisResultService.insertTmUseKwd(getKeywordInfo);
 				}
+				//키워드 라인정보 등록
+				List<Map> getKeywordLineInfo = (List<Map>) kwdInfoMap.get("TM_KWD_LNINF");
+				if(!getKeywordLineInfo.isEmpty()) {
+					analysisResultService.insertTmKwdLineInf(getKeywordLineInfo);
+				}
+				
+				//키워드 분석
+				analysisResultService.getTmInspcRslt(param);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return "success";
 	}
@@ -502,7 +489,6 @@ public class AnalysisResultController {
 				String fileDirName = filePath + saveFileNm.substring(0, pos) + "/";
 				String fileName    = fileDirName + mapInfo.get("FILE_NM").toString() + ".smi";
 				File f = new File(fileName);
-				
 				if(f.exists()) {
 					List<Map<String, String>> kwdLnInfTmp = new ArrayList<Map<String, String>>();
 					
@@ -525,7 +511,6 @@ public class AnalysisResultController {
 						if(br != null) {
 							while((readLine = br.readLine()) != null) {
 								String[] lineArray = readLine.trim().split(";");
-								
 								if(lineArray.length == 4) {
 									if(lineArray[2] != null && !lineArray[2].equals("")) {
 										Map<String, String> kwdLnInfMapTmp = new HashMap<String, String>();
@@ -533,9 +518,8 @@ public class AnalysisResultController {
 										String inLine = lineArray[2].trim();
 										String[] words = inLine.split(" ");
 										lnWrdNum = words.length;
-										
-										kwdLnInfMapTmp.put("SNO", Integer.toString(totLnCnt));	//해당라인 번호
-										kwdLnInfMapTmp.put("LN_WRDNUM", Integer.toString(lnWrdNum));	//해당라인 번호
+										kwdLnInfMapTmp.put("SNO", Integer.toString(totLnCnt));			//해당라인 번호
+										kwdLnInfMapTmp.put("LN_WRDNUM", Integer.toString(lnWrdNum));	//해당라인 단어수
 										kwdLnInfTmp.add(kwdLnInfMapTmp);
 										
 										for(int j=0; j<kwdList.size(); j++) {
@@ -547,7 +531,6 @@ public class AnalysisResultController {
 												//위치찾기
 												String prevKwdNm = inLine.substring(0, inLine.indexOf(kwdNm));
 												int kwdNmLen = prevKwdNm.split(" ").length;
-												
 												Map<String, String> useKwdInfoMap = new HashMap<String, String>();
 												useKwdInfoMap.put("CLS_CD", mapInfo.get("CLS_CD").toString());
 												useKwdInfoMap.put("REQ_DEPT_CD", mapInfo.get("REQ_DEPT_CD").toString());

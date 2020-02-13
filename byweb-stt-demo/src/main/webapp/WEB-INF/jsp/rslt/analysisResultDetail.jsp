@@ -48,7 +48,7 @@
 	
 	#txt_sttRslt {
 		white-space:nowrap;
-		overflow: auto;
+/* 		overflow: scroll; */
 		width: 600px;
 		height: 300px;
 	}
@@ -314,7 +314,7 @@ function fn_save_inspcRslt(){
 				<input type="button" value="저장">
 				<input type="button" value="검색">
 			</div>
-			<textarea id="txt_sttRslt">여보세요.</textarea>
+			<textarea id="txt_sttRslt" wrap="hard">${TEXT}</textarea>
 		</div>
 	</section>
 </div>

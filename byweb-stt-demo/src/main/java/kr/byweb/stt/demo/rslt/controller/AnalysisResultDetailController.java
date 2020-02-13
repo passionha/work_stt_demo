@@ -1,5 +1,13 @@
 package kr.byweb.stt.demo.rslt.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,11 +38,18 @@ public class AnalysisResultDetailController {
 	@Autowired
 	AnalysisResultDetailService analysisResultDetailService;
 	
+	@Value("${file_path_root_key}")
+    private String file_path_root_key;
+	
+	@Value("${file_upload_path.stt}")
+	private String file_upload_path_stt;
+	
 	/**
 	 * 계약정보 조회
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/getContractInfo.do")
 	public String getContractInfo(AnlysRsltVo anlysRsltVo, HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "rslt/analysisResultDetail");
@@ -46,13 +62,14 @@ public class AnalysisResultDetailController {
 		Map banKwdPMap = new HashMap();
 		Map omsnKwdPMap = new HashMap();
 		Map rcdFlPMap = new HashMap();
+		Map fMap = new HashMap();
 		ArrayList<Map> esnKwdTmList = new ArrayList<Map>();
 		ArrayList<Map> banKwdTmList = new ArrayList<Map>();
+		ArrayList<Map> fList = new ArrayList<Map>();
 		List<AnlysRsltVo> inspcList = new ArrayList<AnlysRsltVo>();
-		List<AnlysRsltVo> esnKwdList = new ArrayList<AnlysRsltVo>();
-		List<AnlysRsltVo> banKwdList = new ArrayList<AnlysRsltVo>();
 		List<AnlysRsltVo> omsnKwdList = new ArrayList<AnlysRsltVo>();
 		List<AnlysRsltVo> rcdFlList = new ArrayList<AnlysRsltVo>();
+		StringBuffer txt = new StringBuffer();
 		
 		pMap.put("cls_cd", anlysRsltVo.getCls_cd());
 		pMap.put("req_dept_cd", anlysRsltVo.getReq_dept_cd());
@@ -90,6 +107,13 @@ public class AnalysisResultDetailController {
 		rcdFlPMap.put("prdln_cd", anlysRsltVo.getPrdln_cd());
 		rcdFlPMap.put("scrts_no", anlysRsltVo.getScrts_no());
 		
+		fMap.put("cls_cd", anlysRsltVo.getCls_cd());
+		fMap.put("req_dept_cd", anlysRsltVo.getReq_dept_cd());
+		fMap.put("req_dt", anlysRsltVo.getReq_dt());
+		fMap.put("fin_cd", anlysRsltVo.getFin_cd());
+		fMap.put("prdln_cd", anlysRsltVo.getPrdln_cd());
+		fMap.put("scrts_no", anlysRsltVo.getScrts_no());
+		
 		try {
 			//출현키워드 중 동일키워드 총 출현 개수
 			Integer esnKwdRsltCnt = analysisResultDetailService.getKwdRsltCnt(esnKwdPMap);
@@ -126,8 +150,26 @@ public class AnalysisResultDetailController {
 			//관련녹취파일 목록
 			rcdFlList = analysisResultDetailService.getRecordingFileList(rcdFlPMap);
 			//텍스트변환결과
+			fList = analysisResultDetailService.getRcdFileList(fMap);
 			
-			
+			if(fList.size() > 0) {
+				String filePath = file_path_root_key + file_upload_path_stt;
+				
+				for(Map map : fList) {
+					String fileDirName = "";
+					String saveFileName = map.get("SAVE_FILE_NM").toString();
+					int pos = saveFileName.lastIndexOf(".");
+					if(pos >= 0) {
+						fileDirName = filePath + saveFileName.substring(0, pos) + "/";
+					}
+					
+					if(!fileDirName.equals("")) {
+						String fileName = map.get("FILE_NM").toString() + ".txt";
+						txt.append(fileReader(fileDirName + fileName, "EUC-KR"));
+					}
+				}
+			}
+			System.out.println(fList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -140,6 +182,8 @@ public class AnalysisResultDetailController {
 		model.addAttribute("banKwdList", banKwdTmList);
 		model.addAttribute("omsnKwdList", omsnKwdList);
 		model.addAttribute("rcdFlList", rcdFlList);
+		model.addAttribute("TEXT", txt);
+		System.out.println(txt);
 		
 		return "main";
 	}
@@ -179,5 +223,39 @@ public class AnalysisResultDetailController {
 			e.printStackTrace();
 		}
 		return manualInspcRslt.getScr();
+	}
+	
+	/**
+	 * 파일 읽기
+	 * @param file 파일 경로
+	 * @param charSet 인코딩 언어
+	 */
+	public StringBuffer fileReader(String file, String charSet) {
+		BufferedReader br = null;
+		StringBuffer resultval = new StringBuffer();
+		File f = new File(file);
+		
+		try {
+			if(f.exists()) {
+				br = new BufferedReader(new InputStreamReader(new FileInputStream(f), charSet));
+				int ch;
+				while((ch=br.read()) != -1) {
+					resultval.append((char)ch);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(br != null) br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return resultval;
 	}
 }
