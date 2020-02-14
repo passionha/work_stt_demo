@@ -259,6 +259,7 @@ public class KeywordManagementController {
 		//체크된 키워드 및 기준키워드 동의어 설정
 		chkKwds.add(kwd_nm);
         for(String kwdNm : chkKwds) {
+        	if(kwdNm.equals("")) continue;	//분석기준 설정에서 동의어 삭제 시 kwd_nm ""으로 전송
             pMap.put("chk_sel", "1");
             pMap.put("req_dept_cd", req_dept_cd);
             pMap.put("prdln_cd", prdln_cd);

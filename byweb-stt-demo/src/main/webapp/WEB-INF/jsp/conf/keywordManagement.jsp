@@ -101,17 +101,16 @@ var f_arrModIdx = new Array();	//키워드목록 중 수정된 인덱스 배열
 
 //키워드목록 초기 설정
 $(document).ready(function(){
-	//배점에 따른 사용여부element 초기 비활성화
+	//배점에 따른 사용여부란 초기 비활성화
    	$('input[name="mod_scr"]').each(function (index, item) {
    		if($(item).val() == null || $(item).val() == '0'){
-// 			$("select[name=mod_use_yn]:eq("+index+")").prop("disabled",true);
 			$("select[name=mod_use_yn]").eq(index).prop("disabled",true);
    		}
     });
-  	//키워드명 내 슬래시포함여부에 따른 범위element 초기 비활성화
+  	//키워드명 내 슬래시포함여부에 따른 범위란 초기 비활성화
    	$('input[name="mod_kwd_nm"]').each(function (index, item) {
-   		if($(item).val().indexOf("/") == -1){
-// 			$("input[name=mod_rng]:eq("+index+")").prop("disabled",true);
+//    		if($(item).val().indexOf("/") == -1){
+   		if(!~$(item).val().indexOf("/")){
 			$("input[name=mod_rng]").eq(index).prop("disabled",true);
    		}
     });
@@ -199,7 +198,7 @@ function fn_kwdDupDtn(kwdStr){
 }
 
 //동의어관리 팝업
-function fn_synPopup(kwd_nm, syn_nm, scrng_spr, scr){
+function fn_synPopup(idx){
 	if(f_arrModIdx.length > 0){
 		alert("동의어 설정을 위해 먼저 수정사항을 저장해주세요.");
 		return;
@@ -212,41 +211,26 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr, scr){
 	frm_synPop.target = 'synPop';
 	$('#pop_prdln_cd').val($('#sel_prdln').val());
 	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
-	$('#pop_scrng_spr').val(scrng_spr);
-	$('#pop_kwd_nm').val(kwd_nm);
-	$('#pop_syn_nm').val(syn_nm);
-	$('#pop_scr').val(scr);
+	$('#pop_scrng_spr').val($('input[name="org_scrng_spr"]').eq(idx).val());
+	$('#pop_kwd_nm').val($('input[name="org_kwd_nm"]').eq(idx).val());
+	$('#pop_syn_nm').val($('input[name="org_syn_nm"]').eq(idx).val());
+	$('#pop_scr').val($('input[name="mod_scr"]').eq(idx).val());
 	frm_synPop.submit();
 }
 
-function fn_delete_kwdListSyn(obj){
-	/* var objParams = {
-			"syn_nm" : $("#syn_nm").val(),
-			"prdln_cd" : $("#prdln_cd").val(),
-			"kwd_spr" : $("#kwd_spr").val(),
-			"kwd_nm" : $("#kwd_nm").val(),
-			"org_syn_nm" : $("#org_syn_nm").val(),
-	    	"chkKwds" : chkedKwds,
-	    	"unchkKwds" : unchkedKwds
-    }; */
-	  
+//키워드에 설정된 동의어 삭제
+function fn_delete_kwdListSyn(obj, idx){
     $.ajax({
         url         :   "updateSynonym.do",
         dataType    :   "json",
         contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
         type        :   "post",
-        data        :   objParams,
+        data        :   obj,
         success     :   function(retVal){
-        	alert("저장되었습니다.");
-//         	window.opener.fn_search();
-        	$("#org_syn_nm").val($("#syn_nm").val());
-        	/*
-            if(retVal.code == "OK") {
-                alert(retVal.message);
-            } else {
-                alert(retVal.message);
-            }
-            */
+        	alert("동의어가 삭제되었습니다..");
+        	$('input[name="org_syn_nm"]').eq(idx).val("");
+        	$('input[name="syn_nm"]').eq(idx).val("");
+        	$('#td_syn_nm_'+idx).text("");
         },
         error       :   function(request, status, error){
             console.log("AJAX_ERROR");
@@ -257,8 +241,42 @@ function fn_delete_kwdListSyn(obj){
 
 //배점 입력 시 사용여부 자동 변경
 function fn_scrInsert(idx){
-	//수정된 row index 저장
-	fn_setModIdx(idx);
+	//수정된 row index를 전역 배열변수에 저장
+	f_arrModIdx.push(idx);
+	
+	//배점 입력 시 동일 동의어가 설정된 키워드 간 배점 비교
+	var arrSynScr = new Array();
+	var selSyn = $('input[name="org_syn_nm"]').eq(idx).val();
+	var selScr = $('input[name="mod_scr"]').eq(idx).val();
+	$('input[name="org_syn_nm"]').each(function(index, item){
+		if(idx != index && $(item).val() == selSyn){
+			arrSynScr.push($('input[name="mod_scr"]').eq(index).val());
+		}
+	});
+	if(!~arrSynScr.indexOf(selScr)  && selSyn){
+		if(confirm("입력하신 배점과 동의어 배점이 다릅니다. 설정된 동의어를 삭제하시겠습니까?")){
+			var arrChkedKwd = new Array();
+			var arrUnchkedKwd = new Array();
+			arrUnchkedKwd.push("");
+			arrChkedKwd.push($('input[name="org_kwd_nm"]').eq(idx).val());
+			var objParams = {
+					"syn_nm" : "",
+					"prdln_cd" : $('#sel_prdln').val(),
+					"kwd_spr" : $("#sel_kwdKnd").val(),
+					"kwd_nm" : "",
+					"org_syn_nm" : $('input[name="org_syn_nm"]').eq(idx).val(),
+			    	"chkKwds" : arrChkedKwd,
+			    	"unchkKwds" : arrUnchkedKwd
+		    }
+			//해당 키워드에 설정된 동의어 삭제
+			fn_delete_kwdListSyn(objParams, idx);
+		}else{
+			$('input[name="mod_scr"]').eq(idx).val($('input[name="org_scr"]').eq(idx).val());
+			return;
+		}
+// 		f_arrModIdx.splice(f_arrModIdx.indexOf(idx),1);
+	}
+	//배점 입력 시 사용여부 자동 변경
 	if($('input[name="mod_scr"]').eq(idx).val() > 0){
 		$('select[name="mod_use_yn"]').eq(idx).val('Y');
 		$('select[name="mod_use_yn"]').eq(idx).prop("disabled",false);
@@ -266,63 +284,14 @@ function fn_scrInsert(idx){
 		$('select[name="mod_use_yn"]').eq(idx).val('N');
 		$('select[name="mod_use_yn"]').eq(idx).prop("disabled",true);
 	}
-	
-	
-	//배점 입력 시 동일 동의어가 설정된 키워드 간 배점 비교
-	var arrSynScr = new Array();
-	var selSyn = $('input[name="org_syn_nm"]').eq(idx).val();
-	var selScr = $('input[name="mod_scr"]').eq(idx).val();
-	$('input[name="org_syn_nm"]').each(function(index, item){
-		if(idx != index){
-			if($(item).val() == selSyn){
-// 				console.log($('input[name="mod_scr"]').eq(index).val());
-				arrSynScr.push($('input[name="mod_scr"]').eq(index).val());
-			}
-		}
-	});
-	
-	console.log(arrSynScr.every(function(item, index, array){
-		console.log("********************");
-		console.log("index : "+index);
-		console.log("item : "+item);
-		console.log("selScr : "+selScr);
-		console.log(item.search(selScr));
-		console.log(~item.search(selScr));
-		console.log(!~item.search(selScr));
-		console.log(!!~item.search(selScr));
-		console.log("********************");
-		return !!~item.search(selScr);
-	}));
-		
-	
-// 	var synScrSet = new Set(arrSynScr);
-// 	arrSynScr = Array.from(synScrSet);
-	if(arrSynScr[0] != selScr){
-		if(confirm("입력하신 배점과 동의어 배점이 다릅니다. 동의어 설정을 삭제하시겠습니까?")){
-			var arrChkedKwd = new Array();
-			var objParams = {
-					"syn_nm" : "",
-					"prdln_cd" : $('#sel_prdln').val(),
-					"kwd_spr" : $("#sel_kwdKnd").val(),
-					"kwd_nm" : $('input[name="org_kwd_nm"]').eq(idx).val(),
-					"org_syn_nm" : $('input[name="org_syn_nm"]').eq(idx).val(),
-			    	"chkKwds" : arrChkedKwd,
-			    	"unchkKwds" : null
-		    };
-// 			fn_delete_kwdListSyn(objParams);
-		}
-	}
-// 	if(){
-		
-// 	}
-	
 }
 
 //키워드명에 슬래시 입력 시 범위 자동 변경
 function fn_kwdInsert(idx){
-	//수정된 row index 저장
-	fn_setModIdx(idx);
-	if($('input[name="mod_kwd_nm"]').eq(idx).val().indexOf("/") != -1){
+	//수정된 row index를 전역 배열변수에 저장
+	f_arrModIdx.push(idx);
+// 	if($('input[name="mod_kwd_nm"]').eq(idx).val().indexOf("/") != -1){
+	if(!!~$('input[name="mod_kwd_nm"]').eq(idx).val().indexOf("/")){
 		$('input[name="mod_rng"]').eq(idx).prop("disabled",false);
 	}else{
 		$('input[name="mod_rng"]').eq(idx).val('0');
@@ -345,11 +314,6 @@ function fn_chkAll(){
     } else {
         $('.chk').prop("checked", false);
     }
-}
-
-//수정된 row index를 전역 배열변수에 저장
-function fn_setModIdx(idx){
-	f_arrModIdx.push(idx);
 }
 
 //입력키워드 유효성 검사
@@ -423,7 +387,8 @@ function fn_kwdValid(val){
 		var reversalKwd = "";
 		for(var j=i+1; j<arrKwdNm.length; j++){
 			//슬래시포함 키워드의 슬래시전후단어 전환 후 중복검사
-			if(arrKwdNm[i].indexOf("/") != -1){
+// 			if(arrKwdNm[i].indexOf("/") != -1){
+			if(!!~arrKwdNm[i].indexOf("/")){
 				var befWrd = arrKwdNm[i].substring(0, arrKwdNm[i].indexOf("/"));
 				var aftWrd = arrKwdNm[i].substring(arrKwdNm[i].indexOf("/")+1, arrKwdNm[i].length);
 				reversalKwd = aftWrd+"/"+befWrd;
@@ -452,7 +417,8 @@ function fn_kwdValid(val){
 	//입력키워드별 슬래시기준 전후 단어 간 중복검사
 	var arrSlashDupKwd = new Array();	//슬래시 전후단어 중복 키워드 배열
 	for(var i in arrKwdNm){
-		if(arrKwdNm[i].indexOf("/") != -1){
+// 		if(arrKwdNm[i].indexOf("/") != -1){
+		if(!!~arrKwdNm[i].indexOf("/")){
 			var befWrd = arrKwdNm[i].substring(0, arrKwdNm[i].indexOf("/"));
 			var aftWrd = arrKwdNm[i].substring(arrKwdNm[i].indexOf("/")+1, arrKwdNm[i].length);
 			//슬래시 전후단어 미입력 검사
@@ -500,12 +466,10 @@ function fn_saveKwdList(){
 		}
 		var totInputLength = $("input[name=mod_kwd_nm]").length;
 		for(var i=0; i<totInputLength; i++){
-			if(arrModIdxs.indexOf(i.toString()) != -1){
-// 				kwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
+// 			if(arrModIdxs.indexOf(i.toString()) != -1){
+			if(!!~arrModIdxs.indexOf(i.toString())){
 				kwdStr += $("input[name=mod_kwd_nm]").eq(i).val()+",";
-// 				if($("input[name=mod_kwd_nm]:eq("+i+")").val() != $("input[name=org_kwd_nm]:eq("+i+")").val()){
 				if($("input[name=mod_kwd_nm]").eq(i).val() != $("input[name=org_kwd_nm]").eq(i).val()){
-// 					 dtnKwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
 					 dtnKwdStr += $("input[name=mod_kwd_nm]").eq(i).val()+",";
 				}
 			}
@@ -518,13 +482,8 @@ function fn_saveKwdList(){
 			//입력키워드 상품군 내 중복검사
 			if(fn_kwdDupDtn(dtnKwdStr)){
 				for(var i=0; i<totInputLength; i++){
-					if(arrModIdxs.indexOf(i.toString()) == -1){
-// 						$("input[name=mod_kwd_nm]:eq("+i+")").prop("disabled",true);
-// 						$("input[name=mod_rng]:eq("+i+")").prop("disabled",true);
-// 						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",true);
-// 						$("input[name=mod_scr]:eq("+i+")").prop("disabled",true);
-// 						$("input[name=org_scrng_spr]:eq("+i+")").prop("disabled",true);
-// 						$("input[name=org_kwd_nm]:eq("+i+")").prop("disabled",true);
+// 					if(arrModIdxs.indexOf(i.toString()) == -1){
+					if(!~arrModIdxs.indexOf(i.toString())){
 						$("input[name=mod_kwd_nm]").eq(i).prop("disabled",true);
 						$("input[name=mod_rng]").eq(i).prop("disabled",true);
 						$("select[name=mod_use_yn]").eq(i).prop("disabled",true);
@@ -533,10 +492,8 @@ function fn_saveKwdList(){
 						$("input[name=org_kwd_nm]").eq(i).prop("disabled",true);
 					}else{
 						//수정된 row의 value submit을 위해 배점 입력에 따른 사용여부element 활성화
-// 						$("input[name=mod_rng]:eq("+i+")").prop("disabled",false);
 						$("input[name=mod_rng]").eq(i).prop("disabled",false);
 						//수정된 row의 value submit을 위해 슬래시 입력에 따른 범위element 활성화
-// 						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",false);
 						$("select[name=mod_use_yn]").eq(i).prop("disabled",false);
 					}
 				}
@@ -566,8 +523,6 @@ function fn_deleteKwdList(){
 		}
 		$('input[name="chk_kwd"]:not(:checked)').each(function (i, item) {
 			index = $(item).index("input:checkbox[name=chk_kwd]");
-// 			$("input[name=org_scrng_spr]:eq("+index+")").prop("disabled",true);
-// 			$("input[name=org_kwd_nm]:eq("+index+")").prop("disabled",true);
 			$("input[name=org_scrng_spr]").eq(index).prop("disabled",true);
 			$("input[name=org_kwd_nm]").eq(index).prop("disabled",true);
 	    });
@@ -649,7 +604,7 @@ function fn_deleteKwdList(){
 			<div id="btn_kwdList">
 				<input type="button" value="저장" onclick="fn_saveKwdList()">
 				<input type="button" value="삭제" onclick="fn_deleteKwdList()">
-<!-- 				<input type="button" value="동의어" onclick="fn_synPopup()"> -->
+				<input type="button" value="동의어" onclick="fn_synPopup()">
 			</div>
 			<form id="frm_kwdList" method="post">
 				<input type="hidden" id="mod_prdln_cd" name="mod_prdln_cd">
@@ -675,11 +630,13 @@ function fn_deleteKwdList(){
 							<td>${status.count}</td>
 							<td><input type="checkbox" name="chk_kwd" class="chk" value="${kwdList.chk_del}"></td>
 							<td><input type="text" name="mod_kwd_nm" class="kwd_nm" value="${kwdList.kwd_nm}" maxlength="50" onchange="fn_kwdInsert('${status.index}')"></td>
-							<td onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}','${kwdList.scr}')">${kwdList.syn_nm}</td>
-							<td><input type="text" name="mod_rng" value="${kwdList.rng}" maxlength="10" onkeyup="fn_inNumber(this)" onchange="fn_setModIdx('${status.index}')"></td>
+<%-- 							<td id="td_syn_nm_${status.index}" onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}','${kwdList.scr}')">${kwdList.syn_nm}</td> --%>
+							<td id="td_syn_nm_${status.index}" onclick="fn_synPopup('${status.index}')">${kwdList.syn_nm}</td>
+<%-- 							<td><input type="text" name="mod_rng" value="${kwdList.rng}" maxlength="10" onkeyup="fn_inNumber(this)" onchange="fn_setModIdx('${status.index}')"></td> --%>
+							<td><input type="text" name="mod_rng" value="${kwdList.rng}" maxlength="10" onkeyup="fn_inNumber(this)" onchange="f_arrModIdx.push('${status.index}')"></td>
 							<td>
 								<!-- 사용여부 수정 시 배점 미입력/0이면 수정 불가&툴팁텍스트 뜨게 -->
-								<select name="mod_use_yn" onchange="fn_setModIdx('${status.index}')" onmouseover="">
+								<select name="mod_use_yn" onchange="f_arrModIdx.push('${status.index}')" onmouseover="">
 									<option value="Y" <c:if test="${kwdList.use_yn eq 'Y'}">selected</c:if>>Y</option>
 									<option value="N" <c:if test="${kwdList.use_yn eq 'N'}">selected</c:if>>N</option>
 								</select>
@@ -691,6 +648,7 @@ function fn_deleteKwdList(){
 						<input type="hidden" name="org_syn_nm" value="${kwdList.syn_nm}">
 						<input type="hidden" name="org_scrng_spr" value="${kwdList.org_scrng_spr}">
 						<input type="hidden" name="org_kwd_nm" value="${kwdList.org_kwd_nm}">
+						<input type="hidden" name="org_scr" value="${kwdList.scr}">
 						</c:forEach>
 					</tbody>
 				</table>
