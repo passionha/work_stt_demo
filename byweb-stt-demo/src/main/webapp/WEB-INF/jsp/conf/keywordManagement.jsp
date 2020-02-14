@@ -104,13 +104,15 @@ $(document).ready(function(){
 	//배점에 따른 사용여부element 초기 비활성화
    	$('input[name="mod_scr"]').each(function (index, item) {
    		if($(item).val() == null || $(item).val() == '0'){
-			$("select[name=mod_use_yn]:eq("+index+")").prop("disabled",true);
+// 			$("select[name=mod_use_yn]:eq("+index+")").prop("disabled",true);
+			$("select[name=mod_use_yn]").eq(index).prop("disabled",true);
    		}
     });
   	//키워드명 내 슬래시포함여부에 따른 범위element 초기 비활성화
    	$('input[name="mod_kwd_nm"]').each(function (index, item) {
    		if($(item).val().indexOf("/") == -1){
-			$("input[name=mod_rng]:eq("+index+")").prop("disabled",true);
+// 			$("input[name=mod_rng]:eq("+index+")").prop("disabled",true);
+			$("input[name=mod_rng]").eq(index).prop("disabled",true);
    		}
     });
 });
@@ -161,7 +163,7 @@ function fn_insertKwdList(){
 				$('#ins_prdln_cd').val($('#sel_prdln').val());
 				$('#ins_kwd_spr').val($('#sel_kwdKnd').val());
 				$('#frm_insertKwdList').submit();
-// 				alert("등록되었습니다.");
+				alert("키워드가 등록되었습니다.");
 			}
 		 }else{
 			 $('#ta_writeKwd').focus();
@@ -198,6 +200,11 @@ function fn_kwdDupDtn(kwdStr){
 
 //동의어관리 팝업
 function fn_synPopup(kwd_nm, syn_nm, scrng_spr, scr){
+	if(f_arrModIdx.length > 0){
+		alert("동의어 설정을 위해 먼저 수정사항을 저장해주세요.");
+		return;
+	}
+	
 	window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=no');
 	var frm_synPop = document.getElementById('frm_synPop');
 	frm_synPop.method = 'post';
@@ -212,6 +219,42 @@ function fn_synPopup(kwd_nm, syn_nm, scrng_spr, scr){
 	frm_synPop.submit();
 }
 
+function fn_delete_kwdListSyn(obj){
+	/* var objParams = {
+			"syn_nm" : $("#syn_nm").val(),
+			"prdln_cd" : $("#prdln_cd").val(),
+			"kwd_spr" : $("#kwd_spr").val(),
+			"kwd_nm" : $("#kwd_nm").val(),
+			"org_syn_nm" : $("#org_syn_nm").val(),
+	    	"chkKwds" : chkedKwds,
+	    	"unchkKwds" : unchkedKwds
+    }; */
+	  
+    $.ajax({
+        url         :   "updateSynonym.do",
+        dataType    :   "json",
+        contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
+        type        :   "post",
+        data        :   objParams,
+        success     :   function(retVal){
+        	alert("저장되었습니다.");
+//         	window.opener.fn_search();
+        	$("#org_syn_nm").val($("#syn_nm").val());
+        	/*
+            if(retVal.code == "OK") {
+                alert(retVal.message);
+            } else {
+                alert(retVal.message);
+            }
+            */
+        },
+        error       :   function(request, status, error){
+            console.log("AJAX_ERROR");
+        }
+    });
+}
+
+
 //배점 입력 시 사용여부 자동 변경
 function fn_scrInsert(idx){
 	//수정된 row index 저장
@@ -223,6 +266,56 @@ function fn_scrInsert(idx){
 		$('select[name="mod_use_yn"]').eq(idx).val('N');
 		$('select[name="mod_use_yn"]').eq(idx).prop("disabled",true);
 	}
+	
+	
+	//배점 입력 시 동일 동의어가 설정된 키워드 간 배점 비교
+	var arrSynScr = new Array();
+	var selSyn = $('input[name="org_syn_nm"]').eq(idx).val();
+	var selScr = $('input[name="mod_scr"]').eq(idx).val();
+	$('input[name="org_syn_nm"]').each(function(index, item){
+		if(idx != index){
+			if($(item).val() == selSyn){
+// 				console.log($('input[name="mod_scr"]').eq(index).val());
+				arrSynScr.push($('input[name="mod_scr"]').eq(index).val());
+			}
+		}
+	});
+	
+	console.log(arrSynScr.every(function(item, index, array){
+		console.log("********************");
+		console.log("index : "+index);
+		console.log("item : "+item);
+		console.log("selScr : "+selScr);
+		console.log(item.search(selScr));
+		console.log(~item.search(selScr));
+		console.log(!~item.search(selScr));
+		console.log(!!~item.search(selScr));
+		console.log("********************");
+		return !!~item.search(selScr);
+	}));
+		
+	
+// 	var synScrSet = new Set(arrSynScr);
+// 	arrSynScr = Array.from(synScrSet);
+	if(arrSynScr[0] != selScr){
+		if(confirm("입력하신 배점과 동의어 배점이 다릅니다. 동의어 설정을 삭제하시겠습니까?")){
+			var arrChkedKwd = new Array();
+			var objParams = {
+					"syn_nm" : "",
+					"prdln_cd" : $('#sel_prdln').val(),
+					"kwd_spr" : $("#sel_kwdKnd").val(),
+					"kwd_nm" : $('input[name="org_kwd_nm"]').eq(idx).val(),
+					"org_syn_nm" : $('input[name="org_syn_nm"]').eq(idx).val(),
+			    	"chkKwds" : arrChkedKwd,
+			    	"unchkKwds" : null
+		    };
+// 			fn_delete_kwdListSyn(objParams);
+		}
+	}
+// 	if(){
+		
+// 	}
+	
 }
 
 //키워드명에 슬래시 입력 시 범위 자동 변경
@@ -344,8 +437,8 @@ function fn_kwdValid(val){
 			}
 		}
 	}
-	var arrDupKwdSet = new Set(arrDupKwdNm);
-	arrDupKwdNm = Array.from(arrDupKwdSet);
+	var dupKwdSet = new Set(arrDupKwdNm);
+	arrDupKwdNm = Array.from(dupKwdSet);
 	var dupStr = "";
 	for(var i in arrDupKwdNm){
 		dupStr += arrDupKwdNm[i]+",";
@@ -362,6 +455,11 @@ function fn_kwdValid(val){
 		if(arrKwdNm[i].indexOf("/") != -1){
 			var befWrd = arrKwdNm[i].substring(0, arrKwdNm[i].indexOf("/"));
 			var aftWrd = arrKwdNm[i].substring(arrKwdNm[i].indexOf("/")+1, arrKwdNm[i].length);
+			//슬래시 전후단어 미입력 검사
+			if(!befWrd || !aftWrd) {
+				alert("슬래시(\"\/\") 전후 단어를 올바르게 입력해주세요."); 
+				return false;
+			}
 			if(befWrd == aftWrd){
 				arrSlashDupKwd.push(arrKwdNm[i]);
 			}
@@ -389,39 +487,57 @@ function fn_kwdValid(val){
 //키워드목록 수정사항 저장
 function fn_saveKwdList(){
 	if(!fn_searchSelYn()) return;
+	//저장 전 동일 동의어 설정 키워드 배점 비교 필요
+	
 	if(confirm("수정사항을 저장하시겠습니까?")){
 		var kwdStr = "";		//유효성검사 대상 전체 입력키워드
 		var dtnKwdStr = "";		//중복검사 대상 입력키워드
 		var arrSet = new Set(f_arrModIdx);
 		var arrModIdxs = Array.from(arrSet);
+		if(arrModIdxs.length == 0){
+			alert("수정사항이 존재하지 않습니다.");
+			return;
+		}
 		var totInputLength = $("input[name=mod_kwd_nm]").length;
 		for(var i=0; i<totInputLength; i++){
 			if(arrModIdxs.indexOf(i.toString()) != -1){
-				kwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
-				if($("input[name=mod_kwd_nm]:eq("+i+")").val() != $("input[name=org_kwd_nm]:eq("+i+")").val()){
-					 dtnKwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
+// 				kwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
+				kwdStr += $("input[name=mod_kwd_nm]").eq(i).val()+",";
+// 				if($("input[name=mod_kwd_nm]:eq("+i+")").val() != $("input[name=org_kwd_nm]:eq("+i+")").val()){
+				if($("input[name=mod_kwd_nm]").eq(i).val() != $("input[name=org_kwd_nm]").eq(i).val()){
+// 					 dtnKwdStr += $("input[name=mod_kwd_nm]:eq("+i+")").val()+",";
+					 dtnKwdStr += $("input[name=mod_kwd_nm]").eq(i).val()+",";
 				}
 			}
 		}
 		kwdStr = kwdStr.substring(0, kwdStr.length-1);
 		dtnKwdStr = dtnKwdStr.substring(0, dtnKwdStr.length-1);
+		
 		//입력키워드 유효성 검사
 		 if(fn_kwdValid(kwdStr)){
 			//입력키워드 상품군 내 중복검사
 			if(fn_kwdDupDtn(dtnKwdStr)){
 				for(var i=0; i<totInputLength; i++){
 					if(arrModIdxs.indexOf(i.toString()) == -1){
-						$("input[name=mod_kwd_nm]:eq("+i+")").prop("disabled",true);
-						$("input[name=mod_rng]:eq("+i+")").prop("disabled",true);
-						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",true);
-						$("input[name=mod_scr]:eq("+i+")").prop("disabled",true);
-						$("input[name=org_scrng_spr]:eq("+i+")").prop("disabled",true);
-						$("input[name=org_kwd_nm]:eq("+i+")").prop("disabled",true);
+// 						$("input[name=mod_kwd_nm]:eq("+i+")").prop("disabled",true);
+// 						$("input[name=mod_rng]:eq("+i+")").prop("disabled",true);
+// 						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",true);
+// 						$("input[name=mod_scr]:eq("+i+")").prop("disabled",true);
+// 						$("input[name=org_scrng_spr]:eq("+i+")").prop("disabled",true);
+// 						$("input[name=org_kwd_nm]:eq("+i+")").prop("disabled",true);
+						$("input[name=mod_kwd_nm]").eq(i).prop("disabled",true);
+						$("input[name=mod_rng]").eq(i).prop("disabled",true);
+						$("select[name=mod_use_yn]").eq(i).prop("disabled",true);
+						$("input[name=mod_scr]").eq(i).prop("disabled",true);
+						$("input[name=org_scrng_spr]").eq(i).prop("disabled",true);
+						$("input[name=org_kwd_nm]").eq(i).prop("disabled",true);
 					}else{
 						//수정된 row의 value submit을 위해 배점 입력에 따른 사용여부element 활성화
-						$("input[name=mod_rng]:eq("+i+")").prop("disabled",false);
+// 						$("input[name=mod_rng]:eq("+i+")").prop("disabled",false);
+						$("input[name=mod_rng]").eq(i).prop("disabled",false);
 						//수정된 row의 value submit을 위해 슬래시 입력에 따른 범위element 활성화
-						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",false);
+// 						$("select[name=mod_use_yn]:eq("+i+")").prop("disabled",false);
+						$("select[name=mod_use_yn]").eq(i).prop("disabled",false);
 					}
 				}
 				$('#mod_prdln_cd').val($('#sel_prdln').val());
@@ -431,7 +547,7 @@ function fn_saveKwdList(){
 				var frm_kwdList = document.getElementById('frm_kwdList');
 				frm_kwdList.action = "updateAnalysisStandard.do"
 				frm_kwdList.submit();
-				alert("저장되었습니다.");
+				alert("수정사항이 저장되었습니다.");
 			}
 		 }else{
 			 return;
@@ -444,10 +560,16 @@ function fn_deleteKwdList(){
 	if(!fn_searchSelYn()) return;
 	//삭제체크박스 체크여부 확인 후 alert 추가 필요*************************
 	if(confirm("선택하신 키워드를 삭제하시겠습니까?")){
+		if($('input[name="chk_kwd"]:checked').length == 0){
+			alert("삭제하실 키워드를 선택해주세요.");
+			return;
+		}
 		$('input[name="chk_kwd"]:not(:checked)').each(function (i, item) {
 			index = $(item).index("input:checkbox[name=chk_kwd]");
-			$("input[name=org_scrng_spr]:eq("+index+")").prop("disabled",true);
-			$("input[name=org_kwd_nm]:eq("+index+")").prop("disabled",true);
+// 			$("input[name=org_scrng_spr]:eq("+index+")").prop("disabled",true);
+// 			$("input[name=org_kwd_nm]:eq("+index+")").prop("disabled",true);
+			$("input[name=org_scrng_spr]").eq(index).prop("disabled",true);
+			$("input[name=org_kwd_nm]").eq(index).prop("disabled",true);
 	    });
 		
 		$('#mod_prdln_cd').val($('#sel_prdln').val());
@@ -457,7 +579,7 @@ function fn_deleteKwdList(){
 		var frm_delList = document.getElementById('frm_kwdList');
 		frm_delList.action = "deleteAnalysisStandard.do"
 		frm_delList.submit();
-		alert("삭제되었습니다.");
+		alert("선택하신 키워드가 삭제되었습니다.");
 	}
 }
 </script>
@@ -552,9 +674,9 @@ function fn_deleteKwdList(){
 						<tr>
 							<td>${status.count}</td>
 							<td><input type="checkbox" name="chk_kwd" class="chk" value="${kwdList.chk_del}"></td>
-							<td><input type="text" name="mod_kwd_nm" class="kwd_nm" value="${kwdList.kwd_nm}" onchange="fn_kwdInsert('${status.index}')"></td>
+							<td><input type="text" name="mod_kwd_nm" class="kwd_nm" value="${kwdList.kwd_nm}" maxlength="50" onchange="fn_kwdInsert('${status.index}')"></td>
 							<td onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}','${kwdList.scr}')">${kwdList.syn_nm}</td>
-							<td><input type="text" name="mod_rng" value="${kwdList.rng}" onkeyup="fn_inNumber(this)" onchange="fn_setModIdx('${status.index}')"></td>
+							<td><input type="text" name="mod_rng" value="${kwdList.rng}" maxlength="10" onkeyup="fn_inNumber(this)" onchange="fn_setModIdx('${status.index}')"></td>
 							<td>
 								<!-- 사용여부 수정 시 배점 미입력/0이면 수정 불가&툴팁텍스트 뜨게 -->
 								<select name="mod_use_yn" onchange="fn_setModIdx('${status.index}')" onmouseover="">
@@ -566,6 +688,7 @@ function fn_deleteKwdList(){
 							<td>${kwdList.user_nm}(${kwdList.emp_no})</td>
 							<td>${kwdList.reg_dt}</td>
 						</tr>
+						<input type="hidden" name="org_syn_nm" value="${kwdList.syn_nm}">
 						<input type="hidden" name="org_scrng_spr" value="${kwdList.org_scrng_spr}">
 						<input type="hidden" name="org_kwd_nm" value="${kwdList.org_kwd_nm}">
 						</c:forEach>

@@ -9,14 +9,15 @@
 <script type="text/javascript">
 //동의어 수정사항 저장
 function fn_save(){
-	if($("#syn_nm").val() != null || $("#syn_nm").val() == ""){
+// 	if($("#syn_nm").val() == null || $("#syn_nm").val() == ""){
+	if(!$("#syn_nm").val()){
 		alert("동의어를 입력해주세요.");
 		$("#syn_nm").focus();
 		return;
 	}
 	
-   	var chkedKwds = [];
-    var unchkedKwds = [];
+   	var arrChkedKwd = new Array();
+    var arrUnchkedKwd = new Array();
     var scrCompare = true;
     
     $('input[name="chk_kwdNm"]:checked').each(function(i, element){//체크된 리스트 저장
@@ -26,12 +27,12 @@ function fn_save(){
     		scrCompare = false;
     		return;
     	}else{
-     		chkedKwds.push($(this).val());
+     		arrChkedKwd.push($(this).val());
     	}
     });
     if(scrCompare){
 	    $('input[name="chk_kwdNm"]:not(:checked)').each(function(i){//체크해제 리스트 저장
-	   		unchkedKwds.push($(this).val());
+	   		arrUnchkedKwd.push($(this).val());
 	    });
 	       
 	    var objParams = {
@@ -40,8 +41,8 @@ function fn_save(){
 			"kwd_spr" : $("#kwd_spr").val(),
 			"kwd_nm" : $("#kwd_nm").val(),
 			"org_syn_nm" : $("#org_syn_nm").val(),
-	    	"chkKwds" : chkedKwds,
-	    	"unchkKwds" : unchkedKwds
+	    	"chkKwds" : arrChkedKwd,
+	    	"unchkKwds" : arrUnchkedKwd
 	    };
 	   
 	    $.ajax({
@@ -51,7 +52,7 @@ function fn_save(){
 	        type        :   "post",
 	        data        :   objParams,
 	        success     :   function(retVal){
-	        	alert("저장되었습니다.");
+	        	alert("되었습니다.");
 	        	window.opener.fn_search();
 	        	$("#org_syn_nm").val($("#syn_nm").val());
 	        	/*
