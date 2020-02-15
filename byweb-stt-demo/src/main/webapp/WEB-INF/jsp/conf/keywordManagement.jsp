@@ -136,6 +136,7 @@ function fn_search() {
 		$('#sel_prdln').focus();
 		return;
 	}else if($('#sel_kwdKnd').val() != 'SEL'){
+		$('#srch_kwd_nms').val($("#ta_writeKwd").val());	//동의어 저장 시 입력키워드 유지
 		$('#frm_search').submit();
 	}
 }
@@ -574,6 +575,7 @@ function fn_deleteKwdList(){
 			<h3>${sectionTitle}</h3>
 		</div>
 		<form name="frm_search" id="frm_search" action="getAnalysisStandardList.do" method="post">
+			<input type="hidden" id="srch_kwd_nms" name="srch_kwd_nms">	<!-- 동의어 저장 시 입력키워드 유지 -->
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>

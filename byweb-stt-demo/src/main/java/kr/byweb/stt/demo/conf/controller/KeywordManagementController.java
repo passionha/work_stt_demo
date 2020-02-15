@@ -52,7 +52,7 @@ public class KeywordManagementController {
 		String use_yn = request.getParameter("use_yn") == null ? "" : request.getParameter("use_yn");
 		String prdln_cd = "";
 		String kwd_spr = "";
-		String kwd_nms = "";	
+		String kwd_nms = "";
 		
 		//키워드 목록 조회, 등록 시 입력 조건 유지
 		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -96,7 +96,7 @@ public class KeywordManagementController {
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
 		String prdln_cd = "";
 		String kwd_spr = "";
-		String kwd_nms = "";
+		String kwd_nms = request.getParameter("srch_kwd_nms") == null ? "" : request.getParameter("srch_kwd_nms");	//동의어 저장 시 입력키워드 유지
 		
 		//키워드 등록 시 입력 조건 유지
 		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
