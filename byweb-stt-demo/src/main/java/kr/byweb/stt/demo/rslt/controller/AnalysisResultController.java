@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import kr.byweb.stt.demo.cm.controller.TmCommonController;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 import kr.byweb.stt.demo.conf.model.AnlysStdVo;
@@ -42,6 +45,7 @@ import kr.byweb.stt.demo.rslt.service.AnalysisResultService;
 
 @Controller
 public class AnalysisResultController {
+	private static final Logger LOGGER = LogManager.getLogger(AnalysisResultController.class);
 	
 	@Autowired
 	TmCommonCodeService tmCommonCodeService;
@@ -86,7 +90,7 @@ public class AnalysisResultController {
 		try {
 			finList = tmCommonCodeService.getReqDeptList(finPMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		model.addAttribute("finList", finList);
@@ -128,7 +132,7 @@ public class AnalysisResultController {
 			try {
 				uplList = analysisResultService.getUplFileList(uplPMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
 		}
 		return uplList;
@@ -164,7 +168,7 @@ public class AnalysisResultController {
 						analysisResultService.updateTmRclflInf(setResultFile);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOGGER.debug("Exception : " + e.toString());
 				}
 		}
 		pMap.put("fileList", paramList);
@@ -173,7 +177,7 @@ public class AnalysisResultController {
 			sttsList = analysisResultService.getAnlySttsList(pMap);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		return sttsList;
@@ -205,7 +209,7 @@ public class AnalysisResultController {
 			totRsltList = analysisResultService.getTotalInspectoinList(pMap);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		return totRsltList;
@@ -242,7 +246,7 @@ public class AnalysisResultController {
 			sttRsltList = analysisResultService.getSttResultList(pMap);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		return sttRsltList;
@@ -275,7 +279,7 @@ public class AnalysisResultController {
 			model.addAttribute("totRsltList", totRsltList);
 			model.addAttribute("filename", "종합결과.xls");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		return "rslt/analysisResult_totRslt_exl";
 	}
@@ -310,7 +314,7 @@ public class AnalysisResultController {
 		try {
 			cttRsltList = analysisResultService.getSttResultList(pMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		model.addAttribute("cttRsltList", cttRsltList);
 		model.addAttribute("filename", "계약별결과.xls");
@@ -359,7 +363,7 @@ public class AnalysisResultController {
 				//키워드 분석
 				analysisResultService.getTmInspcRslt(param);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
 		}
 		return "success";
@@ -445,20 +449,20 @@ public class AnalysisResultController {
 					bw.write(resultString);
 				}
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				LOGGER.debug("UnsupportedEncodingException : " + e.toString());
 				ret = false;
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				LOGGER.debug("FileNotFoundException : " + e.toString());
 				ret = false;
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.debug("IOException : " + e.toString());
 				ret = false;
 			} finally {
 				if(bw != null) {
 					try {
 						bw.close();
 					} catch (Exception e) {
-						e.printStackTrace();
+						LOGGER.debug("Exception : " + e.toString());
 						ret = false;
 					}
 				}
@@ -501,7 +505,7 @@ public class AnalysisResultController {
 					try {
 						kwdList = analysisResultService.getKeywordList(mapInfo);
 					} catch (Exception e) {
-						e.printStackTrace();
+						LOGGER.debug("Exception : " + e.toString());
 					}
 					
 					fis = new FileInputStream(f);
@@ -609,9 +613,9 @@ public class AnalysisResultController {
 				if(isr != null) isr.close();
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LOGGER.debug("FileNotFoundException : " + e.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.debug("IOException : " + e.toString());
 		} finally {
 			if(br != null) br.close();
 			if(fis != null) fis.close();

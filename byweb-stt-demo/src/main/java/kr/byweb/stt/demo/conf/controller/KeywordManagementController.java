@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import kr.byweb.stt.demo.cm.controller.TmCommonController;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 import kr.byweb.stt.demo.conf.model.AnlysStdVo;
@@ -28,6 +31,7 @@ import kr.byweb.stt.demo.conf.service.KeywordManagementService;
 
 @Controller
 public class KeywordManagementController {
+	private static final Logger LOGGER = LogManager.getLogger(KeywordManagementController.class);
 	
 	@Autowired
 	KeywordManagementService keywordManagementService;
@@ -74,7 +78,7 @@ public class KeywordManagementController {
 			model.addAttribute("prdlnMngVos", prdlnMngVos);
 			model.addAttribute("tmCmCdVos", tmCmCdVos);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		return "main";
@@ -113,7 +117,7 @@ public class KeywordManagementController {
 			kwdList = keywordManagementService.getAnalysisStandardList(pMap);
 			model.addAttribute("AnlysStdVo", kwdList);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
@@ -156,7 +160,7 @@ public class KeywordManagementController {
 			try {
 				keywordManagementService.insertAnalysisStandard(pMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
 		}
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
@@ -199,7 +203,7 @@ public class KeywordManagementController {
 					dupKwdNms.add(dupKwdMap);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
 		}
 		return dupKwdNms;
@@ -235,7 +239,7 @@ public class KeywordManagementController {
 			model.addAttribute("scr", scr);
 			model.addAttribute("synList", synList);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		return "conf/synonymPopup";
 	}
@@ -277,7 +281,7 @@ public class KeywordManagementController {
             try {
 				keywordManagementService.updateSynonym(pMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
         }
         pMap = new HashMap();
@@ -300,7 +304,7 @@ public class KeywordManagementController {
             try {
 				keywordManagementService.updateSynonym(pMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
         }
         
@@ -338,7 +342,7 @@ public class KeywordManagementController {
 		try {
 			keywordManagementService.updateDelSynonym(pMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		//리턴값
@@ -389,7 +393,7 @@ public class KeywordManagementController {
 			try {
 				keywordManagementService.updateAnalysisStandard(pMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
 		}
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
@@ -422,7 +426,7 @@ public class KeywordManagementController {
 			try {
 				keywordManagementService.deleteAnalysisStandard(pMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.debug("Exception : " + e.toString());
 			}
 		}
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);

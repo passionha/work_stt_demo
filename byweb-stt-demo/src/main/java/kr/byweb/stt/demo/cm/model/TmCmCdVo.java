@@ -1,6 +1,7 @@
 package kr.byweb.stt.demo.cm.model;
 
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
-public class TmCmCdVo {
+public class TmCmCdVo implements Serializable {
+	
 	//공통코드 테이블 : TM_CD_INF
 	private String grp_cd;
 	private String cd;

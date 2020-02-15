@@ -7,16 +7,20 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import kr.byweb.stt.demo.cm.controller.TmCommonController;
 import kr.byweb.stt.demo.rpt.model.ContractVo;
 import kr.byweb.stt.demo.rpt.service.UploadPopupService;
 
 @Controller
 public class UploadPopupController {
+	private static final Logger LOGGER = LogManager.getLogger(UploadPopupController.class);
 	
 	@Autowired
 	UploadPopupService uploadPopupService;
@@ -59,7 +63,7 @@ public class UploadPopupController {
 			model.addAttribute("mismatchList", mismatchList);		//비매칭 녹취파일 목록
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		return "rpt/recordingUploadPopup";
 	}

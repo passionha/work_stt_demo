@@ -16,6 +16,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.byweb.stt.demo.cm.controller.TmCommonController;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 import kr.byweb.stt.demo.rslt.model.AnlysRsltVo;
@@ -31,6 +34,7 @@ import kr.byweb.stt.demo.rslt.service.AnalysisResultDetailService;
 
 @Controller
 public class AnalysisResultDetailController {
+	private static final Logger LOGGER = LogManager.getLogger(AnalysisResultDetailController.class);
 	
 	@Autowired
 	TmCommonCodeService tmCommonCodeService;
@@ -171,7 +175,7 @@ public class AnalysisResultDetailController {
 			}
 			System.out.println(fList);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		model.addAttribute("cttInfo", cttInfo);
@@ -220,7 +224,7 @@ public class AnalysisResultDetailController {
 			pMap.put("inspc_spr", "1");
 			analysisResultDetailService.insertInspectionResult(pMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		return manualInspcRslt.getScr();
 	}
@@ -244,16 +248,16 @@ public class AnalysisResultDetailController {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LOGGER.debug("FileNotFoundException : " + e.toString());
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			LOGGER.debug("UnsupportedEncodingException : " + e.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.debug("IOException : " + e.toString());
 		} finally {
 			try {
 				if(br != null) br.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.debug("IOException : " + e.toString());
 			}
 		}
 		return resultval;

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import kr.byweb.stt.demo.cm.controller.TmCommonController;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 import kr.byweb.stt.demo.rpt.model.ContractVo;
@@ -24,6 +27,7 @@ import kr.byweb.stt.demo.rpt.service.ContractByFinanceDetailService;
 
 @Controller
 public class ContractByFinanceDetailController {
+	private static final Logger LOGGER = LogManager.getLogger(ContractByFinanceDetailController.class);
 	
 	@Autowired
 	TmCommonCodeService tmCommonCodeService;
@@ -116,7 +120,7 @@ public class ContractByFinanceDetailController {
 			prdList = tmCommonCodeService.getPrdlnList(prdPMap);
 			conList = contractByFinanceDetailService.getContractDetailList(conPMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		String org_cls_cd = "";
@@ -170,7 +174,7 @@ public class ContractByFinanceDetailController {
 			model.addAttribute("conList", conList);
 			model.addAttribute("filename", "계약정보.xls");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		return "rpt/contractByFinanceDetail_exl";
 	}
@@ -212,7 +216,7 @@ public class ContractByFinanceDetailController {
 		try {
 			contractByFinanceDetailService.setAnalysisAll(pMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		return "redirect:/getContractDetailList.do";

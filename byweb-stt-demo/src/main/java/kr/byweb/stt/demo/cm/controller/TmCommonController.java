@@ -8,6 +8,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,7 @@ import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 
 @Controller
 public class TmCommonController {
+	private static final Logger LOGGER = LogManager.getLogger(TmCommonController.class);
 	
 	@Autowired
 	TmCommonCodeService tmCommonCodeService;
@@ -30,7 +33,7 @@ public class TmCommonController {
 			List<TmCmCdVo> headerTitles = tmCommonCodeService.getTitleList();
 			session.setAttribute("headerTitles", headerTitles);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		return "main";
 	}
@@ -56,7 +59,7 @@ public class TmCommonController {
 			List<TmCmCdVo> navTitles = tmCommonCodeService.getNavTitleList(req_cd);
 			session.setAttribute("navTitles", navTitles);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		
 		return "redirect:/";

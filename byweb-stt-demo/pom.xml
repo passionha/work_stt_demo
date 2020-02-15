@@ -26,6 +26,8 @@
 	<description>byweb TM project</description>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -34,6 +36,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<!-- 스프링부트 기본설정인 logback이 아닌 log4j2 사용 -->
+			<exclusions>
+	            <exclusion>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-starter-logging</artifactId>
+	            </exclusion>
+        	</exclusions>
 		</dependency>
 		
 		<!-- VO, DTO, Entity 관련 작업 간소화. 개발PC 내 Lombok 설치 필요 -->
@@ -66,6 +75,18 @@
 		    <groupId>org.mybatis.spring.boot</groupId>
        	 	<artifactId>mybatis-spring-boot-starter</artifactId>
        	 	<version>1.1.1</version>
+		</dependency>
+		
+		<!-- log4j2 -->
+		<dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-log4j2</artifactId>
+    	</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-web</artifactId>
+		    <version>2.12.1</version>
 		</dependency>
 		
 		<!-- 스프링 부트 어플리케이션 테스트용 -->

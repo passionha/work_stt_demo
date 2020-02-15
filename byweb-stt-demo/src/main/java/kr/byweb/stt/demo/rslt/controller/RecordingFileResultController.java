@@ -8,11 +8,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import kr.byweb.stt.demo.cm.controller.TmCommonController;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 import kr.byweb.stt.demo.mng.model.PrdlnMngVo;
@@ -21,6 +24,7 @@ import kr.byweb.stt.demo.rslt.service.RecordingFileResultService;
 
 @Controller
 public class RecordingFileResultController {
+	private static final Logger LOGGER = LogManager.getLogger(RecordingFileResultController.class);
 	
 	@Autowired
 	TmCommonCodeService tmCommonCodeService;
@@ -71,7 +75,7 @@ public class RecordingFileResultController {
 			errList = tmCommonCodeService.getErrorCdList();
 			rcdRsltList = recordingFileResultService.getRecordingFileResultList(pMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 //		System.out.println(rcdRsltList);
 		model.addAttribute("fin_cd", fin_cd);
@@ -104,7 +108,7 @@ public class RecordingFileResultController {
 		try {
 			rcdRsltList = recordingFileResultService.getRecordingFileResultList(pMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("Exception : " + e.toString());
 		}
 		System.out.println(rcdRsltList);
 		model.addAttribute("rcdRsltList", rcdRsltList);

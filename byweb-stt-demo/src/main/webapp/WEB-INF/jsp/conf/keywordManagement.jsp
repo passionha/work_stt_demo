@@ -204,6 +204,27 @@ function fn_synPopup(idx){
 		return;
 	}
 	
+	if(idx == null){	//동의어버튼 클릭 시
+		if($('input[name="chk_kwd"]:checked').length != 1){
+			alert("동의어를 설정할 키워드를 1개만 선택해주세요.");
+			return;
+		}else{
+			var chk_idx = ""; 
+			$('input[name="chk_kwd"]').each(function(index, item){
+				if($(this).prop('checked')){ chk_idx = index; }
+			});
+			$('#pop_scrng_spr').val($('input[name="org_scrng_spr"]').eq(chk_idx).val());
+			$('#pop_kwd_nm').val($('input[name="org_kwd_nm"]').eq(chk_idx).val());
+			$('#pop_syn_nm').val($('input[name="org_syn_nm"]').eq(chk_idx).val());
+			$('#pop_scr').val($('input[name="mod_scr"]').eq(chk_idx).val());
+		}
+	}else{				//동의어 컬럼 더블클릭 시
+		$('#pop_scrng_spr').val($('input[name="org_scrng_spr"]').eq(idx).val());
+		$('#pop_kwd_nm').val($('input[name="org_kwd_nm"]').eq(idx).val());
+		$('#pop_syn_nm').val($('input[name="org_syn_nm"]').eq(idx).val());
+		$('#pop_scr').val($('input[name="mod_scr"]').eq(idx).val());
+	}
+	
 	window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=no');
 	var frm_synPop = document.getElementById('frm_synPop');
 	frm_synPop.method = 'post';
@@ -211,10 +232,6 @@ function fn_synPopup(idx){
 	frm_synPop.target = 'synPop';
 	$('#pop_prdln_cd').val($('#sel_prdln').val());
 	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
-	$('#pop_scrng_spr').val($('input[name="org_scrng_spr"]').eq(idx).val());
-	$('#pop_kwd_nm').val($('input[name="org_kwd_nm"]').eq(idx).val());
-	$('#pop_syn_nm').val($('input[name="org_syn_nm"]').eq(idx).val());
-	$('#pop_scr').val($('input[name="mod_scr"]').eq(idx).val());
 	frm_synPop.submit();
 }
 
