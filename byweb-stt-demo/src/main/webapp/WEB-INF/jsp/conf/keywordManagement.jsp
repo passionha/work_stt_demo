@@ -233,6 +233,7 @@ function fn_synPopup(idx){
 	frm_synPop.target = 'synPop';
 	$('#pop_prdln_cd').val($('#sel_prdln').val());
 	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
+	//전체 동의어들 모두 post 파라미터로 보내서 컨트롤러에서 배열로 받아서 model로 팝업화면에 보낸 후 중복확인 사용**************************************
 	frm_synPop.submit();
 }
 
@@ -245,10 +246,21 @@ function fn_delete_kwdListSyn(obj, idx){
         type        :   "post",
         data        :   obj,
         success     :   function(retVal){
-        	alert("동의어가 삭제되었습니다..");
-        	$('input[name="org_syn_nm"]').eq(idx).val("");
-        	$('input[name="syn_nm"]').eq(idx).val("");
-        	$('#td_syn_nm_'+idx).text("");
+        	if(idx != null){
+	        	alert("동의어가 삭제되었습니다.");
+	        	$('input[name="org_syn_nm"]').eq(idx).val("");
+	        	$('input[name="syn_nm"]').eq(idx).val("");
+	        	$('#td_syn_nm_'+idx).text("");
+        	}
+//         	else if(syn != null){
+//         		$('input[name="org_syn_nm"]').each(function(index, item){
+//         			if($(item).val() == syn){
+//         				$(item).val("");
+//         	        	$('input[name="syn_nm"]').eq(index).val("");
+//         	        	$('#td_syn_nm_'+index).text("");
+//         			}
+//         		});
+//         	}
         },
         error       :   function(request, status, error){
             console.log("AJAX_ERROR");
@@ -460,8 +472,8 @@ function fn_kwdValid(val){
 	}
 	
 	//중복키워드 제거
-	var arrKwdSet = new Set(arrKwdNm);
-	arrKwdNm = Array.from(arrKwdSet)
+	var setArrKwd = new Set(arrKwdNm);
+	arrKwdNm = Array.from(setArrKwd)
 	
 	//키워드 문자열 치환 결과 저장
 	$('#ins_kwd_nms').val(arrKwdNm.join(","));
@@ -539,8 +551,52 @@ function fn_deleteKwdList(){
 			alert("삭제하실 키워드를 선택해주세요.");
 			return;
 		}
+		
+		var arrChkSyn = new Array();
+		$('input[name="chk_kwd"]:checked').each(function (index, item) {
+			var idx = $(item).index("input:checkbox[name=chk_kwd]");
+			arrChkSyn.push($("input[name=org_syn_nm]").eq(idx).val());
+		});
+		
+		var setChkSyn = new Set(arrChkSyn);
+		arrChkSyn = Array.from(setChkSyn);
+		for(var i=0; i<arrChkSyn.length; i++){
+			var cnt = 0;
+			var syn = "";
+			$('input[name="chk_kwd"').each(function (index, item) {
+				if(arrChkSyn[i] == $("input[name=org_syn_nm]").eq(index).val()){
+					cnt++;
+				}
+			});
+			if(cnt == 2){
+				if(confirm("선택한 키워드 삭제 시 동의어["+arrChkSyn[i]+"]의 키워드가 1개만 남습니다.\n동의어를 삭제하시겠습니까?")){
+					var arrChkedKwd = new Array();
+					$('input[name="org_kwd_nm"').each(function (index, item) {
+						if($("input[name=org_syn_nm]").eq(index).val() == arrChkSyn[i]){
+							arrChkedKwd.push($(item).val());
+						}
+					});
+						
+					var arrUnchkedKwd = new Array();
+					arrUnchkedKwd.push("");
+					var objParams = {
+							"syn_nm" : "",
+							"prdln_cd" : $('#sel_prdln').val(),
+							"kwd_spr" : $("#sel_kwdKnd").val(),
+							"kwd_nm" : "",
+							"org_syn_nm" : arrChkSyn[i],
+					    	"chkKwds" : arrChkedKwd,
+					    	"unchkKwds" : arrUnchkedKwd
+				    }
+					//해당 키워드에 설정된 동의어 삭제
+					fn_delete_kwdListSyn(objParams, null, arrChkSyn[i]);
+				}else{
+					return;
+				}
+			}
+		}
 		$('input[name="chk_kwd"]:not(:checked)').each(function (i, item) {
-			index = $(item).index("input:checkbox[name=chk_kwd]");
+			var index = $(item).index("input:checkbox[name=chk_kwd]");
 			$("input[name=org_scrng_spr]").eq(index).prop("disabled",true);
 			$("input[name=org_kwd_nm]").eq(index).prop("disabled",true);
 	    });

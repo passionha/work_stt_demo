@@ -74,33 +74,56 @@ function fn_save(){
 //동의어 삭제
 function fn_delete(){
 	if(confirm('해당 동의어를 삭제하시겠습니까?')){
-		var objParams = {
-			"syn_nm" : $("#org_syn_nm").val(),
-			"prdln_cd" : $("#prdln_cd").val(),
-			"kwd_spr" : $("#kwd_spr").val(),
-	    }
-	    
-	    $.ajax({
-	        url         :   "updateDelSynonym.do",
-	        dataType    :   "json",
-	        contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
-	        type        :   "post",
-	        data        :   objParams,
-	        success     :   function(retVal){
-	        	alert("삭제되었습니다.");
-	        	window.opener.fn_search();
-	        	self.close();
-	        },
-	        error       :   function(request, status, error){
-	            console.log("AJAX_ERROR");
-	        }
-	    });
+		if(fn_synValid){
+			var objParams = {
+					"syn_nm" : $("#org_syn_nm").val(),
+					"prdln_cd" : $("#prdln_cd").val(),
+					"kwd_spr" : $("#kwd_spr").val(),
+		    }
+		    
+		    $.ajax({
+		        url         :   "updateDelSynonym.do",
+		        dataType    :   "json",
+		        contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
+		        type        :   "post",
+		        data        :   objParams,
+		        success     :   function(retVal){
+		        	alert("삭제되었습니다.");
+		        	window.opener.fn_search();
+		        	self.close();
+		        },
+		        error       :   function(request, status, error){
+		            console.log("AJAX_ERROR");
+		        }
+		    });
+		}
+		
 	}
 }
 
 //동의어명 유효성 검사
-function synValid(){
+function fn_synValid(val){
+	//공백만 입력 검사
+	if(!val.trim()){
+		alert("동의어를 입력해주세요.");
+		return false;
+	}
 	
+	//한글 외 문자 검사(슬래시, 콤마 제외)
+	var noSpcChar = /[\{\}\[\]?.,;:|\)*~`!^\-+<>@\#$%&\\\=\(\'\"]/gi
+	if(noSpcChar.test(val)){
+		alert("동의어명에 ㅇㅇ특수문자는 입력할 수 없습니다.");
+		return false;
+	}
+
+	if(val.length >= 50){
+		alert("동의어명은 50자를 초과할 수 없습니다.");
+		return false;
+	}
+	
+	//동의어명 중복검사
+	
+	return true;
 }
 
 </script>
@@ -124,7 +147,7 @@ function synValid(){
 			<table border="1">
 				<tr>
 					<th>동의어</th>
-					<td><input type="text" id="syn_nm" name="syn_nm" value="${syn_nm}"></td>
+					<td><input type="text" id="syn_nm" name="syn_nm" value="${syn_nm}" maxlength="50"></td>
 				</tr>
 				<tr>
 					<th>기준 키워드</th>
