@@ -225,15 +225,16 @@ function fn_synPopup(idx){
 		$('#pop_syn_nm').val($('input[name="org_syn_nm"]').eq(idx).val());
 		$('#pop_scr').val($('input[name="mod_scr"]').eq(idx).val());
 	}
-	
-	window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=no');
-	var frm_synPop = document.getElementById('frm_synPop');
-	frm_synPop.method = 'post';
-	frm_synPop.action = 'getSynonymKeywordList.do';
-	frm_synPop.target = 'synPop';
-	$('#pop_prdln_cd').val($('#sel_prdln').val());
-	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
-	frm_synPop.submit();
+	var strFeature = "dialogWidth:430px; dialogHeight:500px; center:yes; help:no; status:no; scroll:on; resizable:no";
+	var rtnVal = window.showModalDialog('getSynonymKeywordList.do', '', strFeature);
+// 	window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=no');
+// 	var frm_synPop = document.getElementById('frm_synPop');
+// 	frm_synPop.method = 'post';
+// 	frm_synPop.action = 'getSynonymKeywordList.do';
+// 	frm_synPop.target = 'synPop';
+// 	$('#pop_prdln_cd').val($('#sel_prdln').val());
+// 	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
+// 	frm_synPop.submit();
 }
 
 //키워드에 설정된 동의어 삭제
