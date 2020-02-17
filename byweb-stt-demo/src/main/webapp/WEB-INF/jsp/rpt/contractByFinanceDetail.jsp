@@ -250,6 +250,8 @@ function fn_anlysAll(){
 					<th>계약상태</th>
 					<th>계약상태발생일</th>
 					<th>계약자명</th>
+					<th>상품설명대본파일명</th>
+					<th>해피콜대본파일명</th>
 					<th>대리점명</th>
 					<th>대리점등록번호</th>
 					<th>모집점포명</th>
@@ -270,6 +272,8 @@ function fn_anlysAll(){
 					<td>${conList.ctt_stts}</td>
 					<td><fmt:formatDate value="${fmt_ctt_stts_efdt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.cttor_nm}</td>
+					<td>${conList.pdesc_scpt_file_nm}</td>
+					<td>${conList.hpycl_scpt_file_nm}</td>
 					<td>${conList.ga_nm}</td>
 					<td>${conList.ga_rno}</td>
 					<td>${conList.rcrt_sto_nm}</td>
