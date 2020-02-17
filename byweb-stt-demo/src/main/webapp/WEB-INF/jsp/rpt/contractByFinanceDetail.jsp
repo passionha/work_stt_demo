@@ -152,6 +152,17 @@ function fn_anlysAll(){
 	}
 }
 
+//대본파일 다운로드 팝업(scrSpr - 1:상품설명, 2:해피콜)
+function fn_openScrDownPopup(scrSpr){
+	window.open('','scrDownPopup','width=800,height=600,location=no,status=no,scrollbars=no');
+	var frm_uplPop = document.getElementById("frm_scrDownPop");
+	$('#scr_dwn_fin_cd').val(fin_cd);
+	$('#scr_dwn_req_dt').val(req_dt);
+	$('#scr_spr').val(scrSpr);
+	
+	frm_uplPop.submit();
+}
+
 </script>
 </head>
 <body>
@@ -272,8 +283,8 @@ function fn_anlysAll(){
 					<td>${conList.ctt_stts}</td>
 					<td><fmt:formatDate value="${fmt_ctt_stts_efdt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.cttor_nm}</td>
-					<td>${conList.pdesc_scpt_file_nm}</td>
-					<td>${conList.hpycl_scpt_file_nm}</td>
+					<td onclick="fn_openScrDownPopup(1)">${conList.pdesc_scpt_file_nm}</td>
+					<td onclick="fn_openScrDownPopup(2)">${conList.hpycl_scpt_file_nm}</td>
 					<td>${conList.ga_nm}</td>
 					<td>${conList.ga_rno}</td>
 					<td>${conList.rcrt_sto_nm}</td>
@@ -303,6 +314,11 @@ function fn_anlysAll(){
 			<input type="hidden" name="org_scrts_no" value="${scrts_no}">
 			<input type="hidden" name="org_ctt_sdate" value="${ctt_sdate}">
 			<input type="hidden" name="org_ctt_edate" value="${ctt_edate}">
+		</form>
+		<form id="frm_scrDownPop" name="frm_scrDownPop" method="post" action="getScriptDownloadPopup" target="scrDownPopup">
+			<input type="hidden" id="scr_dwn_fin_cd" name="fin_cd">
+			<input type="hidden" id="scr_dwn_req_dt" name="req_dt">
+			<input type="hidden" id="scr_spr" name="scr_spr">
 		</form>
 	</section>
 </div>
