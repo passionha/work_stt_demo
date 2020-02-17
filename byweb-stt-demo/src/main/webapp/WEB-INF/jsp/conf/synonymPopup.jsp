@@ -9,13 +9,48 @@
 <script type="text/javascript">
 //동의어 수정사항 저장
 function fn_save(){
+	if($('input[name="chk_kwdNm"]:checked').length == 0){
+		var msg = "동의어로 선택하신 키워드가 없습니다. 해당 동의어를 삭제하시겠습니까?"
+		fn_delete(msg);
+		return;	
+	}
+	
 	if(confirm("수정사항을 저장하시겠습니까?")){
-		if(!$("#syn_nm").val()){
-			alert("동의어를 입력해주세요.");
+		//동의어명 유효성 검사
+		if(!fn_synValid($("#syn_nm").val())){
 			$("#syn_nm").focus();
 			return;
 		}
 		
+		//동의어명 중복검사
+		var objParams = {
+			"prdln_cd" : $("#prdln_cd").val(),
+			"kwd_spr" : $("#kwd_spr").val(),
+			"syn_nm" : $("#syn_nm").val(),
+			"org_syn_nm" : $("#org_syn_nm").val(),
+	    }
+		
+		var dupResult = true;
+	    $.ajax({
+	        url         :   "getSynonymDup.do",
+	        dataType    :   "json",
+	        contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
+	        type        :   "post",
+	        data        :   objParams,
+	        async		:   false,
+	        success     :   function(data){
+	        	if(data > 0){
+	        		alert("["+$('#syn_nm').val()+"]은(는) 이미 사용 중인 동의어명입니다.");
+	        		dupResult = false;
+	        	}
+	        },
+	        error       :   function(request, status, error){
+	            console.log("AJAX_ERROR");
+	        }
+	    });
+		if(!dupResult) return;
+		
+		//동의어 설정 키워드 간 배점 동일여부 확인
 	   	var arrChkedKwd = new Array();
 	    var arrUnchkedKwd = new Array();
 	    var scrCompare = true;
@@ -72,32 +107,32 @@ function fn_save(){
 }
     
 //동의어 삭제
-function fn_delete(){
-	if(confirm('해당 동의어를 삭제하시겠습니까?')){
-		if(fn_synValid){
-			var objParams = {
-					"syn_nm" : $("#org_syn_nm").val(),
-					"prdln_cd" : $("#prdln_cd").val(),
-					"kwd_spr" : $("#kwd_spr").val(),
-		    }
-		    
-		    $.ajax({
-		        url         :   "updateDelSynonym.do",
-		        dataType    :   "json",
-		        contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
-		        type        :   "post",
-		        data        :   objParams,
-		        success     :   function(retVal){
-		        	alert("삭제되었습니다.");
-		        	window.opener.fn_search();
-		        	self.close();
-		        },
-		        error       :   function(request, status, error){
-		            console.log("AJAX_ERROR");
-		        }
-		    });
-		}
-		
+function fn_delete(aMsg){
+	var msg = "해당 동의어를 삭제하시겠습니까?";
+	if(aMsg){ msg = aMsg; }
+	
+	if(confirm(msg)){
+		var objParams = {
+				"syn_nm" : $("#org_syn_nm").val(),
+				"prdln_cd" : $("#prdln_cd").val(),
+				"kwd_spr" : $("#kwd_spr").val(),
+	    }
+	    
+	    $.ajax({
+	        url         :   "updateDelSynonym.do",
+	        dataType    :   "json",
+	        contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
+	        type        :   "post",
+	        data        :   objParams,
+	        success     :   function(retVal){
+	        	alert("삭제되었습니다.");
+	        	window.opener.fn_search();
+	        	self.close();
+	        },
+	        error       :   function(request, status, error){
+	            console.log("AJAX_ERROR");
+	        }
+	    });
 	}
 }
 
@@ -109,10 +144,10 @@ function fn_synValid(val){
 		return false;
 	}
 	
-	//한글 외 문자 검사(슬래시, 콤마 제외)
-	var noSpcChar = /[\{\}\[\]?.,;:|\)*~`!^\-+<>@\#$%&\\\=\(\'\"]/gi
+	//특수 문자 검사
+	var noSpcChar = /[<>]/gi
 	if(noSpcChar.test(val)){
-		alert("동의어명에 ㅇㅇ특수문자는 입력할 수 없습니다.");
+		alert("동의어명에 \"<, >\"는 입력할 수 없습니다.");
 		return false;
 	}
 
@@ -120,10 +155,7 @@ function fn_synValid(val){
 		alert("동의어명은 50자를 초과할 수 없습니다.");
 		return false;
 	}
-	
-	//동의어명 중복검사
-	
-	return true;
+    return true;
 }
 
 </script>

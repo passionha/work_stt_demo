@@ -319,6 +319,38 @@ public class KeywordManagementController {
 	}
 	
 	/**
+	 * 동의어명 중복검사
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/getSynonymDup.do")
+	@ResponseBody
+	public Integer getSynonymDup(HttpSession session, HttpServletRequest request, Model model) {
+		Map pMap = new HashMap();
+		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
+		String prdln_cd = request.getParameter("prdln_cd") == null ? "" : request.getParameter("prdln_cd"); 
+		String kwd_spr = request.getParameter("kwd_spr") == null ? "" : request.getParameter("kwd_spr");
+		String syn_nm = request.getParameter("syn_nm") == null ? "" : request.getParameter("syn_nm");
+		String org_syn_nm = request.getParameter("org_syn_nm") == null ? "" : request.getParameter("org_syn_nm");
+		//체크된 키워드 및 기준키워드 동의어 설정
+		pMap.put("req_dept_cd", req_dept_cd);
+		pMap.put("prdln_cd", prdln_cd);
+		pMap.put("kwd_spr", kwd_spr);
+		pMap.put("syn_nm", syn_nm);
+		pMap.put("org_syn_nm", org_syn_nm);
+		
+		int dup_cnt = 0;
+		try {
+			dup_cnt = keywordManagementService.getSynonymDup(pMap);
+		} catch (Exception e) {
+			LOGGER.debug("Exception : " + e.toString());
+		}
+		System.out.println("**************************dup_cnt : "+dup_cnt);
+		return dup_cnt;
+	}
+	
+	/**
 	 * 동의어 삭제
 	 * @param request
 	 * @param model

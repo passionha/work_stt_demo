@@ -117,6 +117,19 @@
 		  	</if>
 	</update>
 	
+	<!-- 동의어관리 팝업 동의어명 중복검사 -->
+	<select id="getSynonymDup" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT
+		    COUNT(SYN_NM) as dup_cnt
+		FROM TM_ANLYS_STD
+		WHERE
+		    REQ_DEPT_CD = #{req_dept_cd}
+		    AND PRDLN_CD = #{prdln_cd}
+		    AND KWD_SPR = #{kwd_spr}
+		    AND SYN_NM = #{syn_nm}
+		    AND SYN_NM != #{org_syn_nm}
+	</select>
+	
 	<!-- 동의어관리 팝업 동의어 삭제 -->
 	<update id="updateDelSynonym" parameterType="java.util.Map">
 		UPDATE

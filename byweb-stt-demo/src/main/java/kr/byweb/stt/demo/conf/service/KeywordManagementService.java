@@ -21,5 +21,7 @@ public interface KeywordManagementService {
 	public void deleteAnalysisStandard(Map pMap) throws Exception;
 
 	public void updateDelSynonym(Map pMap) throws Exception;
+
+	public Integer getSynonymDup(Map pMap) throws Exception;
 	
 }

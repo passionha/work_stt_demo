@@ -54,6 +54,11 @@ public class KeywordManagementServiceImpl implements KeywordManagementService{
 	public void updateDelSynonym(Map pMap) throws Exception {
 		keywordManagementMapper.updateDelSynonym(pMap);
 	}
+
+	@Override
+	public Integer getSynonymDup(Map pMap) throws Exception {
+		return keywordManagementMapper.getSynonymDup(pMap);
+	}
 	
 	
 }

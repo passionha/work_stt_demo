@@ -233,7 +233,6 @@ function fn_synPopup(idx){
 	frm_synPop.target = 'synPop';
 	$('#pop_prdln_cd').val($('#sel_prdln').val());
 	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
-	//전체 동의어들 모두 post 파라미터로 보내서 컨트롤러에서 배열로 받아서 model로 팝업화면에 보낸 후 중복확인 사용**************************************
 	frm_synPop.submit();
 }
 
@@ -544,8 +543,8 @@ function fn_saveKwdList(){
 
 //키워드목록 삭제
 function fn_deleteKwdList(){
+	//조회조건 선택여부
 	if(!fn_searchSelYn()) return;
-	//삭제체크박스 체크여부 확인 후 alert 추가 필요*************************
 	if(confirm("선택하신 키워드를 삭제하시겠습니까?")){
 		if($('input[name="chk_kwd"]:checked').length == 0){
 			alert("삭제하실 키워드를 선택해주세요.");
@@ -569,7 +568,7 @@ function fn_deleteKwdList(){
 				}
 			});
 			if(cnt == 2){
-				if(confirm("선택한 키워드 삭제 시 동의어["+arrChkSyn[i]+"]의 키워드가 1개만 남습니다.\n동의어를 삭제하시겠습니까?")){
+				if(confirm("선택하신 키워드 삭제 시 동의어의 키워드가 1개만 남습니다.\n동의어와 키워드를 삭제하시겠습니까?")){
 					var arrChkedKwd = new Array();
 					$('input[name="org_kwd_nm"').each(function (index, item) {
 						if($("input[name=org_syn_nm]").eq(index).val() == arrChkSyn[i]){
