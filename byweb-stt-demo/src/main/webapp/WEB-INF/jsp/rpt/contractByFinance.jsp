@@ -90,12 +90,13 @@ function fn_delContract(cls_cd, req_dt, fin_cd, fin_nm, sbm_dt){
 	}
 }
 
-//녹취파일 업로드 팝업
-function fn_openUploadPop(fin_cd, req_dt){
-	window.open('','recUplPopup','width=800,height=600,location=no,status=no,scrollbars=no');
+//녹취파일 업로드 팝업(uplSpr - 1:녹취파일 2:대본파일)
+function fn_openUplPop(uplSpr, fin_cd, req_dt){
+	window.open('','uplPopup','width=800,height=600,location=no,status=no,scrollbars=no');
 	var frm_uplPop = document.getElementById("frm_uplPop");
 	document.getElementById("upl_fin_cd").value = fin_cd;
 	document.getElementById("upl_req_dt").value = req_dt;
+	document.getElementById("upl_spr").value = uplSpr;
 	frm_uplPop.submit();
 }
 
@@ -227,6 +228,7 @@ function fn_goDetail(idx){
 					<th>녹취파일건수</th>
 					<th>비매칭건수</th>
 					<th>녹취파일 업로드</th>
+					<th>대본파일 업로드</th>
 					<th>STT진행상태</th>
 					<th>삭제</th>
 				</tr>
@@ -247,7 +249,8 @@ function fn_goDetail(idx){
 					<td>${conList.ctt_cnt}</td>
 					<td>${conList.file_cnt}</td>
 					<td>${conList.mismatch_cnt}</td>
-					<td><input type="button" value="업로드" onclick="fn_openUploadPop('${conList.fin_cd}', '${conList.req_dt}')"></td>
+					<td><input type="button" value="업로드" onclick="fn_openUplPop(1, '${conList.fin_cd}', '${conList.req_dt}')"></td>
+					<td><input type="button" value="업로드" onclick="fn_openUplPop(2, '${conList.fin_cd}', '${conList.req_dt}')"></td>
 					<td>${conList.anly_st}</td>
 					<td><input type="button" value="삭제" onclick="fn_delContract('${conList.cls_cd}','${conList.req_dt}','${conList.fin_cd}','${conList.fin_nm}','${conList.sbm_dt}')"></td>
 				</tr>
@@ -267,9 +270,10 @@ function fn_goDetail(idx){
 			<input type="hidden" id="del_edate" name="edate">
 			<input type="hidden" id="del_sel_fin_cd" name="sel_fin_cd">
 		</form>
-		<form id="frm_uplPop" name="frm_uplPop" method="post" action="getDefInfo.do" target="recUplPopup">
+		<form id="frm_uplPop" name="frm_uplPop" method="post" action="getDefInfo.do" target="uplPopup">
 			<input type="hidden" id="upl_fin_cd" name="fin_cd">
 			<input type="hidden" id="upl_req_dt" name="req_dt">
+			<input type="hidden" id="upl_spr" name="upl_spr">
 		</form>
 		<form id="frm_exl" name="frm_exl" method="post" action="getContract_exl.do">
 			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">

@@ -26,45 +26,56 @@ public class UploadPopupController {
 	UploadPopupService uploadPopupService;
 	
 	/**
-	 * 녹취파일 업로드 기본정보 조회
+	 * 업로드 팝업 기본정보 조회
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/getDefInfo.do")
 	public String getDefInfo(HttpSession session, HttpServletRequest request, Model model) {
-		Map pMap1 = new HashMap();
-		Map pMap2 = new HashMap();
-		Map pMap3 = new HashMap();
+		Map pMap = new HashMap();
+		Map hisPMap = new HashMap();
+		Map msmcPMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
-		
 		String fin_cd = request.getParameter("fin_cd") == null ? "" : (String) request.getParameter("fin_cd");
 		String req_dt = request.getParameter("req_dt") == null ? "" : (String) request.getParameter("req_dt");
+		String upl_spr = request.getParameter("upl_spr") == null ? "" : (String) request.getParameter("upl_spr");
 		
-		pMap1.put("fin_cd", fin_cd);
-		pMap1.put("req_dt", req_dt);
+		pMap.put("fin_cd", fin_cd);
+		pMap.put("req_dt", req_dt);
 		
-		pMap2.put("req_dept_cd", req_dept_cd);
-		pMap2.put("fin_cd", fin_cd);
-		pMap2.put("req_dt", req_dt);
-		pMap2.put("upl_spr", "1");
-		
-		pMap3.put("req_dept_cd", req_dept_cd);
-		pMap3.put("fin_cd", fin_cd);
-		pMap3.put("req_dt", req_dt);
-		pMap3.put("upl_spr", "1");
+		hisPMap.put("req_dept_cd", req_dept_cd);
+		hisPMap.put("fin_cd", fin_cd);
+		hisPMap.put("req_dt", req_dt);
+		hisPMap.put("upl_spr", upl_spr);
 		
 		try {
-			ContractVo contractVo = uploadPopupService.getDefInfo(pMap1);
-			List<ContractVo> hisList = uploadPopupService.getHisList(pMap2);
-			List<ContractVo> mismatchList = uploadPopupService.getMismatchList(pMap3);
+			ContractVo contractVo = uploadPopupService.getDefInfo(pMap);
+			List<ContractVo> hisList = uploadPopupService.getHisList(hisPMap);
 			
 			model.addAttribute("contractVo", contractVo);			//회사 기본 정보
 			model.addAttribute("hisList", hisList);					//업로드 조회 결과
-			model.addAttribute("mismatchList", mismatchList);		//비매칭 녹취파일 목록
 			
 		} catch (Exception e) {
 			LOGGER.debug("Exception : " + e.toString());
 		}
-		return "rpt/recordingUploadPopup";
+		
+		if(upl_spr.equals("1")) {
+			try {
+				msmcPMap.put("req_dept_cd", req_dept_cd);
+				msmcPMap.put("fin_cd", fin_cd);
+				msmcPMap.put("req_dt", req_dt);
+				msmcPMap.put("upl_spr", upl_spr);
+				
+				List<ContractVo> mismatchList = uploadPopupService.getMismatchList(msmcPMap);
+				model.addAttribute("mismatchList", mismatchList);		//비매칭 녹취파일 목록
+				
+			} catch (Exception e) {
+				LOGGER.debug("Exception : " + e.toString());
+			}
+			return "rpt/recordingUploadPopup";
+		}else {
+			return "rpt/scriptUploadPopup";
+		}
 	}
 }
