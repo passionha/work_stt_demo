@@ -127,6 +127,7 @@ function fn_chkChangedIdx(idx){
 
 //엑셀 다운로드
 function fn_excel(){
+	$('#req_dept_nm').val($("#tbl_prdln > tbody > tr > td").eq('1').text());
 	var frm = document.getElementById("frm_prdln");
 	frm.action = 'getProduct_exl.do';
 	frm.submit();
@@ -228,6 +229,7 @@ function fn_lpad(val, len, chr) {
 		<input type="hidden" name="nm_${status.index}" value="${cList.cd_nm}">
 		</c:forEach>
 		<input type="hidden" id="org_s_PRDLN" name="org_s_PRDLN" value="${org_s_PRDLN}">
+		<input type="hidden" id="req_dept_nm" name="req_dept_nm">
 			<div id="searchBar">
 				<ul>
 					<li>▶</li>

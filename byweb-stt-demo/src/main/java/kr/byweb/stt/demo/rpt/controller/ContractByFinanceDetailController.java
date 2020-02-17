@@ -159,6 +159,7 @@ public class ContractByFinanceDetailController {
 		String prdln_cd = request.getParameter("org_prdln_cd") == null ? "" : request.getParameter("org_prdln_cd");
 		String ctt_sdate = request.getParameter("org_ctt_sdate") == null ? "" : request.getParameter("org_ctt_sdate");
 		String ctt_edate = request.getParameter("org_ctt_edate") == null ? "" : request.getParameter("org_ctt_edate");
+		String fin_nm = request.getParameter("org_fin_nm") == null ? "" : request.getParameter("org_fin_nm")+"_";
 		
 		conPMap.put("cls_cd", cls_cd);
 		conPMap.put("req_dept_cd", req_dept_cd);
@@ -171,8 +172,9 @@ public class ContractByFinanceDetailController {
 		
 		try {
 			conList = contractByFinanceDetailService.getContractDetailList(conPMap);
+			String fileNm = fin_nm + (req_dt.equals("") ? "" : req_dt+"_") + "계약정보.xls";
 			model.addAttribute("conList", conList);
-			model.addAttribute("filename", "계약정보.xls");
+			model.addAttribute("filename", fileNm);
 		} catch (Exception e) {
 			LOGGER.debug("Exception : " + e.toString());
 		}

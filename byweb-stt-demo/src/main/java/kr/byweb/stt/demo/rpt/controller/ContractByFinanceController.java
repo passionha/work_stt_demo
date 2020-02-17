@@ -203,6 +203,7 @@ public class ContractByFinanceController {
 		String fin_cd = request.getParameter("org_fin_cd") == null ? "" : (String) request.getParameter("org_fin_cd");
 		String sdate = request.getParameter("org_sdate") == null ? "" : (String) request.getParameter("org_sdate");
 		String edate = request.getParameter("org_edate") == null ? "" : (String) request.getParameter("org_edate");
+		String fin_nm = request.getParameter("org_fin_nm") == null ? "" : (String) request.getParameter("org_fin_nm")+"_";
 		
 		pMap2.put("req_dept_cd", req_dept_cd);
 		pMap2.put("fin_cd", fin_cd);
@@ -212,7 +213,7 @@ public class ContractByFinanceController {
 		try {
 			List<ContractVo> conList = contractByFinanceService.getContractList(pMap2);
 			model.addAttribute("conList", conList);
-			model.addAttribute("filename", "제출현황.xls");
+			model.addAttribute("filename", fin_nm+"제출현황.xls");
 		} catch (Exception e) {
 			LOGGER.debug("Exception : " + e.toString());
 		}

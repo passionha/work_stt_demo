@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style type="text/css">
 	#searchBar {
 		border-style: solid;
@@ -78,6 +79,7 @@ function fn_search(){
 
 //녹취파일 오류내역 엑셀 다운로드
 function fn_excel(){
+	$('#org_fin_nm').val($("#sel_fin_cd option:selected").text());
 	var frm = document.getElementById("frm_search_errResult");
 	frm.action = 'getRecordingFileResult_exl.do';
 	frm.submit();
@@ -111,6 +113,7 @@ function fn_excel(){
 		<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
 		<input type="hidden" id="org_req_dt" name="org_req_dt" value="${req_dt}">
 		<input type="hidden" id="org_err_cd" name="org_err_cd" value="${err_cd}">
+		<input type="hidden" id="org_fin_nm" name="org_fin_nm">
 		<div id="searchBar">
 			<ul>
 				<li>▶</li>

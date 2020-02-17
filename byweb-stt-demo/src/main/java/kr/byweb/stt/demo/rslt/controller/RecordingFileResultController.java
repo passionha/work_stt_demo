@@ -100,6 +100,7 @@ public class RecordingFileResultController {
 		String fin_cd = request.getParameter("org_fin_cd") == null ? "ALL" : request.getParameter("org_fin_cd");
 		String req_dt = request.getParameter("org_req_dt") == null ? "" : request.getParameter("org_req_dt");
 		String err_cd = request.getParameter("org_err_cd") == null ? "ALL" : request.getParameter("org_err_cd");
+		String fin_nm = request.getParameter("org_fin_nm") == null ? "전체" : request.getParameter("org_fin_nm");
 		
 		pMap.put("req_dept_cd", req_dept_cd);
 		pMap.put("fin_cd", fin_cd);
@@ -110,9 +111,9 @@ public class RecordingFileResultController {
 		} catch (Exception e) {
 			LOGGER.debug("Exception : " + e.toString());
 		}
-		System.out.println(rcdRsltList);
+		String fileNm = fin_nm+"_" + (req_dt.equals("") ? "" : req_dt+"_") + "오류내역.xls";
 		model.addAttribute("rcdRsltList", rcdRsltList);
-		model.addAttribute("filename", "오류내역.xls");
+		model.addAttribute("filename", fileNm);
 		return "rslt/recordingFileResult_exl";
 	}
 }

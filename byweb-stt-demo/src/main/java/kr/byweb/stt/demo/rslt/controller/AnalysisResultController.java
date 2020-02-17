@@ -272,6 +272,7 @@ public class AnalysisResultController {
 			map.put("save_file_nm", chkFlList.getSave_file_nm());
 			paramList.add(map);
 		}
+		
 		pMap.put("fileList", paramList);
 		
 		try {
@@ -302,6 +303,9 @@ public class AnalysisResultController {
 		pMap.put("req_dt", anlysRsltVo.getReq_dt());
 		pMap.put("prdln_cd", anlysRsltVo.getPrdln_cd());
 		pMap.put("scrts_no", anlysRsltVo.getScrts_no() == null ? "" : anlysRsltVo.getScrts_no());
+		String fin_nm = anlysRsltVo.getFin_nm() == null ? "" : anlysRsltVo.getFin_nm()+"_";
+		String req_dt = anlysRsltVo.getReq_dt() == null ? "" : anlysRsltVo.getReq_dt()+"_";
+		String prdln_nm = anlysRsltVo.getPrdln_nm() == null ? "" : anlysRsltVo.getPrdln_nm()+"_";
 		
 		String arrSaveFileNm[] = anlysRsltVo.getArr_save_file_nm();
 		for(int i=0; i<arrSaveFileNm.length; i++) {
@@ -316,8 +320,10 @@ public class AnalysisResultController {
 		} catch (Exception e) {
 			LOGGER.debug("Exception : " + e.toString());
 		}
+		
+		String fileNm = fin_nm+"_"+req_dt+"_"+prdln_nm+"계약별결과.xls";
 		model.addAttribute("cttRsltList", cttRsltList);
-		model.addAttribute("filename", "계약별결과.xls");
+		model.addAttribute("filename", fileNm);
 		return "rslt/analysisResult_cttRslt_exl";
 	}
 	

@@ -591,6 +591,8 @@ function fn_excel_cttRslt(){
 	var ipt_fin_cd = document.createElement('input');
 	var ipt_prdln_cd = document.createElement('input');
 	var ipt_scrts_no = document.createElement('input');
+	var ipt_fin_nm = document.createElement('input');
+	var ipt_prdln_nm = document.createElement('input');
 	
 	ipt_cls_cd.setAttribute("type", "hidden");
 	ipt_cls_cd.setAttribute("name", "cls_cd");
@@ -610,6 +612,12 @@ function fn_excel_cttRslt(){
 	ipt_scrts_no.setAttribute("type", "hidden");
 	ipt_scrts_no.setAttribute("name", "scrts_no");
 	ipt_scrts_no.setAttribute("value", f_srch_Scrts_no);
+	ipt_fin_nm.setAttribute("type", "hidden");
+	ipt_fin_nm.setAttribute("name", "fin_nm");
+	ipt_fin_nm.setAttribute("value", $("#ctt_rslt_cont > table > tbody > tr").children('td').eq('0').text());
+	ipt_prdln_nm.setAttribute("type", "hidden");
+	ipt_prdln_nm.setAttribute("name", "prdln_nm");
+	ipt_prdln_nm.setAttribute("value", $("#ctt_rslt_cont > table > tbody > tr").children('td').eq('2').text());
 	
 	frm.appendChild(ipt_cls_cd);
 	frm.appendChild(ipt_req_dept_cd);
@@ -617,13 +625,14 @@ function fn_excel_cttRslt(){
 	frm.appendChild(ipt_fin_cd);
 	frm.appendChild(ipt_prdln_cd);
 	frm.appendChild(ipt_scrts_no);
+	frm.appendChild(ipt_fin_nm);
+	frm.appendChild(ipt_prdln_nm);
 	
 	for(var i in f_arrCttRslt){
 		var ipt_save_file_nm = document.createElement('input');
 		ipt_save_file_nm.setAttribute("type", "hidden");
 		ipt_save_file_nm.setAttribute("name", "arr_save_file_nm["+i+"]");
 		ipt_save_file_nm.setAttribute("value", f_arrCttRslt[i].save_file_nm);
-// 		arr_save_file_nm[]
 		frm.appendChild(ipt_save_file_nm);
 	}
 	

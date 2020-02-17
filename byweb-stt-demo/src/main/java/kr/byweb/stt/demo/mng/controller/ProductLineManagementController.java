@@ -125,6 +125,7 @@ public class ProductLineManagementController {
 		List<PrdlnMngVo> prdlnList = new ArrayList<PrdlnMngVo>();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
 		String s_PRDLN = request.getParameter("org_s_PRDLN") == null ? "" : request.getParameter("org_s_PRDLN");
+		String req_dept_nm = request.getParameter("req_dept_nm") == null ? "" : request.getParameter("req_dept_nm")+"_";
 		
 		pMap.put("req_dept_cd", req_dept_cd);
 		pMap.put("s_PRDLN", s_PRDLN);
@@ -135,7 +136,7 @@ public class ProductLineManagementController {
 			LOGGER.debug("Exception : " + e.toString());
 		}
 		model.addAttribute("prdlnList", prdlnList);
-		model.addAttribute("filename", "상품군관리.xls");
+		model.addAttribute("filename", req_dept_nm+"상품군관리.xls");
 		return "mng/productLineManagement_exl";
 	}
 }

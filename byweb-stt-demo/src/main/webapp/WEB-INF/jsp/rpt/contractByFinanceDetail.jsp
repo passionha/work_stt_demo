@@ -126,6 +126,7 @@ function fn_addDash( event, obj ){
 //엑셀 다운로드
 function fn_excel(){
 	var frm = document.getElementById("frm_exl");
+	$('#org_fin_nm').val($("#sel_fin_cd option:selected").text());
 	frm.action = 'getContractDetail_exl.do';
 	frm.submit();
 }
@@ -280,9 +281,10 @@ function fn_anlysAll(){
 				</c:forEach>
 			</tbody>
 		</table>
-		<form id="frm_exl" name="frm_exl" method="post" action="getContractDetail_exl.do">
+		<form id="frm_exl" name="frm_exl" method="post">
 			<input type="hidden" name="org_cls_cd" value="${org_cls_cd}">
 			<input type="hidden" name="org_fin_cd" value="${fin_cd}">
+			<input type="hidden" id="org_fin_nm" name="org_fin_nm">
 			<input type="hidden" name="org_req_dt" value="${req_dt}">
 			<input type="hidden" name="org_prdln_cd" value="${prdln_cd}">
 			<input type="hidden" name="org_scrts_no" value="${scrts_no}">
