@@ -92,12 +92,15 @@ function fn_delContract(cls_cd, req_dt, fin_cd, fin_nm, sbm_dt){
 
 //녹취파일 업로드 팝업(uplSpr - 1:녹취파일 2:대본파일)
 function fn_openUplPop(uplSpr, fin_cd, req_dt){
-	window.open('','uplPopup','width=800,height=600,location=no,status=no,scrollbars=no');
-	var frm_uplPop = document.getElementById("frm_uplPop");
-	document.getElementById("upl_fin_cd").value = fin_cd;
-	document.getElementById("upl_req_dt").value = req_dt;
-	document.getElementById("upl_spr").value = uplSpr;
-	frm_uplPop.submit();
+	var strFeature = "dialogWidth:430px; dialogHeight:500px; center:yes; help:no; status:no; scroll:on; resizable:no";
+	var rtnVal = window.showModalDialog('getDefInfo.do?fin_cd='+fin_cd+'&req_dt='+req_dt+'&upl_spr='+uplSpr, '', strFeature);
+	
+// 	window.open('','uplPopup','width=800,height=600,location=no,status=no,scrollbars=no');
+// 	var frm_uplPop = document.getElementById("frm_uplPop");
+// 	document.getElementById("upl_fin_cd").value = fin_cd;
+// 	document.getElementById("upl_req_dt").value = req_dt;
+// 	document.getElementById("upl_spr").value = uplSpr;
+// 	frm_uplPop.submit();
 }
 
 //제출일자 조회조건 유효성 검사
