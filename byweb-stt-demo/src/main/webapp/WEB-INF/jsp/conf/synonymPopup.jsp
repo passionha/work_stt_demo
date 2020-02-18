@@ -7,6 +7,7 @@
 <title>※동의어 관리</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
+var parentSearchYn = false;		//부모창 재조회 여부
 
 $(document).ready(function(){
 	//팝업 시 parent창 비활성화
@@ -94,7 +95,7 @@ function fn_save(){
 		        data        :   objParams,
 		        success     :   function(retVal){
 		        	alert("저장되었습니다.");
-// 		        	window.opener.fn_search();
+					parentSearchYn = true;
 		        	$("#org_syn_nm").val($("#syn_nm").val());
 		        	/*
 		            if(retVal.code == "OK") {
@@ -132,7 +133,7 @@ function fn_delete(aMsg){
 	        data        :   objParams,
 	        success     :   function(retVal){
 	        	alert("삭제되었습니다.");
-// 	        	window.opener.fn_search();
+				parentSearchYn = true;
 	        	self.close();
 	        },
 	        error       :   function(request, status, error){
@@ -167,7 +168,7 @@ function fn_synValid(val){
 
 //팝업 닫기 전 parent 활성화
 function fn_befClosePop(){
-	window.opener.fn_search();
+	if(parentSearchYn) window.opener.fn_search();			//부모창 재조회
 	window.opener.$('#modal_layer').css({'display':'none'});
 }
 </script>

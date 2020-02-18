@@ -25,5 +25,10 @@ public class ContractByFinanceDetailServiceImpl implements ContractByFinanceDeta
 		contractByFinanceDetailMapper.updateAnalysisUploadFile(pMap);
 		contractByFinanceDetailMapper.updateAnalysisRecordingFile(pMap);
 	}
+
+	@Override
+	public ContractVo getScriptFileInfo(Map pMap) throws Exception {
+		return contractByFinanceDetailMapper.getScriptFileInfo(pMap);
+	}
 	
 }

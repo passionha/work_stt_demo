@@ -114,4 +114,59 @@
 		  AND TRNS_STTS = '4'
 		  AND UPL_SPR = '1'
 	</update>
+	
+	<!-- 대본파일 다운로드용 대본파일 정보 조회 -->
+	<select id="getScriptFileInfo" parameterType="java.util.Map" resultType="kr.byweb.stt.demo.rpt.model.ContractVo">
+		SELECT
+		    TT.*
+		FROM(
+		    SELECT 
+		    	  T1.FILE_NM
+		        , T1.FILE_PATH
+		        , ROW_NUMBER() OVER(ORDER BY REG_DT DESC) RNUM
+		    FROM
+		        (SELECT
+		              A.CLS_CD
+		            , A.REQ_DEPT_CD
+		            , A.FIN_CD
+		            , A.REQ_DT
+		            , A.SCRTS_NO
+		            , A.PDESC_SCPT_FILE_NM
+		            , A.HPYCL_SCPT_FILE_NM
+		            , B.FILE_NM
+		            , B.FILE_PATH
+		            , B.SAVE_FILE_NM
+		            , B.UPL_SPR
+		         FROM RR_TM001 A, (SELECT * FROM TM_RCDFL_INF WHERE TRNS_STTS != 5) B
+		         WHERE
+		              	  A.CLS_CD = B.CLS_CD
+		              AND A.REQ_DEPT_CD = B.REQ_DEPT_CD
+		              AND A.REQ_DT = B.REQ_DT
+		              AND A.FIN_CD = B.FIN_CD
+		              AND A.SCRTS_NO = B.SCRTS_NO
+		              AND A.CLS_CD = #{cls_cd}
+		              AND A.REQ_DEPT_CD = #{req_dept_cd}
+		              AND A.FIN_CD = #{fin_cd}
+		              AND A.REQ_DT = #{req_dt}
+		              AND A.SCRTS_NO = #{scrts_no}
+		              AND B.UPL_SPR = 2
+					  <if test="pdesc_scpt_file_nm != ''">
+		              AND B.FILE_NM = #{pdesc_scpt_file_nm}
+		              AND A.PDESC_SCPT_FILE_NM = B.FILE_NM
+		              </if>
+					  <if test="hpycl_scpt_file_nm != ''">
+		              AND B.FILE_NM = #{hpycl_scpt_file_nm}
+		              AND A.HPYCL_SCPT_FILE_NM = B.FILE_NM
+		              </if>
+		        ) T1, TM_FLUPL_INF T2
+		    WHERE
+		            T1.CLS_CD = T2.CLS_CD
+		        AND T1.REQ_DEPT_CD = T2.REQ_DEPT_CD
+		        AND T1.FIN_CD = T2.FIN_CD
+		        AND T1.REQ_DT = T2.REQ_DT
+		        AND T1.UPL_SPR = T2.UPL_SPR
+		        AND T1.SAVE_FILE_NM = T2.SAVE_FILE_NM
+		) TT
+		WHERE RNUM = 1
+	</select>
 </mapper>

@@ -14,5 +14,7 @@ public interface ContractByFinanceDetailMapper {
 	public void updateAnalysisUploadFile(Map pMap) throws Exception;
 
 	public void updateAnalysisRecordingFile(Map pMap) throws Exception;
+
+	public ContractVo getScriptFileInfo(Map pMap) throws Exception;
 	
 }

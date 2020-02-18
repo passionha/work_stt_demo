@@ -46,6 +46,27 @@ public class ContractVo {
 	private String emp_no;
 //	private Timestamp reg_dt;
 	
+	//녹취파일 정보 테이블 : TM_RCDFL_INF
+//	private String cls_cd;
+//	private String req_dept_cd;
+//	private String scrts_no;
+//	private String fin_cd;
+//	private String req_dt;
+//	private String upl_spr;
+//	private String save_file_nm;
+//	private String prdln_cd;
+	private String file_nm;
+	private String file_path;
+	private String sttfile_path;
+	private String file_spr;
+	private String file_txt;
+	private String file_smi;
+	private String file_kwd;
+//	private String trns_stts;
+	private String use_yn;
+//	private String emp_no;
+//	private Timestamp reg_dt;
+	
 	//기타 화면 정의 파라미터
 	private String reg_dt;
 	private String fin_nm;
@@ -61,4 +82,5 @@ public class ContractVo {
 	private String emp_nm;
 	private String rcd_file_nm;
 	private String prdln_nm;
+	private String scr_spr;
 }

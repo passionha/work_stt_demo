@@ -9,4 +9,6 @@ public interface ContractByFinanceDetailService {
 	public List<ContractVo> getContractDetailList(Map pMap) throws Exception;
 
 	public void setAnalysisAll(Map pMap) throws Exception;
+
+	public ContractVo getScriptFileInfo(Map pMap) throws Exception;
 }

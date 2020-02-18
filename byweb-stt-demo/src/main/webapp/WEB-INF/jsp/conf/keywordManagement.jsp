@@ -241,8 +241,13 @@ function fn_synPopup(idx){
 	
 // 	var strFeature = "dialogWidth:430px; dialogHeight:500px; center:yes; help:no; status:no; scroll:on; resizable:no";
 // 	var rtnVal = window.showModalDialog('getSynonymKeywordList.do', '', strFeature);
-
-	f_childPop = window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=yes,menubar=no,titlebar=no');
+	
+	var popWidth = 430;
+	var popHeight = 500;
+	var popupX = (window.screen.width / 2) - (popWidth / 2);
+	var popupY= (window.screen.height / 2) - (popHeight / 2);
+	
+	f_childPop = window.open('','synPop','width='+popWidth+', height='+popHeight+', location=no, status=no, scrollbars=yes, menubar=no, titlebar=no, left='+popupX+', top='+popupY);
 	var frm_synPop = document.getElementById('frm_synPop');
 	frm_synPop.method = 'post';
 	frm_synPop.action = 'getSynonymKeywordList.do';

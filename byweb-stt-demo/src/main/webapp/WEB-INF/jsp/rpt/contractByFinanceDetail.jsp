@@ -153,14 +153,24 @@ function fn_anlysAll(){
 }
 
 //대본파일 다운로드 팝업(scrSpr - 1:상품설명, 2:해피콜)
-function fn_openScrDownPopup(scrSpr){
-	window.open('','scrDownPopup','width=800,height=600,location=no,status=no,scrollbars=no');
-	var frm_uplPop = document.getElementById("frm_scrDownPop");
-	$('#scr_dwn_fin_cd').val(fin_cd);
-	$('#scr_dwn_req_dt').val(req_dt);
-	$('#scr_spr').val(scrSpr);
+function fn_openScrDownPopup(scrSpr, idx){
+	var scrts_no = $('input[name="conList_scrts_no"]').eq(idx).val();
+	var pScrNm = encodeURIComponent($('input[name="conList_pdesc_scpt_file_nm"]').eq(idx).val());
+	var hScrNm = encodeURIComponent($('input[name="conList_hpycl_scpt_file_nm"]').eq(idx).val());
+	var fin_nm = encodeURIComponent($('input[name="conList_fin_nm"]').eq(idx).val());
+	var strUrl = 'getScriptFileInfo.do?cls_cd='+$('#scr_cls_cd').val()+'&fin_cd='+$('#scr_fin_cd').val()+'&req_dt='+$('#scr_req_dt').val()+'&scrts_no='+scrts_no
+								   +'&pdesc_scpt_file_nm='+pScrNm+'&hpycl_scpt_file_nm='+hScrNm+'&scr_spr='+scrSpr+'&fin_nm='+fin_nm;
+	var strFeature = "dialogWidth:350px; dialogHeight:120px; center:yes; help:no; status:no; scroll:no; resizable:no";
+	var rtnVal = window.showModalDialog(strUrl, '', strFeature);
 	
-	frm_uplPop.submit();
+	
+// 	window.open('','scrDownPopup','width=800,height=600,location=no,status=no,scrollbars=no');
+// 	var frm_uplPop = document.getElementById("frm_scrDownPop");
+// 	$('#scr_pdesc_scpt_file_nm').val(pScrNm);
+// 	$('#scr_hpycl_scpt_file_nm').val(hScrNm);
+// 	$('#scr_spr').val(scrSpr);
+// 	$('#scr_scrts_no').val(scrts_no);
+// 	frm_uplPop.submit();
 }
 
 </script>
@@ -271,7 +281,7 @@ function fn_openScrDownPopup(scrSpr){
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="conList" items="${conList}" begin="0" step="1">
+				<c:forEach var="conList" items="${conList}" begin="0" step="1" varStatus="status">
 				<fmt:parseDate value="${conList.ctt_dt}" var="fmt_ctt_dt" pattern="yyyyMMdd"/>
 				<fmt:parseDate value="${conList.ctt_stts_efdt}" var="fmt_ctt_stts_efdt" pattern="yyyyMMdd"/>
 				<tr>
@@ -283,8 +293,8 @@ function fn_openScrDownPopup(scrSpr){
 					<td>${conList.ctt_stts}</td>
 					<td><fmt:formatDate value="${fmt_ctt_stts_efdt}" pattern="yyyy-MM-dd"/></td>
 					<td>${conList.cttor_nm}</td>
-					<td onclick="fn_openScrDownPopup(1)">${conList.pdesc_scpt_file_nm}</td>
-					<td onclick="fn_openScrDownPopup(2)">${conList.hpycl_scpt_file_nm}</td>
+					<td onclick="fn_openScrDownPopup(1, ${status.index})">${conList.pdesc_scpt_file_nm}</td>
+					<td onclick="fn_openScrDownPopup(2, ${status.index})">${conList.hpycl_scpt_file_nm}</td>
 					<td>${conList.ga_nm}</td>
 					<td>${conList.ga_rno}</td>
 					<td>${conList.rcrt_sto_nm}</td>
@@ -293,6 +303,10 @@ function fn_openScrDownPopup(scrSpr){
 				</tr>
 				<input type="hidden" name="conList_trns_stts" value="${conList.trns_stts}">
 				<input type="hidden" name="conList_req_yn" value="${conList.req_yn}">
+				<input type="hidden" name="conList_scrts_no" value="${conList.scrts_no}">
+				<input type="hidden" name="conList_pdesc_scpt_file_nm" value="${conList.pdesc_scpt_file_nm}">
+				<input type="hidden" name="conList_hpycl_scpt_file_nm" value="${conList.hpycl_scpt_file_nm}">
+				<input type="hidden" name="conList_fin_nm" value="${conList.fin_nm}">
 				</c:forEach>
 			</tbody>
 		</table>
@@ -315,10 +329,14 @@ function fn_openScrDownPopup(scrSpr){
 			<input type="hidden" name="org_ctt_sdate" value="${ctt_sdate}">
 			<input type="hidden" name="org_ctt_edate" value="${ctt_edate}">
 		</form>
-		<form id="frm_scrDownPop" name="frm_scrDownPop" method="post" action="getScriptDownloadPopup" target="scrDownPopup">
-			<input type="hidden" id="scr_dwn_fin_cd" name="fin_cd">
-			<input type="hidden" id="scr_dwn_req_dt" name="req_dt">
+		<form id="frm_scrDownPop" name="frm_scrDownPop" method="post" action="getScriptFileInfo.do" target="scrDownPopup">
 			<input type="hidden" id="scr_spr" name="scr_spr">
+			<input type="hidden" id="scr_cls_cd" name="cls_cd" value="${org_cls_cd}">
+			<input type="hidden" id="scr_fin_cd" name="fin_cd" value="${fin_cd}">
+			<input type="hidden" id="scr_req_dt" name="req_dt" value="${req_dt}">
+			<input type="hidden" id="scr_scrts_no" name="scrts_no">
+			<input type="hidden" id="scr_pdesc_scpt_file_nm" name="pdesc_scpt_file_nm">
+			<input type="hidden" id="scr_hpycl_scpt_file_nm" name="hpycl_scpt_file_nm">
 		</form>
 	</section>
 </div>

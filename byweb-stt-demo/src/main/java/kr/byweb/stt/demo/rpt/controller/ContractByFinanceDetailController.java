@@ -223,4 +223,42 @@ public class ContractByFinanceDetailController {
 		
 		return "redirect:/getContractDetailList.do";
 	}
+	
+	/**
+	 * 대본파일 다운로드 팝업 조회
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping("/getScriptFileInfo.do")
+	public String getScriptFileInfo(ContractVo pScrInfo, HttpSession session, HttpServletRequest request, Model model) {
+		ContractVo scrFileInfo = new ContractVo();
+		Map pMap = new HashMap();
+		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
+		
+		pMap.put("cls_cd", pScrInfo.getCls_cd());
+		pMap.put("req_dept_cd", req_dept_cd);
+		pMap.put("fin_cd", pScrInfo.getFin_cd());
+		pMap.put("req_dt", pScrInfo.getReq_dt());
+		pMap.put("scrts_no", pScrInfo.getScrts_no());
+		
+		if(pScrInfo.getScr_spr().equals("1")) {
+			pMap.put("pdesc_scpt_file_nm", pScrInfo.getPdesc_scpt_file_nm() == null ? "" : pScrInfo.getPdesc_scpt_file_nm());
+			pMap.put("hpycl_scpt_file_nm", "");
+			model.addAttribute("file_nm", pScrInfo.getPdesc_scpt_file_nm() == null ? "" : pScrInfo.getPdesc_scpt_file_nm());
+		}else if(pScrInfo.getScr_spr().equals("2")) {
+			pMap.put("pdesc_scpt_file_nm", "");
+			pMap.put("hpycl_scpt_file_nm", pScrInfo.getHpycl_scpt_file_nm() == null ? "" : pScrInfo.getHpycl_scpt_file_nm());
+			model.addAttribute("file_nm", pScrInfo.getHpycl_scpt_file_nm() == null ? "" : pScrInfo.getHpycl_scpt_file_nm());
+		}
+		try {
+			scrFileInfo = contractByFinanceDetailService.getScriptFileInfo(pMap);
+		} catch (Exception e) {
+			LOGGER.debug("Exception : " + e.toString());
+		}
+		
+		model.addAttribute("fin_nm", pScrInfo.getFin_nm());
+		model.addAttribute("scrFileInfo", scrFileInfo);
+		return "rpt/scriptDownloadPopup";
+	}
 }
