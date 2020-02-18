@@ -3,6 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%-- <%@ page import="java.util.*, kr.byweb.stt.demo.conf.model.*" %> --%>
 <%@ page import="java.util.*, kr.byweb.stt.demo.cm.model.*" %>
+<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +16,7 @@
 		width: 1400px;
 	}
 
-	#wrapper {
+	#wrap {
 		width: 100%;
 		text-align: left;
 		min-height: 300px;
@@ -31,15 +32,15 @@
 		width: 1235px;
 	}
 	
-	#wrapper li {
+	#wrap li {
 		display: inline;
 	}
 	
-	#wrapper li:nth-child(2), :nth-child(5) {
+	#wrap li:nth-child(2), :nth-child(5) {
 		padding-right: 5px;
 	}
 	
-	#wrapper li:nth-child(3) {
+	#wrap li:nth-child(3) {
 		padding-right: 100px;
 	}
 	
@@ -94,22 +95,33 @@
 		border-style: solid;
 		border-width: 1px;
 	}
+	
+    #modal_layer {
+    	display: none;
+    	position: fixed;
+    	top: 0;
+    	left: 0;
+    	width: 100%;
+        height: 100%;
+        background:rgba(0, 0, 0, 0.5);
+    }
 </style>
 <script type="text/javascript">
-var f_kwdDupYn;					//키워드 중복결과 변수
+var f_kwdDupYn = true;			//키워드 중복결과 변수
 var f_arrModIdx = new Array();	//키워드목록 중 수정된 인덱스 배열
+var f_childPop;					//팝업창 변수
 
-//키워드목록 초기 설정
+	
+
 $(document).ready(function(){
-	//배점에 따른 사용여부란 초기 비활성화
+	//키워드목록의 배점에 따른 사용여부란 초기 비활성화
    	$('input[name="mod_scr"]').each(function (index, item) {
    		if($(item).val() == null || $(item).val() == '0'){
 			$("select[name=mod_use_yn]").eq(index).prop("disabled",true);
    		}
     });
-  	//키워드명 내 슬래시포함여부에 따른 범위란 초기 비활성화
+  	//키워드목록의 키워드명 내 슬래시포함여부에 따른 범위란 초기 비활성화
    	$('input[name="mod_kwd_nm"]').each(function (index, item) {
-//    		if($(item).val().indexOf("/") == -1){
    		if(!~$(item).val().indexOf("/")){
 			$("input[name=mod_rng]").eq(index).prop("disabled",true);
    		}
@@ -225,16 +237,18 @@ function fn_synPopup(idx){
 		$('#pop_syn_nm').val($('input[name="org_syn_nm"]').eq(idx).val());
 		$('#pop_scr').val($('input[name="mod_scr"]').eq(idx).val());
 	}
-	var strFeature = "dialogWidth:430px; dialogHeight:500px; center:yes; help:no; status:no; scroll:on; resizable:no";
-	var rtnVal = window.showModalDialog('getSynonymKeywordList.do', '', strFeature);
-// 	window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=no');
-// 	var frm_synPop = document.getElementById('frm_synPop');
-// 	frm_synPop.method = 'post';
-// 	frm_synPop.action = 'getSynonymKeywordList.do';
-// 	frm_synPop.target = 'synPop';
-// 	$('#pop_prdln_cd').val($('#sel_prdln').val());
-// 	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
-// 	frm_synPop.submit();
+	
+// 	var strFeature = "dialogWidth:430px; dialogHeight:500px; center:yes; help:no; status:no; scroll:on; resizable:no";
+// 	var rtnVal = window.showModalDialog('getSynonymKeywordList.do', '', strFeature);
+
+	f_childPop = window.open('','synPop','width=430,height=500,location=no,status=no,scrollbars=yes,menubar=no,titlebar=no');
+	var frm_synPop = document.getElementById('frm_synPop');
+	frm_synPop.method = 'post';
+	frm_synPop.action = 'getSynonymKeywordList.do';
+	frm_synPop.target = 'synPop';
+	$('#pop_prdln_cd').val($('#sel_prdln').val());
+	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
+	frm_synPop.submit();
 }
 
 //키워드에 설정된 동의어 삭제
@@ -252,15 +266,6 @@ function fn_delete_kwdListSyn(obj, idx){
 	        	$('input[name="syn_nm"]').eq(idx).val("");
 	        	$('#td_syn_nm_'+idx).text("");
         	}
-//         	else if(syn != null){
-//         		$('input[name="org_syn_nm"]').each(function(index, item){
-//         			if($(item).val() == syn){
-//         				$(item).val("");
-//         	        	$('input[name="syn_nm"]').eq(index).val("");
-//         	        	$('#td_syn_nm_'+index).text("");
-//         			}
-//         		});
-//         	}
         },
         error       :   function(request, status, error){
             console.log("AJAX_ERROR");
@@ -320,7 +325,6 @@ function fn_scrInsert(idx){
 function fn_kwdInsert(idx){
 	//수정된 row index를 전역 배열변수에 저장
 	f_arrModIdx.push(idx);
-// 	if($('input[name="mod_kwd_nm"]').eq(idx).val().indexOf("/") != -1){
 	if(!!~$('input[name="mod_kwd_nm"]').eq(idx).val().indexOf("/")){
 		$('input[name="mod_rng"]').eq(idx).prop("disabled",false);
 	}else{
@@ -512,7 +516,6 @@ function fn_saveKwdList(){
 			//입력키워드 상품군 내 중복검사
 			if(fn_kwdDupDtn(dtnKwdStr)){
 				for(var i=0; i<totInputLength; i++){
-// 					if(arrModIdxs.indexOf(i.toString()) == -1){
 					if(!~arrModIdxs.indexOf(i.toString())){
 						$("input[name=mod_kwd_nm]").eq(i).prop("disabled",true);
 						$("input[name=mod_rng]").eq(i).prop("disabled",true);
@@ -611,10 +614,18 @@ function fn_deleteKwdList(){
 		alert("선택하신 키워드가 삭제되었습니다.");
 	}
 }
+
+//분석기준화면 페이지 이동 시 열린 동의어 팝업 자동 닫기
+function fn_childPopup(){
+	if(!f_childPop.closed && f_childPop){
+		f_childPop.close();	
+	}
+}
 </script>
 </head>
-<body>
-<div id="wrapper">
+<body onbeforeunload="fn_childPopup();">
+<div id="modal_layer"></div><!-- 팝업 시 parent창 비활성화용 cover -->
+<div id="wrap">
 	<section>
 		<div>
 			<c:forEach var="headerTitles" items="${sessionScope.headerTitles}">
@@ -705,12 +716,9 @@ function fn_deleteKwdList(){
 							<td>${status.count}</td>
 							<td><input type="checkbox" name="chk_kwd" class="chk" value="${kwdList.chk_del}"></td>
 							<td><input type="text" name="mod_kwd_nm" class="kwd_nm" value="${kwdList.kwd_nm}" maxlength="50" onchange="fn_kwdInsert('${status.index}')"></td>
-<%-- 							<td id="td_syn_nm_${status.index}" onclick="fn_synPopup('${kwdList.kwd_nm}','${kwdList.syn_nm}','${kwdList.scrng_spr}','${kwdList.scr}')">${kwdList.syn_nm}</td> --%>
 							<td id="td_syn_nm_${status.index}" onclick="fn_synPopup('${status.index}')">${kwdList.syn_nm}</td>
-<%-- 							<td><input type="text" name="mod_rng" value="${kwdList.rng}" maxlength="10" onkeyup="fn_inNumber(this)" onchange="fn_setModIdx('${status.index}')"></td> --%>
 							<td><input type="text" name="mod_rng" value="${kwdList.rng}" maxlength="10" onkeyup="fn_inNumber(this)" onchange="f_arrModIdx.push('${status.index}')"></td>
 							<td>
-								<!-- 사용여부 수정 시 배점 미입력/0이면 수정 불가&툴팁텍스트 뜨게 -->
 								<select name="mod_use_yn" onchange="f_arrModIdx.push('${status.index}')" onmouseover="">
 									<option value="Y" <c:if test="${kwdList.use_yn eq 'Y'}">selected</c:if>>Y</option>
 									<option value="N" <c:if test="${kwdList.use_yn eq 'N'}">selected</c:if>>N</option>

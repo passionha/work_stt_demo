@@ -7,6 +7,12 @@
 <title>※동의어 관리</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function(){
+	//팝업 시 parent창 비활성화
+	window.opener.$('#modal_layer').css({'display':'block'});
+});
+
 //동의어 수정사항 저장
 function fn_save(){
 	if($('input[name="chk_kwdNm"]:checked').length == 0){
@@ -88,7 +94,7 @@ function fn_save(){
 		        data        :   objParams,
 		        success     :   function(retVal){
 		        	alert("저장되었습니다.");
-		        	window.opener.fn_search();
+// 		        	window.opener.fn_search();
 		        	$("#org_syn_nm").val($("#syn_nm").val());
 		        	/*
 		            if(retVal.code == "OK") {
@@ -126,7 +132,7 @@ function fn_delete(aMsg){
 	        data        :   objParams,
 	        success     :   function(retVal){
 	        	alert("삭제되었습니다.");
-	        	window.opener.fn_search();
+// 	        	window.opener.fn_search();
 	        	self.close();
 	        },
 	        error       :   function(request, status, error){
@@ -158,9 +164,15 @@ function fn_synValid(val){
     return true;
 }
 
+
+//팝업 닫기 전 parent 활성화
+function fn_befClosePop(){
+	window.opener.fn_search();
+	window.opener.$('#modal_layer').css({'display':'none'});
+}
 </script>
 </head>
-<body>
+<body onbeforeunload="fn_befClosePop();">
 	<div id="wrap">
 		<div id="popupTitle">
 			<h3>※동의어 관리</h3>
