@@ -56,6 +56,17 @@
 		float: right;
 		margin-bottom: 10px;
 	}
+	
+	#modal_layer {
+    	display: none;
+    	position: fixed;
+    	top: 0;
+    	left: 0;
+    	width: 100%;
+        height: 100%;
+/*         background:rgba(0, 0, 0, 0.5); */
+        z-index: 9000;
+    }
 </style>
 <script type="text/javascript">
 //조회조건 유효성 검사 및 submit
@@ -92,20 +103,20 @@ function fn_delContract(cls_cd, req_dt, fin_cd, fin_nm, sbm_dt){
 
 //녹취파일 업로드 팝업(uplSpr - 1:녹취파일 2:대본파일)
 function fn_openUplPop(uplSpr, fin_cd, req_dt){
-	var strFeature = "dialogWidth:800px; dialogHeight:600px; center:yes; help:no; status:no; scroll:on; resizable:no";
-	var rtnVal = window.showModalDialog('getDefInfo.do?fin_cd='+fin_cd+'&req_dt='+req_dt+'&upl_spr='+uplSpr, '', strFeature);
+// 	var strFeature = "dialogWidth:800px; dialogHeight:600px; center:yes; help:no; status:no; scroll:on; resizable:no";
+// 	var rtnVal = window.showModalDialog('getDefInfo.do?fin_cd='+fin_cd+'&req_dt='+req_dt+'&upl_spr='+uplSpr, '', strFeature);
 	
-// 	var popWidth = 800;
-// 	var popHeight = 600;
-// 	var popupX = (window.screen.width / 2) - (popWidth / 2);
-// 	var popupY= (window.screen.height / 2) - (popHeight / 2);
+	var popWidth = 800;
+	var popHeight = 600;
+	var popupX = (window.screen.width / 2) - (popWidth / 2);
+	var popupY= (window.screen.height / 2) - (popHeight / 2);
 	
-// 	window.open('','uplPopup','width='+popWidth+', height='+popHeight+', location=no, status=no, scrollbars=yes, menubar=no, titlebar=no, left='+popupX+', top='+popupY);
-// 	var frm_uplPop = document.getElementById("frm_uplPop");
-// 	document.getElementById("upl_fin_cd").value = fin_cd;
-// 	document.getElementById("upl_req_dt").value = req_dt;
-// 	document.getElementById("upl_spr").value = uplSpr;
-// 	frm_uplPop.submit();
+	f_childPop = window.open('','uplPopup','width='+popWidth+', height='+popHeight+', location=no, status=no, scrollbars=yes, menubar=no, titlebar=no, left='+popupX+', top='+popupY);
+	var frm_uplPop = document.getElementById("frm_uplPop");
+	document.getElementById("upl_fin_cd").value = fin_cd;
+	document.getElementById("upl_req_dt").value = req_dt;
+	document.getElementById("upl_spr").value = uplSpr;
+	frm_uplPop.submit();
 }
 
 //제출일자 조회조건 유효성 검사
@@ -172,9 +183,16 @@ function fn_goDetail(idx){
 	frm_goDetail.submit();
 }
 
+//회사별 제출현황 페이지 이동 시 열린 팝업 자동 닫기
+function fn_childPopup(){
+	if(!f_childPop.closed && f_childPop){
+		f_childPop.close();	
+	}
+}
 </script>
 </head>
-<body>
+<body onbeforeunload="fn_childPopup();">
+<div id="modal_layer"></div><!-- 팝업 시 parent창 비활성화용 cover -->
 <div id="wrap">
 	<section>
 		<div>

@@ -7,6 +7,19 @@
 <title>대본파일 다운로드</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
+var parentSearchYn = false;		//팝업 종료 시 부모창 재조회 여부
+
+$(document).ready(function(){
+	//팝업 시 parent창 비활성화
+	window.opener.$('#modal_layer').css({'display':'block'});
+});
+
+//팝업 종료 시 parent 활성화
+function fn_befClosePop(){
+	if(parentSearchYn) window.opener.fn_search();			//부모창 재조회
+	window.opener.$('#modal_layer').css({'display':'none'});
+}
+
 //대본파일 열기 및 저장(saveSpr - 1:열기, 2:저장)
 function fn_saveScrFile(saveSpr){
 	if(!$('#file_path').val()){
@@ -22,7 +35,7 @@ function fn_saveScrFile(saveSpr){
 }
 </script>
 </head>
-<body>
+<body onbeforeunload="fn_befClosePop();">
 	<div id="message">
 		<p>[${fin_nm}_${file_nm}]</p>
 		<p>파일을 다운로드 하시겠습니까?</p>

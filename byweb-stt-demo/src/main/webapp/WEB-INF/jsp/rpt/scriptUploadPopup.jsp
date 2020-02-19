@@ -5,8 +5,23 @@
 <head>
 <meta charset="UTF-8">
 <title>대본파일 업로드</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+var parentSearchYn = false;		//팝업 종료 시 부모창 재조회 여부
+
+$(document).ready(function(){
+	//팝업 시 parent창 비활성화
+	window.opener.$('#modal_layer').css({'display':'block'});
+});
+
+//팝업 종료 시 parent 활성화
+function fn_befClosePop(){
+	if(parentSearchYn) window.opener.fn_search();			//부모창 재조회
+	window.opener.$('#modal_layer').css({'display':'none'});
+}
+</script>
 </head>
-<body>
+<body onbeforeunload="fn_befClosePop();">
 <div id="wrap">
 	<div id="fileInfo">
 		<div id="finInfoTitle">

@@ -56,6 +56,17 @@
 		float: right;
 		margin-bottom: 10px;
 	}
+	
+	#modal_layer {
+    	display: none;
+    	position: fixed;
+    	top: 0;
+    	left: 0;
+    	width: 100%;
+        height: 100%;
+/*         background:rgba(0, 0, 0, 0.5); */
+        z-index: 9000;
+    }
 </style>
 <script type="text/javascript">
 //조회조건 유효성 검사 및 submit
@@ -155,27 +166,40 @@ function fn_anlysAll(){
 //대본파일 다운로드 팝업(scrSpr - 1:상품설명, 2:해피콜)
 function fn_openScrDownPopup(scrSpr, idx){
 	var scrts_no = $('input[name="conList_scrts_no"]').eq(idx).val();
-	var pScrNm = encodeURIComponent($('input[name="conList_pdesc_scpt_file_nm"]').eq(idx).val());
-	var hScrNm = encodeURIComponent($('input[name="conList_hpycl_scpt_file_nm"]').eq(idx).val());
-	var fin_nm = encodeURIComponent($('input[name="conList_fin_nm"]').eq(idx).val());
-	var strUrl = 'getScriptFileInfo.do?cls_cd='+$('#scr_cls_cd').val()+'&fin_cd='+$('#scr_fin_cd').val()+'&req_dt='+$('#scr_req_dt').val()+'&scrts_no='+scrts_no
-								   +'&pdesc_scpt_file_nm='+pScrNm+'&hpycl_scpt_file_nm='+hScrNm+'&scr_spr='+scrSpr+'&fin_nm='+fin_nm;
-	var strFeature = "dialogWidth:350px; dialogHeight:120px; center:yes; help:no; status:no; scroll:no; resizable:no";
-	var rtnVal = window.showModalDialog(strUrl, '', strFeature);
+// 	var pScrNm = encodeURIComponent($('input[name="conList_pdesc_scpt_file_nm"]').eq(idx).val());
+// 	var hScrNm = encodeURIComponent($('input[name="conList_hpycl_scpt_file_nm"]').eq(idx).val());
+// 	var fin_nm = encodeURIComponent($('input[name="conList_fin_nm"]').eq(idx).val());
+// 	var strUrl = 'getScriptFileInfo.do?cls_cd='+$('#scr_cls_cd').val()+'&fin_cd='+$('#scr_fin_cd').val()+'&req_dt='+$('#scr_req_dt').val()+'&scrts_no='+scrts_no
+// 								   +'&pdesc_scpt_file_nm='+pScrNm+'&hpycl_scpt_file_nm='+hScrNm+'&scr_spr='+scrSpr+'&fin_nm='+fin_nm;
+// 	var strFeature = "dialogWidth:350px; dialogHeight:120px; center:yes; help:no; status:no; scroll:no; resizable:no";
+// 	var rtnVal = window.showModalDialog(strUrl, '', strFeature);
+	
+	var popWidth = 350;
+	var popHeight = 120;
+	var popupX = (window.screen.width / 2) - (popWidth / 2);
+	var popupY= (window.screen.height / 2) - (popHeight / 2);
 	
 	
-// 	window.open('','scrDownPopup','width=800,height=600,location=no,status=no,scrollbars=no');
-// 	var frm_uplPop = document.getElementById("frm_scrDownPop");
-// 	$('#scr_pdesc_scpt_file_nm').val(pScrNm);
-// 	$('#scr_hpycl_scpt_file_nm').val(hScrNm);
-// 	$('#scr_spr').val(scrSpr);
-// 	$('#scr_scrts_no').val(scrts_no);
-// 	frm_uplPop.submit();
+	f_childPop = window.open('','scrDownPopup','width='+popWidth+', height='+popHeight+', location=no, status=no, scrollbars=no, menubar=no, titlebar=no, left='+popupX+', top='+popupY);
+	var frm_uplPop = document.getElementById("frm_scrDownPop");
+	$('#scr_pdesc_scpt_file_nm').val($('input[name="conList_pdesc_scpt_file_nm"]').eq(idx).val());
+	$('#scr_hpycl_scpt_file_nm').val($('input[name="conList_hpycl_scpt_file_nm"]').eq(idx).val());
+	$('#scr_spr').val(scrSpr);
+	$('#scr_fin_nm').val($('input[name="conList_fin_nm"]').eq(idx).val());
+	$('#scr_scrts_no').val(scrts_no);
+	frm_uplPop.submit();
 }
 
+//녹취파일 계약정보 페이지 이동 시 열린 팝업 자동 닫기
+function fn_childPopup(){
+	if(!f_childPop.closed && f_childPop){
+		f_childPop.close();	
+	}
+}
 </script>
 </head>
-<body>
+<body onbeforeunload="fn_childPopup();">
+<div id="modal_layer"></div><!-- 팝업 시 parent창 비활성화용 cover -->
 <div id="wrap">
 	<section>
 		<div>
@@ -335,6 +359,7 @@ function fn_openScrDownPopup(scrSpr, idx){
 			<input type="hidden" id="scr_fin_cd" name="fin_cd" value="${fin_cd}">
 			<input type="hidden" id="scr_req_dt" name="req_dt" value="${req_dt}">
 			<input type="hidden" id="scr_scrts_no" name="scrts_no">
+			<input type="hidden" id="scr_fin_nm" name="fin_nm">
 			<input type="hidden" id="scr_pdesc_scpt_file_nm" name="pdesc_scpt_file_nm">
 			<input type="hidden" id="scr_hpycl_scpt_file_nm" name="hpycl_scpt_file_nm">
 		</form>

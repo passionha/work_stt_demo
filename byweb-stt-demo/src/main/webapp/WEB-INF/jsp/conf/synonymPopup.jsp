@@ -7,7 +7,7 @@
 <title>※동의어 관리</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
-var parentSearchYn = false;		//부모창 재조회 여부
+var parentSearchYn = false;		//팝업 종료 시 부모창 재조회 여부
 
 $(document).ready(function(){
 	//팝업 시 parent창 비활성화
@@ -166,7 +166,7 @@ function fn_synValid(val){
 }
 
 
-//팝업 닫기 전 parent 활성화
+//팝업 종료 시 parent 활성화
 function fn_befClosePop(){
 	if(parentSearchYn) window.opener.fn_search();			//부모창 재조회
 	window.opener.$('#modal_layer').css({'display':'none'});
