@@ -89,6 +89,12 @@
 		    <version>2.12.1</version>
 		</dependency>
 		
+		<!-- spring boot security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		
 		<!-- 스프링 부트 어플리케이션 테스트용 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
