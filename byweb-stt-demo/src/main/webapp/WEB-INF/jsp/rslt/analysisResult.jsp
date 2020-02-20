@@ -784,7 +784,7 @@ function fn_execAnalys(){
 			<h3>${sectionTitle}</h3>
 		</div>
 		<div id="upl_file_sel">
-			<form id="frm_getUplList" action="getAnlysRsltList.do" method="post">
+			<form id="frm_getUplList" action="/tm/getAnlysRsltList.do" method="post">
 			<input type="hidden" id="upl_class_cd" name="upl_class_cd">
 			<div id="sel_fin_nm">
 				<h5>> 업로드파일 선택</h5>
@@ -897,9 +897,9 @@ function fn_execAnalys(){
 						<tbody></tbody>
 					</table>
 				</div>
-				<form id="frm_excel_totRslt" method="post" action="getTotalInspectoinList_exl.do"></form>
-				<form id="frm_excel_cttRslt" method="post" action="getSttResultList_exl.do"></form>
-				<form id="frm_goDetail" method="post" action="getContractInfo.do">
+				<form id="frm_excel_totRslt" method="post" action="/tm/getTotalInspectoinList_exl.do"></form>
+				<form id="frm_excel_cttRslt" method="post" action="/tm/getSttResultList_exl.do"></form>
+				<form id="frm_goDetail" method="post" action="/tm/getContractInfo.do">
 					<input type="hidden" id="det_cls_cd" name="cls_cd">
 					<input type="hidden" id="det_req_dept_cd" name="req_dept_cd">
 					<input type="hidden" id="det_req_dt" name="req_dt">

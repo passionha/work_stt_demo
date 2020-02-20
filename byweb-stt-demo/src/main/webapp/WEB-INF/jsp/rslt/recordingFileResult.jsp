@@ -73,7 +73,7 @@ function fn_search(){
 		}
 	}
 	var frm = document.getElementById("frm_search_errResult");
-	frm.action = 'getRecordingFileResultList.do';
+	frm.action='/tm/getRecordingFileResultList.do';
 	frm.submit();
 }
 
@@ -81,7 +81,7 @@ function fn_search(){
 function fn_excel(){
 	$('#org_fin_nm').val($("#sel_fin_cd option:selected").text());
 	var frm = document.getElementById("frm_search_errResult");
-	frm.action = 'getRecordingFileResult_exl.do';
+	frm.action='/tm/getRecordingFileResult_exl.do';
 	frm.submit();
 }
 </script>

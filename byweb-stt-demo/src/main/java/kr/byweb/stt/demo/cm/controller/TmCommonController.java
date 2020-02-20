@@ -32,7 +32,7 @@ public class TmCommonController {
 	@Autowired
 	TmCommonCodeService tmCommonCodeService;
 	
-	@RequestMapping("/ddd")
+	@RequestMapping("/cm/main.do")
 	public String goMain(HttpSession session, HttpServletRequest request) {
 		//AuthProvider에서 세팅한 값 로드
 //		MemberVo memberVo = (MemberVo)SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -49,7 +49,7 @@ public class TmCommonController {
 		return "main";
 	}
 	
-	@RequestMapping("/selHeader.do")
+	@RequestMapping("/cm/selHeader.do")
 	public String selHeader(HttpSession session, HttpServletRequest request) {
 		String req_cd = request.getParameter("req_dept_cd") == null ? "" : request.getParameter("req_dept_cd");
 		String req_dept_cd = "";
@@ -73,6 +73,6 @@ public class TmCommonController {
 			LOGGER.debug("Exception : " + e.toString());
 		}
 		
-		return "redirect:/";
+		return "redirect:/cm/main.do";
 	}
 }

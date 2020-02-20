@@ -138,7 +138,7 @@ function fn_addDash( event, obj ){
 function fn_excel(){
 	var frm = document.getElementById("frm_exl");
 	$('#org_fin_nm').val($("#sel_fin_cd option:selected").text());
-	frm.action = 'getContractDetail_exl.do';
+	frm.action='/tm/getContractDetail_exl.do';
 	frm.submit();
 }
 
@@ -154,7 +154,7 @@ function fn_anlysAll(){
 	if(req_cnt > 0){
 		if(confirm("STT진행상태가 \'업로드완료\'인 건만 녹취파일 변환요청이 진행됩니다.\n변환요청을 진행하시겠습니까?")){
 			var frm = document.getElementById("frm_anlysAll");
-			frm.action = 'setAnalysisAll.do';
+			frm.action='/tm/setAnalysisAll.do';
 			frm.submit();
 			alert("녹취파일 변환을 요청하였습니다.");
 		}
@@ -216,7 +216,7 @@ function fn_childPopup(){
 			</c:forEach>
 			<h3>${sectionTitle}</h3>
 		</div>
-		<form id="frm" action="getContractDetailList.do" method="post">
+		<form id="frm" action="/tm/getContractDetailList.do" method="post">
 			<input type="hidden" id="det_class_cd" name="det_class_cd">
 			<div id="btn_top">
 				<input type="button" value="녹취파일변환" onclick="fn_anlysAll()">
@@ -344,7 +344,7 @@ function fn_childPopup(){
 			<input type="hidden" name="org_ctt_sdate" value="${ctt_sdate}">
 			<input type="hidden" name="org_ctt_edate" value="${ctt_edate}">
 		</form>
-		<form id="frm_anlysAll" name="frm_anlysAll" method="post" action="setAnalysisAll.do">
+		<form id="frm_anlysAll" name="frm_anlysAll" method="post" action="/tm/setAnalysisAll.do">
 			<input type="hidden" name="org_cls_cd" value="${org_cls_cd}">
 			<input type="hidden" name="org_fin_cd" value="${fin_cd}">
 			<input type="hidden" name="org_req_dt" value="${req_dt}">
@@ -353,7 +353,7 @@ function fn_childPopup(){
 			<input type="hidden" name="org_ctt_sdate" value="${ctt_sdate}">
 			<input type="hidden" name="org_ctt_edate" value="${ctt_edate}">
 		</form>
-		<form id="frm_scrDownPop" name="frm_scrDownPop" method="post" action="getScriptFileInfo.do" target="scrDownPopup">
+		<form id="frm_scrDownPop" name="frm_scrDownPop" method="post" action="/tm/getScriptFileInfo.do" target="scrDownPopup">
 			<input type="hidden" id="scr_spr" name="scr_spr">
 			<input type="hidden" id="scr_cls_cd" name="cls_cd" value="${org_cls_cd}">
 			<input type="hidden" id="scr_fin_cd" name="fin_cd" value="${fin_cd}">

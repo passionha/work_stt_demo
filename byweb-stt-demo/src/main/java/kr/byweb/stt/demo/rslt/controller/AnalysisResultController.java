@@ -64,7 +64,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getAnlysRsltList.do")
+	@RequestMapping("/tm/getAnlysRsltList.do")
 	public String getAnlysRsltList(HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "rslt/analysisResult");
 		Map finPMap = new HashMap();
@@ -104,7 +104,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getUplFileList.do")
+	@RequestMapping("/tm/getUplFileList.do")
 	@ResponseBody
 	public List<AnlysRsltVo> getKeywordDuplicationList(HttpSession session, HttpServletRequest request, Model model) {
 		Map uplPMap = new HashMap();
@@ -144,7 +144,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getAnlySttsList.do")
+	@RequestMapping("/tm/getAnlySttsList.do")
 	@ResponseBody
 	public List<AnlysRsltVo> getAnlySttsList(@RequestBody AnlysRsltVo[] arrChkFiles, HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
@@ -189,7 +189,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getTotalInspectoinList.do")
+	@RequestMapping("/tm/getTotalInspectoinList.do")
 	@ResponseBody
 	public List<AnlysRsltVo> getTotalInspectoinList(@RequestBody AnlysRsltVo[] arrChkFiles, HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
@@ -221,7 +221,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getSttResultList.do")
+	@RequestMapping("/tm/getSttResultList.do")
 	@ResponseBody
 	public List<AnlysRsltVo> getSttResultList(@RequestBody AnlysRsltVo totRslt, HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
@@ -258,7 +258,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getTotalInspectoinList_exl.do")
+	@RequestMapping("/tm/getTotalInspectoinList_exl.do")
 	public String getTotalInspectoinList_exl(AnlysRsltVo anlysRsltVo, HttpServletResponse response, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		List<AnlysRsltVo> totRsltList = new ArrayList<AnlysRsltVo>();
@@ -291,7 +291,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getSttResultList_exl.do")
+	@RequestMapping("/tm/getSttResultList_exl.do")
 	public String getSttResultList_exl(AnlysRsltVo anlysRsltVo, HttpServletResponse response, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		List<AnlysRsltVo> cttRsltList = new ArrayList<AnlysRsltVo>();
@@ -335,7 +335,7 @@ public class AnalysisResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/setKeywordInfo.do")
+	@RequestMapping("/tm/setKeywordInfo.do")
 	@ResponseBody
 	public String setKeywordInfo(@RequestBody List<Map> AnlysList, HttpSession session, HttpServletRequest request, Model model) {
 		

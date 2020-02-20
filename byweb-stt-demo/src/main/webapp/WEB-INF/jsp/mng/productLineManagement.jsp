@@ -32,7 +32,7 @@ const f_arrChangedIdx = new Array();	//수정된 상품군 인덱스 배열
 //상품군 목록 조회
 function fn_search(){
 	var frm = document.getElementById("frm_prdln");
-	frm.action = "getProductList.do";
+	frm.action="/tm/getProductList.do";
 	frm.submit();
 }
 
@@ -114,7 +114,7 @@ function fn_save(){
 			});
 		}
 		var frm = document.getElementById("frm_prdln");
-		frm.action = "saveProductList.do";
+		frm.action="/tm/saveProductList.do";
 		frm.submit();
 		alert("저장되었습니다.");
 	}
@@ -129,7 +129,7 @@ function fn_chkChangedIdx(idx){
 function fn_excel(){
 	$('#req_dept_nm').val($("#tbl_prdln > tbody > tr > td").eq('1').text());
 	var frm = document.getElementById("frm_prdln");
-	frm.action = 'getProduct_exl.do';
+	frm.action='/tm/getProduct_exl.do';
 	frm.submit();
 }
 

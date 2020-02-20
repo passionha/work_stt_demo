@@ -43,7 +43,7 @@ public class ProductLineManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getProductList.do")
+	@RequestMapping("/tm/getProductList.do")
 	public String getProductList(HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "mng/productLineManagement");
 		Map pMap = new HashMap();
@@ -85,7 +85,7 @@ public class ProductLineManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/saveProductList.do")
+	@RequestMapping("/tm/saveProductList.do")
 	public String saveProductList(PrdlnMngVo pList, HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		String s_PRDLN = request.getParameter("s_PRDLN") == null ? "" : request.getParameter("s_PRDLN");
 		String org_s_PRDLN = request.getParameter("org_s_PRDLN") == null ? "" : request.getParameter("org_s_PRDLN");
@@ -119,7 +119,7 @@ public class ProductLineManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getProduct_exl.do")
+	@RequestMapping("/tm/getProduct_exl.do")
 	public String getProduct_exl(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		List<PrdlnMngVo> prdlnList = new ArrayList<PrdlnMngVo>();

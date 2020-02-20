@@ -31,7 +31,7 @@ public class UploadPopupController {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping("/getDefInfo.do")
+	@RequestMapping("/tm/getDefInfo.do")
 	public String getDefInfo(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		Map hisPMap = new HashMap();

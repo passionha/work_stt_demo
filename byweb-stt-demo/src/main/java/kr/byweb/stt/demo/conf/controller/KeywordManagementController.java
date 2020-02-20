@@ -44,7 +44,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getAnlysStdList.do")
+	@RequestMapping("/tm/getAnlysStdList.do")
 	public String getAnlysStdList(HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "conf/keywordManagement");
 		Map pMap = new HashMap();
@@ -90,7 +90,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getAnalysisStandardList.do")
+	@RequestMapping("/tm/getAnalysisStandardList.do")
 	public String getAnalysisStandardList(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -133,7 +133,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/insertAnalysisStandard.do")
+	@RequestMapping("/tm/insertAnalysisStandard.do")
 	public String insertAnalysisStandard(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -175,7 +175,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getKeywordDuplicationList.do")
+	@RequestMapping("/tm/getKeywordDuplicationList.do")
 	@ResponseBody
 	public ArrayList getKeywordDuplicationList(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
@@ -214,7 +214,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getSynonymKeywordList.do")
+	@RequestMapping("/tm/getSynonymKeywordList.do")
 	public String getSynonymKeywordList(HttpServletRequest request, HttpSession session, Model model) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -250,7 +250,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/updateSynonym.do")
+	@RequestMapping("/tm/updateSynonym.do")
 	@ResponseBody
 	public Object updateSynonym(@RequestParam(value="chkKwds[]") List<String> chkKwds, @RequestParam(value="unchkKwds[]") List<String> unchkKwds, HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
@@ -324,7 +324,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getSynonymDup.do")
+	@RequestMapping("/tm/getSynonymDup.do")
 	@ResponseBody
 	public Integer getSynonymDup(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
@@ -356,7 +356,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/updateDelSynonym.do")
+	@RequestMapping("/tm/updateDelSynonym.do")
 	@ResponseBody
 	public Object updateDelSynonym(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
@@ -393,7 +393,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/updateAnalysisStandard.do")
+	@RequestMapping("/tm/updateAnalysisStandard.do")
 	public String updateAnalysisStandard(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
@@ -440,7 +440,7 @@ public class KeywordManagementController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/deleteAnalysisStandard.do")
+	@RequestMapping("/tm/deleteAnalysisStandard.do")
 	public String deleteAnalysisStandard(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");

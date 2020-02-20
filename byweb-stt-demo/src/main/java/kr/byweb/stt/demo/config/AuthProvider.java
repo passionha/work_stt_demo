@@ -1,4 +1,4 @@
-package kr.byweb.stt.demo.config;
+/*package kr.byweb.stt.demo.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +23,12 @@ import kr.byweb.stt.demo.cm.controller.TmCommonController;
 import kr.byweb.stt.demo.cm.mapper.MemberMapper;
 import kr.byweb.stt.demo.cm.model.MemberVo;
 import kr.byweb.stt.demo.cm.service.MemberService;
-
+*/
 /**
  * 인증 provider
  * 로그인 시 사용자 입력 아이디, 비밀번호 확인하고 해당 권한을 부여하는 클래스
  */
+/*
 @Component()
 public class AuthProvider implements AuthenticationProvider{
 	
@@ -83,3 +84,4 @@ public class AuthProvider implements AuthenticationProvider{
 	}
 
 }
+*/

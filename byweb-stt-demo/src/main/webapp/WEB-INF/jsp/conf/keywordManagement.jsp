@@ -250,7 +250,7 @@ function fn_synPopup(idx){
 	f_childPop = window.open('','synPop','width='+popWidth+', height='+popHeight+', location=no, status=no, scrollbars=yes, menubar=no, titlebar=no, left='+popupX+', top='+popupY);
 	var frm_synPop = document.getElementById('frm_synPop');
 	frm_synPop.method = 'post';
-	frm_synPop.action = 'getSynonymKeywordList.do';
+	frm_synPop.action='/tm/getSynonymKeywordList.do';
 	frm_synPop.target = 'synPop';
 	$('#pop_prdln_cd').val($('#sel_prdln').val());
 	$('#pop_kwd_spr').val($('#sel_kwdKnd').val());
@@ -541,7 +541,7 @@ function fn_saveKwdList(){
 				$('#mod_kwd_nms').val($('#ta_writeKwd').val());
 				
 				var frm_kwdList = document.getElementById('frm_kwdList');
-				frm_kwdList.action = "updateAnalysisStandard.do"
+				frm_kwdList.action="/tm/updateAnalysisStandard.do"
 				frm_kwdList.submit();
 				alert("수정사항이 저장되었습니다.");
 			}
@@ -615,7 +615,7 @@ function fn_deleteKwdList(){
 		$('#mod_kwd_nms').val($('#ta_writeKwd').val());
 		
 		var frm_delList = document.getElementById('frm_kwdList');
-		frm_delList.action = "deleteAnalysisStandard.do"
+		frm_delList.action="/tm/deleteAnalysisStandard.do"
 		frm_delList.submit();
 		alert("선택하신 키워드가 삭제되었습니다.");
 	}
@@ -647,7 +647,7 @@ function fn_childPopup(){
 			</c:forEach>
 			<h3>${sectionTitle}</h3>
 		</div>
-		<form name="frm_search" id="frm_search" action="getAnalysisStandardList.do" method="post">
+		<form name="frm_search" id="frm_search" action="/tm/getAnalysisStandardList.do" method="post">
 			<input type="hidden" id="srch_kwd_nms" name="srch_kwd_nms">	<!-- 동의어 저장 시 입력키워드 유지 -->
 			<div id="searchBar">
 				<ul>
@@ -682,7 +682,7 @@ function fn_childPopup(){
 			<div id="btn_kwdSet">
 				<input type="button" value="키워드 등록" onclick="fn_insertKwdList();">
 			</div>
-			<form id="frm_insertKwdList" action="insertAnalysisStandard.do" method="post">
+			<form id="frm_insertKwdList" action="/tm/insertAnalysisStandard.do" method="post">
 				<textarea id="ta_writeKwd" name="kwd_nms" rows="4" placeholder="여러 키워드 등록 시 구분자를 ','단위로 등록하세요. 한 키워드는 50자 이상을 넘을 수 없습니다.">${kwd_nms}</textarea>
 				<input type="hidden" id="ins_prdln_cd" name="ins_prdln_cd">
 				<input type="hidden" id="ins_kwd_spr" name="ins_kwd_spr">

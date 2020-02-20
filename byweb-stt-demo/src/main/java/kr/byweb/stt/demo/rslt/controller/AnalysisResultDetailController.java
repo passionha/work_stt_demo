@@ -54,7 +54,7 @@ public class AnalysisResultDetailController {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping("/getContractInfo.do")
+	@RequestMapping("/tm/getContractInfo.do")
 	public String getContractInfo(AnlysRsltVo anlysRsltVo, HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "rslt/analysisResultDetail");
 		
@@ -198,7 +198,7 @@ public class AnalysisResultDetailController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/insertInspectionResult.do")
+	@RequestMapping("/tm/insertInspectionResult.do")
 	@ResponseBody
 	public int insertInspectionResult(@RequestBody AnlysRsltVo manualInspcRslt, HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();

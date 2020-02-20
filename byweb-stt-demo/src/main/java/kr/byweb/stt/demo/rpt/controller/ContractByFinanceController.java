@@ -44,7 +44,7 @@ public class ContractByFinanceController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getContractList.do")
+	@RequestMapping("/tm/getContractList.do")
 	public String getContractList(HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "rpt/contractByFinance");
 		Map finPMap = new HashMap();
@@ -121,7 +121,7 @@ public class ContractByFinanceController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/delContract.do")
+	@RequestMapping("/tm/delContract.do")
 	public String delContract(HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		List<Map> files = new ArrayList<Map>();
@@ -195,7 +195,7 @@ public class ContractByFinanceController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getContract_exl.do")
+	@RequestMapping("/tm/getContract_exl.do")
 	public String getContract_exl(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map pMap1 = new HashMap();
 		Map pMap2 = new HashMap();

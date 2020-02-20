@@ -37,7 +37,7 @@ public class RecordingFileResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getRecordingFileResultList.do")
+	@RequestMapping("/tm/getRecordingFileResultList.do")
 	public String getRecordingFileResultList(HttpSession session, HttpServletRequest request, Model model) {
 		model.addAttribute("contentPage", "rslt/recordingFileResult");
 		Map pMap = new HashMap();
@@ -92,7 +92,7 @@ public class RecordingFileResultController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getRecordingFileResult_exl.do")
+	@RequestMapping("/tm/getRecordingFileResult_exl.do")
 	public String getRecordingFileResult_exl(HttpSession session, HttpServletRequest request, Model model) {
 		Map pMap = new HashMap();
 		List<AnlysRsltVo> rcdRsltList = new ArrayList<AnlysRsltVo>();

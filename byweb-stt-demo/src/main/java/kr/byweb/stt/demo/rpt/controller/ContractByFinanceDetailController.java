@@ -40,7 +40,7 @@ public class ContractByFinanceDetailController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getContractDetailList.do")
+	@RequestMapping("/tm/getContractDetailList.do")
 	public String getContractDetailList(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		model.addAttribute("contentPage", "rpt/contractByFinanceDetail");
 		Map conPMap = new HashMap();
@@ -147,7 +147,7 @@ public class ContractByFinanceDetailController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/getContractDetail_exl.do")
+	@RequestMapping("/tm/getContractDetail_exl.do")
 	public String getContract_exl(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map conPMap = new HashMap();
 		List<ContractVo> conList = new ArrayList<ContractVo>();
@@ -186,7 +186,7 @@ public class ContractByFinanceDetailController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/setAnalysisAll.do")
+	@RequestMapping("/tm/setAnalysisAll.do")
 	public String setAnalysisAll(HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		Map pMap = new HashMap();
 		List<ContractVo> conList = new ArrayList<ContractVo>();
@@ -230,7 +230,7 @@ public class ContractByFinanceDetailController {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping("/getScriptFileInfo.do")
+	@RequestMapping("/tm/getScriptFileInfo.do")
 	public String getScriptFileInfo(ContractVo pScrInfo, HttpSession session, HttpServletRequest request, Model model) {
 		ContractVo scrFileInfo = new ContractVo();
 		Map pMap = new HashMap();

@@ -169,7 +169,7 @@ function fn_addDash( event, obj ){
 function fn_excel(){
 	$('#org_fin_nm').val($("#sel_fin_cd option:selected").text());
 	var frm = document.getElementById("frm_exl");
-	frm.action = 'getContract_exl.do';
+	frm.action='/tm/getContract_exl.do';
 	frm.submit();
 }
 
@@ -209,7 +209,7 @@ function fn_childPopup(){
 			</c:forEach>
 			<h3>${sectionTitle}</h3>
 		</div>
-		<form id="frm" action="getContractList.do" method="post">
+		<form id="frm" action="/tm/getContractList.do" method="post">
 			<div id="btn_top">
 				<input type="button" value="엑셀" onclick="fn_excel()">
 				<input type="button" value="조회" onclick="fn_search()">
@@ -283,12 +283,12 @@ function fn_childPopup(){
 				</c:forEach>
 			</tbody>
 		</table>
-		<form id="frm_goDetail" name="frm_goDetail" method="post" action="getContractDetailList.do">
+		<form id="frm_goDetail" name="frm_goDetail" method="post" action="/tm/getContractDetailList.do">
 			<input type="hidden" id="det_cls_cd" name="cls_cd">
 			<input type="hidden" id="det_fin_cd" name="fin_cd">
 			<input type="hidden" id="det_req_dt" name="req_dt">
 		</form>
-		<form id="frm_del" name="frm_del" method="post" action="delContract.do" target="_self">
+		<form id="frm_del" name="frm_del" method="post" action="/tm/delContract.do" target="_self">
 			<input type="hidden" id="del_cls_cd" name="cls_cd">
 			<input type="hidden" id="del_fin_cd" name="fin_cd">
 			<input type="hidden" id="del_req_dt" name="req_dt">
@@ -296,12 +296,12 @@ function fn_childPopup(){
 			<input type="hidden" id="del_edate" name="edate">
 			<input type="hidden" id="del_sel_fin_cd" name="sel_fin_cd">
 		</form>
-		<form id="frm_uplPop" name="frm_uplPop" method="post" action="getDefInfo.do" target="uplPopup">
+		<form id="frm_uplPop" name="frm_uplPop" method="post" action="/tm/getDefInfo.do" target="uplPopup">
 			<input type="hidden" id="upl_fin_cd" name="fin_cd">
 			<input type="hidden" id="upl_req_dt" name="req_dt">
 			<input type="hidden" id="upl_spr" name="upl_spr">
 		</form>
-		<form id="frm_exl" name="frm_exl" method="post" action="getContract_exl.do">
+		<form id="frm_exl" name="frm_exl" method="post" action="/tm/getContract_exl.do">
 			<input type="hidden" id="org_fin_cd" name="org_fin_cd" value="${fin_cd}">
 			<input type="hidden" id="org_fin_nm" name="org_fin_nm">
 			<input type="hidden" id="org_sdate" name="org_sdate" value="${sdate}">
