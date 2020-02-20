@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import kr.byweb.stt.demo.cm.model.LoginForm;
+import kr.byweb.stt.demo.cm.model.MemberVo;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 
@@ -30,8 +32,14 @@ public class TmCommonController {
 	@Autowired
 	TmCommonCodeService tmCommonCodeService;
 	
-	@RequestMapping("/")
+	@RequestMapping("/ddd")
 	public String goMain(HttpSession session, HttpServletRequest request) {
+		//AuthProvider에서 세팅한 값 로드
+//		MemberVo memberVo = (MemberVo)SecurityContextHolder.getContext().getAuthentication().getDetails();
+//		
+//		session.setAttribute("user_id", memberVo.getAcnt_id());
+//		session.setAttribute("user_pw", memberVo.getAcnt_pw());
+//		LOGGER.debug("******************main memberVo : "+memberVo);
 		try {
 			List<TmCmCdVo> headerTitles = tmCommonCodeService.getTitleList();
 			session.setAttribute("headerTitles", headerTitles);

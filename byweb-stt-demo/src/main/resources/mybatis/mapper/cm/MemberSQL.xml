@@ -4,7 +4,13 @@
 	<!-- 로그인 인증 위한 권한 코드 조회 -->
 	<select id="authenticate" resultType="kr.byweb.stt.demo.cm.model.MemberVo">
 		SELECT 
-		       AUTH_CD
+        	  AUTH_CD
+			, ACNT_ID
+			, ACNT_PW
+			, EMP_NO
+			, EMP_NM
+			, EMP_EMAIL
+			, USE_YN
 		FROM AIAS_MEMBER
 		WHERE
 	            ACNT_ID = #{acnt_id}
