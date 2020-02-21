@@ -1,4 +1,4 @@
-/*package kr.byweb.stt.demo.config;
+package kr.byweb.stt.demo.config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,4 +100,3 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 //		auth.authenticationProvider(authenticationProvider);
 	}
 }
-*/

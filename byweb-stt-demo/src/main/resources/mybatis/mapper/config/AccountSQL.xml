@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.byweb.stt.demo.config.mapper.AccountMapper">
+	<select id="findByUserid" parameterType="java.lang.String" resultType="kr.byweb.stt.demo.config.model.Account">
+		SELECT /* kr.byweb.stt.demo.config.mapper.AccountMapper.findByUserid */
+		      ACNT_ID
+		    , ACNT_PW
+		    , EMP_NO
+		    , EMP_NM
+		    , EMP_EMAIL
+		    , AUTH_CD
+		    , USE_YN
+		FROM AIAS_MEMBER
+		WHERE
+		    ACNT_ID = #{user_id}
+	</select>
+	
+	<insert id="saveAccount" parameterType="kr.byweb.stt.demo.config.model.Account">
+		INSERT INTO AIAS_MEMBER (
+		      ACNT_ID
+		    , ACNT_PW
+		    , EMP_NO
+		    , EMP_NM
+		    , EMP_EMAIL
+		    , AUTH_CD
+		    , USE_YN
+		) VALUES (
+		      #{acnt_id}
+		    , #{acnt_pw}
+		    , #{emp_no}
+		    , #{emp_nm}
+		    , #{emp_email}
+		    , #{auth_cd}
+		    , 'Y'
+		)
+	</insert>
+</mapper>

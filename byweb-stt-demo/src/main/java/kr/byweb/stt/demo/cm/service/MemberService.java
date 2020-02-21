@@ -1,4 +1,4 @@
-package kr.byweb.stt.demo.cm.service;
+/*package kr.byweb.stt.demo.cm.service;
 
 import java.util.Map;
 
@@ -11,3 +11,4 @@ import kr.byweb.stt.demo.cm.model.MemberVo;
 public interface MemberService {
 	public MemberVo authenticate(Map pMap) throws Exception;
 }
+*/

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,8 +16,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = "username")
-public class MemberVo implements UserDetails{
+//@EqualsAndHashCode(of = "username")
+public class MemberVo /* implements UserDetails */{
 	//회원 테이블 : AIAS_MEMBER
 	private String acnt_id;
 	private String acnt_pw;
@@ -30,7 +31,7 @@ public class MemberVo implements UserDetails{
 	private String authorities;
 	private static final long serialVersionUID = 1L;
 	
-	@Override
+	/*@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List authorityList = new ArrayList<>();
         if (!StringUtils.isEmpty(authorities)) {
@@ -64,5 +65,5 @@ public class MemberVo implements UserDetails{
 	@Override
 	public boolean isEnabled() {
 		return false;
-	}
+	}*/
 }

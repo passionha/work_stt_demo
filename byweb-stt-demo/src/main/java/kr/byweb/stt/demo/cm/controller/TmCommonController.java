@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import kr.byweb.stt.demo.cm.model.LoginForm;
-import kr.byweb.stt.demo.cm.model.MemberVo;
 import kr.byweb.stt.demo.cm.model.TmCmCdVo;
 import kr.byweb.stt.demo.cm.service.TmCommonCodeService;
 

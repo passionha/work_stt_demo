@@ -1,4 +1,4 @@
-package kr.byweb.stt.demo.cm.service;
+/*package kr.byweb.stt.demo.cm.service;
 
 import java.util.Map;
 
@@ -20,3 +20,4 @@ public class MamberServiceImpl implements MemberService{
 	}
 
 }
+*/
