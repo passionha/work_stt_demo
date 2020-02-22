@@ -34,7 +34,7 @@
 				</c:forEach>
 			</ul>
 		</div>
-		<form id="frm_selHeader" action="/cm/selHeader.do" method="post" target="_self">
+		<form id="frm_selHeader" action="/cm/selHeader.do" method="post">
 			<input type="hidden" id="req_dept_cd" name="req_dept_cd">
 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 		</form>

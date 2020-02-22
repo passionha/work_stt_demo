@@ -7,10 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-	admin 입니다.
-	
-	<sec:authentication property="principal.username"/>님 안녕하세요 !<br>
-	<sec:authentication property="principal.nick"/>님 안녕하세요 !<br>
+	관리자 페이지입니다.<br>
+	<sec:authentication property="principal"/><br>
+	ID : <sec:authentication property="principal.username"/><br>
+	'<sec:authentication property="principal.emp_nm"/>'님 안녕하세요 !<br>
 	
 	 <sec:authorize access="isAnonymous()">
 		<br> 로그아웃 중입니다.

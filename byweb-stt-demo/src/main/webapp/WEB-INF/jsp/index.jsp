@@ -9,6 +9,7 @@
 <body>
 hello<br> 
 
+<a href="/cm/main.do">메인 페이지로 이동</a><br>
 <a href="/admin">어드민 페이지로 이동</a><br>
 <a href="/user">유저 페이지로 이동</a><br>
 
