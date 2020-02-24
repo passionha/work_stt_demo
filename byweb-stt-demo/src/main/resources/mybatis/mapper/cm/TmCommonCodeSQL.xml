@@ -6,9 +6,11 @@
 		SELECT
 		      MENU_ID
 		    , MENU_NM
+		    , UPPER_MENU_ID
 		FROM TM_MENU_MNG
 		WHERE
-			  UPPER_MENU_ID = 'M1'
+<!-- 			  UPPER_MENU_ID = 'M1' -->
+			  MENU_LEVEL = '1'
 		  AND USE_YN = 'Y'
 	</select>
 	

@@ -16,9 +16,6 @@ public class AccountController {
 	@Autowired
 	AccountService accountService;
 	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	
 	@RequestMapping("/")
 	public String home() {
 		return "redirect:/cm/main.do";
@@ -47,16 +44,11 @@ public class AccountController {
 	public String register(Account account, Model model){
 		model.addAttribute("contentPage", "common/registerResult");
 		// 회원정보 데이터베이스에 저장
-		account.setAcnt_pw(passwordEncoder.encode(account.getAcnt_pw()));
-//		account.setAcnt_pw(account.getAcnt_pw());
-		System.out.println("**************homeCntl account.getAcnt_pw() : "+account.getAcnt_pw());
-//		System.out.println("**************homeCntl encode.getAcnt_pw() : "+passwordEncoder.encode(account.getAcnt_pw()));
 		try {
 			accountService.register(account);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		model.addAttribute("emp_nm", account.getEmp_nm());
 		return "main";
 	}

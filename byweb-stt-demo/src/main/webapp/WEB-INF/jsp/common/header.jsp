@@ -49,8 +49,7 @@
 						</form>
 					</li>
 					<li id="li_loginNm">
-						'<sec:authentication property="principal.emp_nm"/>
-						(<sec:authentication property="principal.username"/>)'님 안녕하세요 !
+						'<sec:authentication property="principal.emp_nm"/>(<sec:authentication property="principal.username"/>)'님 안녕하세요.&nbsp;&nbsp;&nbsp;
 					</li>
 				 </sec:authorize>
 			</ul>
