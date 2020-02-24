@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-//@EntityScan
 public class Account {
 	//회원 테이블 : AIAS_MEMBER
 	private String acnt_id;

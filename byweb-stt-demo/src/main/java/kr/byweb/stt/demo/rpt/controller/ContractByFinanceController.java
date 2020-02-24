@@ -187,7 +187,7 @@ public class ContractByFinanceController {
 		redirectAttributes.addFlashAttribute("sdate", sdate);
 		redirectAttributes.addFlashAttribute("edate", edate);
 		
-		return "redirect:/getContractList.do";
+		return "redirect:/tm/getContractList.do";
 	}
 	
 	/**

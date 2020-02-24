@@ -221,7 +221,7 @@ public class ContractByFinanceDetailController {
 			LOGGER.debug("Exception : " + e.toString());
 		}
 		
-		return "redirect:/getContractDetailList.do";
+		return "redirect:/tm/getContractDetailList.do";
 	}
 	
 	/**

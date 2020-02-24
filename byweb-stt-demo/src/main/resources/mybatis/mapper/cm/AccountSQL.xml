@@ -15,7 +15,7 @@
 		    ACNT_ID = #{username}
 	</select>
 	
-	<insert id="saveAccount" parameterType="kr.byweb.stt.demo.cm.model.Account">
+	<insert id="register" parameterType="kr.byweb.stt.demo.cm.model.Account">
 		INSERT INTO AIAS_MEMBER (
 		      ACNT_ID
 		    , ACNT_PW

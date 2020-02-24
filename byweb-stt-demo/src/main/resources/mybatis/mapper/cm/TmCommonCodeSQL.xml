@@ -8,7 +8,7 @@
 		    , MENU_NM
 		FROM TM_MENU_MNG
 		WHERE
-			  UPPER_MENU_ID = 'TM'
+			  UPPER_MENU_ID = 'M1'
 		  AND USE_YN = 'Y'
 	</select>
 	

@@ -31,7 +31,6 @@ public class TmCommonController {
 			LOGGER.debug("Exception : " + e.toString());
 		}
 		return "main";
-//		return "index";
 	}
 	
 	@RequestMapping("/cm/selHeader.do")
@@ -39,13 +38,13 @@ public class TmCommonController {
 		String req_cd = request.getParameter("req_dept_cd") == null ? "" : request.getParameter("req_dept_cd");
 		String req_dept_cd = "";
 		switch(req_cd) {
-		case "TM-01" :
+		case "M1-01" :
 			req_dept_cd = "1";
 			break;
-		case "TM-02" :
+		case "M1-02" :
 			req_dept_cd = "2";
 			break;
-		case "TM-03" :
+		case "M1-03" :
 			req_dept_cd = "3";
 			break;
 		}

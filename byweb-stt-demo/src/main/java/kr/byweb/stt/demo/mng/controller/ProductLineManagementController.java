@@ -111,7 +111,7 @@ public class ProductLineManagementController {
 		//redirect경로로 전달할 파라미터 저장
 		redirectAttributes.addFlashAttribute("ins_s_PRDLN", s_PRDLN);
 		redirectAttributes.addFlashAttribute("org_s_PRDLN", org_s_PRDLN);
-		return "redirect:/getProductList.do";
+		return "redirect:/tm/getProductList.do";
 	}
 	
 	/**

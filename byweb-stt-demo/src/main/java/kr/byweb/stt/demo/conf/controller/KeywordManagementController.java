@@ -92,6 +92,7 @@ public class KeywordManagementController {
 	 */
 	@RequestMapping("/tm/getAnalysisStandardList.do")
 	public String getAnalysisStandardList(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+		System.out.println("********************getAnalysisStandardList");
 		Map pMap = new HashMap();
 		String req_dept_cd = session.getAttribute("req_dept_cd") == null ? "" : (String) session.getAttribute("req_dept_cd");
 		String prdln_cd = "";
@@ -124,7 +125,7 @@ public class KeywordManagementController {
 		redirectAttributes.addFlashAttribute("kwd_spr", kwd_spr);
 		redirectAttributes.addFlashAttribute("kwd_nms", kwd_nms);
 		redirectAttributes.addFlashAttribute("kwdList", kwdList);
-		return "redirect:/getAnlysStdList.do";
+		return "redirect:/tm/getAnlysStdList.do";
 	}	
 	
 	/**
@@ -166,7 +167,7 @@ public class KeywordManagementController {
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
 		redirectAttributes.addFlashAttribute("kwd_spr", kwd_spr);
 		redirectAttributes.addFlashAttribute("kwd_nms", kwd_nms);
-		return "redirect:/getAnalysisStandardList.do";
+		return "redirect:/tm/getAnalysisStandardList.do";
 	}
 	
 	/**
@@ -431,7 +432,7 @@ public class KeywordManagementController {
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
 		redirectAttributes.addFlashAttribute("kwd_spr", kwd_spr);
 		redirectAttributes.addFlashAttribute("kwd_nms", kwd_nms);
-		return "redirect:/getAnalysisStandardList.do";
+		return "redirect:/tm/getAnalysisStandardList.do";
 	}
 	
 	/**
@@ -464,6 +465,6 @@ public class KeywordManagementController {
 		redirectAttributes.addFlashAttribute("prdln_cd", prdln_cd);
 		redirectAttributes.addFlashAttribute("kwd_spr", kwd_spr);
 		redirectAttributes.addFlashAttribute("kwd_nms", kwd_nms);
-		return "redirect:/getAnalysisStandardList.do";
+		return "redirect:/tm/getAnalysisStandardList.do";
 	}
 }
