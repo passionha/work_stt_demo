@@ -31,7 +31,6 @@ public class AccountService implements UserDetailsService{
 		try {
 			account = accountMapper.findByUserid(username);
 //			account.setAcnt_pw(passwordEncoder.encode(account.getAcnt_pw()));
-			System.out.println("loadUserByUsername getAcnt_pw : "+account.getAcnt_pw());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

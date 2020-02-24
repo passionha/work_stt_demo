@@ -38,8 +38,14 @@
 	<header>
 		<div>
 			<ul>
+				<sec:authentication property="principal" var="principal"/>
 				<c:forEach var="headerTitles" items="${sessionScope.headerTitles}" begin="0" step="1">
-				<li onclick="fn_sbmReqCd('${headerTitles.menu_id}')">${headerTitles.menu_nm}</li>
+					<c:if test="${(principal.auth_cd == 'BW' || principal.auth_cd == 'TM') && headerTitles.upper_menu_id == 'M1'}">
+						<li onclick="fn_sbmReqCd('${headerTitles.menu_id}')">${headerTitles.menu_nm}</li>
+					</c:if>
+					<c:if test="${(principal.auth_cd == 'BW' || principal.auth_cd == 'EC') && headerTitles.upper_menu_id == 'M2'}">
+						<li onclick="fn_sbmReqCd('${headerTitles.menu_id}')">${headerTitles.menu_nm}</li>
+					</c:if>
 				</c:forEach>
 				<sec:authorize access="isAuthenticated()">
 					<li id="li_logoutBtn">
@@ -49,7 +55,7 @@
 						</form>
 					</li>
 					<li id="li_loginNm">
-						'<sec:authentication property="principal.emp_nm"/>(<sec:authentication property="principal.username"/>)'님 안녕하세요.&nbsp;&nbsp;&nbsp;
+						'${principal.emp_nm}(${principal.username})'님 안녕하세요.&nbsp;&nbsp;&nbsp;
 					</li>
 				 </sec:authorize>
 			</ul>
